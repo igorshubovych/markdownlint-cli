@@ -1,0 +1,50 @@
+{
+  "name": "markdownlint-cli",
+  "version": "0.0.1",
+  "description": "MarkdownLint Command Line Interface",
+  "main": "cli.js",
+  "bin": {
+    "markdownlint": "cli.js"
+  },
+  "engines": {
+    "node": ">=0.12.0"
+  },
+  "scripts": {
+    "test": "xo && ava",
+    "start": "node ./cli.js"
+  },
+  "files": [
+    "cli.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/igorshubovych/markdownlint-cli.git"
+  },
+  "keywords": [
+    "markdown",
+    "markdownlint",
+    "cli",
+    "cli-app"
+  ],
+  "author": "Igor Shubovych <igor.shubovych@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/igorshubovych/markdownlint-cli/issues"
+  },
+  "homepage": "https://github.com/igorshubovych/markdownlint-cli#readme",
+  "dependencies": {
+    "commander": "~2.9.0",
+    "deep-extend": "~0.4.1",
+    "lodash": "~3.10.1",
+    "markdownlint": "~0.1.0",
+    "rc": "~1.1.6"
+  },
+  "devDependencies": {
+    "ava": "*",
+    "execa": "^0.2.2",
+    "xo": "*"
+  },
+  "xo": {
+    "space": true
+  }
+}
