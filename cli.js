@@ -7,7 +7,7 @@ var program = require('commander');
 
 function readConfiguration(args) {
   var rc = require('rc');
-  var config = rc(pkg.name, {});
+  var config = rc('markdownlint', {});
   if (args.config) {
     var fs = require('fs');
     try {
