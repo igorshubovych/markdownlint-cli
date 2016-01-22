@@ -31,7 +31,6 @@ function lint(lintFiles, config) {
 }
 
 function printResult(lintResult) {
-  // var chalk = require('chalk');
   console.log(lintResult.toString());
 }
 

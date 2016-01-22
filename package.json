@@ -2,19 +2,19 @@
   "name": "markdownlint-cli",
   "version": "0.0.2",
   "description": "MarkdownLint Command Line Interface",
-  "main": "cli.js",
+  "main": "markdownlint.js",
   "bin": {
-    "markdownlint": "cli.js"
+    "markdownlint": "markdownlint.js"
   },
   "engines": {
     "node": ">=0.12.0"
   },
   "scripts": {
     "test": "xo && ava",
-    "start": "node ./cli.js"
+    "start": "node ./markdownlint.js"
   },
   "files": [
-    "cli.js"
+    "markdownlint.js"
   ],
   "repository": {
     "type": "git",
