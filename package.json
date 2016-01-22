@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "xo && ava",
-    "start": "node ./markdownlint.js"
+    "start": "node ./markdownlint.js",
+    "precommit": "npm test"
   },
   "files": [
     "markdownlint.js"
@@ -42,6 +43,7 @@
   "devDependencies": {
     "ava": "*",
     "execa": "^0.2.2",
+    "husky": "^0.10.2",
     "xo": "*"
   },
   "xo": {
