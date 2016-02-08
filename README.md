@@ -1,4 +1,4 @@
-# markdownlint-cli [![Build Status](https://travis-ci.org/igorshubovych/markdownlint-cli.svg?branch=master)](https://travis-ci.org/igorshubovych/markdownlint-cli)
+# markdownlint-cli [![Build Status][travis-badge]][travis-url]
 
 > Command Line Interface for [MarkdownLint](https://github.com/DavidAnson/markdownlint)
 
@@ -25,3 +25,6 @@ $ markdownlint --help
 ## License
 
 MIT © Igor Shubovych
+
+[travis-badge]: https://travis-ci.org/igorshubovych/markdownlint-cli.svg?branch=master
+[travis-url]: https://travis-ci.org/igorshubovych/markdownlint-cli
