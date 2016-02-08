@@ -1,4 +1,4 @@
-# markdownlint-cli [![Build Status][travis-badge]][travis-url]
+# markdownlint-cli [![Travis CI Build Status][travis-badge]][travis-url] [![AppVeyor CI Build Status][appveyor-badge]][appveyor-url]
 
 > Command Line Interface for [MarkdownLint](https://github.com/DavidAnson/markdownlint)
 
@@ -28,3 +28,6 @@ MIT © Igor Shubovych
 
 [travis-badge]: https://travis-ci.org/igorshubovych/markdownlint-cli.svg?branch=master
 [travis-url]: https://travis-ci.org/igorshubovych/markdownlint-cli
+
+[appveyor-badge]: https://ci.appveyor.com/api/projects/status/vays51ikmutkwc2y/branch/master?svg=true
+[appveyor-url]: https://ci.appveyor.com/project/igorshubovych/markdownlint-cli
