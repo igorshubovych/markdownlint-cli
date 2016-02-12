@@ -24,5 +24,4 @@ test_script:
   - cmd: npm test
 
 cache:
-  - node_modules           # local npm modules
-  - '%APPDATA%\npm-cache'  # npm cache
+  - node_modules # local npm modules
