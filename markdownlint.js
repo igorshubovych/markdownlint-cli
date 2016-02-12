@@ -4,6 +4,7 @@
 
 var pkg = require('./package');
 var program = require('commander');
+var values = require('lodash.values');
 
 function readConfiguration(args) {
   var rc = require('rc');
@@ -35,11 +36,11 @@ function printResult(lintResult) {
 }
 
 function isResultCorrect(lintResult) {
-  var _ = require('lodash');
   function notEmptyObject(item) {
-    return !_.isEqual(item, {});
+    return Object.keys(item).length > 0;
   }
-  return _.values(lintResult).some(notEmptyObject);
+  return values(lintResult)
+    .some(notEmptyObject);
 }
 
 program
