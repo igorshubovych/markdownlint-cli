@@ -26,8 +26,8 @@ $ markdownlint --help
 
 MIT © Igor Shubovych
 
-[travis-badge]: https://travis-ci.org/igorshubovych/markdownlint-cli.svg?branch=master
+[travis-badge]: https://img.shields.io/travis/igorshubovych/markdownlint-cli/master.svg?label=linux
 [travis-url]: https://travis-ci.org/igorshubovych/markdownlint-cli
 
-[appveyor-badge]: https://ci.appveyor.com/api/projects/status/vays51ikmutkwc2y/branch/master?svg=true
+[appveyor-badge]: https://img.shields.io/appveyor/ci/igorshubovych/markdownlint-cli/master.svg?label=windows
 [appveyor-url]: https://ci.appveyor.com/project/igorshubovych/markdownlint-cli
