@@ -2,6 +2,12 @@
 
 > Command Line Interface for [MarkdownLint](https://github.com/DavidAnson/markdownlint)
 
+## Installation
+
+```bash
+npm install -g markdownlint-cli
+```
+
 ## Usage
 
 ```bash
