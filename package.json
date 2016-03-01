@@ -36,6 +36,8 @@
   "dependencies": {
     "commander": "~2.9.0",
     "deep-extend": "~0.4.1",
+    "glob": "7.0.0",
+    "lodash.flatten": "4.1.0",
     "lodash.values": "~4.1.0",
     "markdownlint": "~0.1.1",
     "rc": "~1.1.6"
