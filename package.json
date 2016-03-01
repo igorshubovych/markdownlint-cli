@@ -36,14 +36,14 @@
   "dependencies": {
     "commander": "~2.9.0",
     "deep-extend": "~0.4.1",
-    "lodash.values": "~4.0.0",
-    "markdownlint": "~0.1.0",
+    "lodash.values": "~4.1.0",
+    "markdownlint": "~0.1.1",
     "rc": "~1.1.6"
   },
   "devDependencies": {
     "ava": "*",
     "execa": "^0.2.2",
-    "husky": "^0.10.2",
+    "husky": "^0.11.3",
     "xo": "*"
   },
   "xo": {
