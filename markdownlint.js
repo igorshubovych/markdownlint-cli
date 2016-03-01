@@ -5,15 +5,16 @@
 var pkg = require('./package');
 var program = require('commander');
 var values = require('lodash.values');
+var rc = require('rc');
+var extend = require('deep-extend');
+var fs = require('fs');
+var markdownlint = require('markdownlint');
 
 function readConfiguration(args) {
-  var rc = require('rc');
   var config = rc('markdownlint', {});
   if (args.config) {
-    var fs = require('fs');
     try {
       var userConfig = JSON.parse(fs.readFileSync(args.config));
-      var extend = require('deep-extend');
       config = extend(config, userConfig);
     } catch (e) {
       console.warn('Cannot read or parse config file', args.config);
@@ -23,7 +24,6 @@ function readConfiguration(args) {
 }
 
 function lint(lintFiles, config) {
-  var markdownlint = require('markdownlint');
   var lintOptions = {
     files: lintFiles,
     config: config
