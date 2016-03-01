@@ -4,7 +4,7 @@
 
 ## Usage
 
-```
+```bash
 $ markdownlint --help
 
   Usage: markdownlint [options] <files>
