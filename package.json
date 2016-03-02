@@ -10,7 +10,7 @@
     "node": ">=0.12.0"
   },
   "scripts": {
-    "test": "xo && ava",
+    "test": "xo && ava test/",
     "start": "node ./markdownlint.js",
     "precommit": "npm test"
   },
