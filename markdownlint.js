@@ -46,11 +46,15 @@ function lint(lintFiles, config) {
   return markdownlint.sync(lintOptions);
 }
 
-function printResult(lintResult) {
-  console.log(lintResult.toString());
+function printResult(lintResult, hasErrors) {
+  if (hasErrors) {
+    console.error(lintResult.toString());
+  } else {
+    console.log(lintResult.toString());
+  }
 }
 
-function isResultCorrect(lintResult) {
+function hasResultErrors(lintResult) {
   function notEmptyObject(item) {
     return Object.keys(item).length > 0;
   }
@@ -71,10 +75,8 @@ var files = prepareFileList(program.args);
 if (files && files.length > 0) {
   var config = readConfiguration(program);
   var lintResult = lint(files, config);
-  printResult(lintResult);
-  if (isResultCorrect(lintResult)) {
-    process.exit(1);
-  }
+  var hasErrors = hasResultErrors(lintResult);
+  printResult(lintResult, hasErrors);
 } else {
   program.help();
 }
