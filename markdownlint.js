@@ -13,11 +13,27 @@ var markdownlint = require('markdownlint');
 var path = require('path');
 var glob = require('glob');
 
+function readJSONFrom(file) {
+  return JSON.parse(fs.readFileSync(file));
+}
+
 function readConfiguration(args) {
   var config = rc('markdownlint', {});
-  if (args.config) {
+  var projectConfigFile = '.markdownlint.json';
+  var userConfigFile = args.config;
+  try {
+    fs.accessSync(projectConfigFile, fs.R_OK);
+    var projectConfig = readJSONFrom(projectConfigFile);
+    config = extend(config, projectConfig);
+  } catch (err) {
+  }
+  // Normally parsing this file is not needed,
+  // because it is already parsed by rc package.
+  // However I have to do it to overwrite configuration
+  // from .markdownlint.json.
+  if (userConfigFile) {
     try {
-      var userConfig = JSON.parse(fs.readFileSync(args.config));
+      var userConfig = readJSONFrom(userConfigFile);
       config = extend(config, userConfig);
     } catch (e) {
       console.warn('Cannot read or parse config file', args.config);
