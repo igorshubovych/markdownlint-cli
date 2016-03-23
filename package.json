@@ -10,9 +10,10 @@
     "node": ">=0.12.0"
   },
   "scripts": {
-    "test": "xo && ava test/",
+    "test": "ava test/",
+    "watch": "npm test -- --watch --tap | tap-growl",
     "start": "node ./markdownlint.js",
-    "precommit": "npm test"
+    "precommit": "xo && npm test"
   },
   "files": [
     "markdownlint.js"
@@ -43,12 +44,26 @@
     "rc": "~1.1.6"
   },
   "devDependencies": {
-    "ava": "*",
+    "ava": "^0.13.0",
     "execa": "^0.2.2",
     "husky": "^0.11.3",
+    "tap-growl": "^1.1.2",
     "xo": "*"
   },
   "xo": {
     "space": true
+  },
+  "ava": {
+    "failFast": true,
+    "babel": {
+      "presets": [
+        "es2015",
+        "stage-2"
+      ],
+      "plugins": [
+        "espower",
+        "transform-runtime"
+      ]
+    }
   }
 }
