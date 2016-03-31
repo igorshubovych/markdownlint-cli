@@ -1,0 +1,7 @@
+.node_repl_history
+.vscode/
+.idea/
+test/
+.editorconfig
+.travis.yml
+appveyor.yml
