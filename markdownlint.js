@@ -65,6 +65,7 @@ function lint(lintFiles, config) {
 function printResult(lintResult, hasErrors) {
   if (hasErrors) {
     console.error(lintResult.toString());
+    process.exit(1);
   } else {
     console.log(lintResult.toString());
   }
