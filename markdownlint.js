@@ -2,16 +2,16 @@
 
 'use strict';
 
-var pkg = require('./package');
-var program = require('commander');
+var fs = require('fs');
+var path = require('path');
 var values = require('lodash.values');
 var flatten = require('lodash.flatten');
 var rc = require('rc');
 var extend = require('deep-extend');
-var fs = require('fs');
 var markdownlint = require('markdownlint');
-var path = require('path');
+var program = require('commander');
 var glob = require('glob');
+var pkg = require('./package');
 
 function readJSONFrom(file) {
   return JSON.parse(fs.readFileSync(file));
@@ -35,7 +35,7 @@ function readConfiguration(args) {
     try {
       var userConfig = readJSONFrom(userConfigFile);
       config = extend(config, userConfig);
-    } catch (e) {
+    } catch (err) {
       console.warn('Cannot read or parse config file', args.config);
     }
   }
