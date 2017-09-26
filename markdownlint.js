@@ -14,17 +14,13 @@ var glob = require('glob');
 
 var pkg = require('./package');
 
-function readJSONFrom(file) {
-  return JSON.parse(fs.readFileSync(file));
-}
-
 function readConfiguration(args) {
   var config = rc('markdownlint', {});
   var projectConfigFile = '.markdownlint.json';
   var userConfigFile = args.config;
   try {
     fs.accessSync(projectConfigFile, fs.R_OK);
-    var projectConfig = readJSONFrom(projectConfigFile);
+    var projectConfig = markdownlint.readConfigSync(projectConfigFile);
     config = extend(config, projectConfig);
   } catch (err) {
   }
@@ -34,7 +30,7 @@ function readConfiguration(args) {
   // from .markdownlint.json.
   if (userConfigFile) {
     try {
-      var userConfig = readJSONFrom(userConfigFile);
+      var userConfig = markdownlint.readConfigSync(userConfigFile);
       config = extend(config, userConfig);
     } catch (err) {
       console.warn('Cannot read or parse config file', args.config);
@@ -44,7 +40,7 @@ function readConfiguration(args) {
 }
 
 function prepareFileList(files) {
-  files = files.map(function (file) {
+  files = files.map(file => {
     var isDir = fs.lstatSync(file).isDirectory();
     if (isDir) {
       var markdownFiles = path.join(file, '**', '*.md');
@@ -58,7 +54,7 @@ function prepareFileList(files) {
 function lint(lintFiles, config) {
   var lintOptions = {
     files: lintFiles,
-    config: config
+    config
   };
   return markdownlint.sync(lintOptions);
 }
