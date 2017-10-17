@@ -1,0 +1,6 @@
+- id: markdownlint
+  name: Markdownlint
+  description: Run markdownlint on all staged markdown files
+  entry: markdownlint
+  language: node
+  files: \.(md|markdown)$
