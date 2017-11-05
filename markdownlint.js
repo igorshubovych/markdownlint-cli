@@ -40,7 +40,7 @@ function readConfiguration(args) {
 }
 
 function prepareFileList(files) {
-  files = files.map(file => {
+  files = files.map(function (file) {
     var isDir = fs.lstatSync(file).isDirectory();
     if (isDir) {
       var markdownFiles = path.join(file, '**', '*.md');
@@ -54,7 +54,7 @@ function prepareFileList(files) {
 function lint(lintFiles, config) {
   var lintOptions = {
     files: lintFiles,
-    config
+    config: config
   };
   return markdownlint.sync(lintOptions);
 }
