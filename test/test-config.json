@@ -1,10 +1,6 @@
 {
-  "default": true,
-  "MD003": { "style": "atx" },
+  "extends": "base-config.json",
+
   "MD007": { "indent": 4 },
-  "MD013": { "line_length": 200 },
-  "MD033": false,
-  "MD034": false,
-  "no-hard-tabs": false,
-  "whitespace": false
+  "MD013": { "line_length": 200 }
 }
