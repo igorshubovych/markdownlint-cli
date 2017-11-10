@@ -63,7 +63,10 @@ function printResult(lintResult, hasErrors) {
   if (hasErrors) {
     process.stderr.write(lintResult.toString(), process.exit.bind(process, 1));
   } else {
-    console.log(lintResult.toString());
+    var result = lintResult.toString();
+    if (result) {
+      console.log(result);
+    }
   }
 }
 

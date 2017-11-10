@@ -25,6 +25,16 @@ test('linting of correct Markdown file returns no error', async t => {
   }
 });
 
+test('linting of correct Markdown file yields no output', async t => {
+  try {
+    const result = await execa('../markdownlint.js',
+      ['--config', 'test-config.json', 'correct.md']);
+    t.true(result.stdout.length === 0);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 test('linting of incorrect Markdown file fails', async t => {
   try {
     await execa('../markdownlint.js',
