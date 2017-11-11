@@ -43,3 +43,11 @@ test('linting of incorrect Markdown file fails', async t => {
     t.true(err.stderr.length > 0);
   }
 });
+
+test('linting of incorrect Markdown via npm run file fails with eol', async t => {
+  try {
+    await execa('npm', ['run', 'invalid']);
+  } catch (err) {
+    t.true(/\nnpm ERR! code ELIFECYCLE/.test(err.stderr));
+  }
+});

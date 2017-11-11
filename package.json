@@ -10,6 +10,7 @@
     "node": ">=0.12.0"
   },
   "scripts": {
+    "invalid": "node ./markdownlint.js --config test/test-config.json -- test/incorrect.md",
     "test": "ava test/",
     "watch": "npm test -- --watch --tap | tap-growl",
     "start": "node ./markdownlint.js",
