@@ -41,10 +41,13 @@ function readConfiguration(args) {
 
 function prepareFileList(files) {
   files = files.map(function (file) {
-    var isDir = fs.lstatSync(file).isDirectory();
-    if (isDir) {
-      var markdownFiles = path.join(file, '**', '*.md');
-      return glob.sync(markdownFiles);
+    try {
+      if (fs.lstatSync(file).isDirectory()) {
+        return glob.sync(path.join(file, '**', '*.{md,markdown}'));
+      }
+    } catch (err) {
+      // Not a directory, not a file, may be a glob
+      return glob.sync(file);
     }
     return file;
   });
