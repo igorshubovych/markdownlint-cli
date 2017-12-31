@@ -13,7 +13,7 @@ npm install -g markdownlint-cli
 ```bash
 $ markdownlint --help
 
-  Usage: markdownlint [options] <files>
+  Usage: markdownlint [options] <files|directories|globs>
 
   MarkdownLint Command Line Interface
 
@@ -49,6 +49,7 @@ CLI argument `--config` is not mandatory. If it is not provided, `markdownlint-c
 ## Related
 
 - [markdownlint][markdownlint] - API for this module
+- [glob][glob] - Pattern matching implementation
 
 ## License
 
@@ -66,3 +67,4 @@ MIT © Igor Shubovych
 [style-folder]: https://github.com/DavidAnson/markdownlint/tree/master/style
 [test-config]: https://github.com/igorshubovych/markdownlint-cli/blob/master/test/test-config.json
 [rc-standards]: https://www.npmjs.com/package/rc#standards
+[glob]: https://github.com/isaacs/node-glob

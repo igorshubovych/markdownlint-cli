@@ -91,7 +91,7 @@ function hasResultErrors(lintResult) {
 program
   .version(pkg.version)
   .description(pkg.description)
-  .usage('[options] <files>')
+  .usage('[options] <files|directories|globs>')
   .option('-c, --config [configFile]', 'Configuration file');
 
 program.parse(process.argv);
