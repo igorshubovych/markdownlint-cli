@@ -51,3 +51,33 @@ test('linting of incorrect Markdown via npm run file fails with eol', async t =>
     t.true(/\nnpm ERR! code ELIFECYCLE/.test(err.stderr));
   }
 });
+
+test('glob linting works with passing files', async t => {
+  const result = await execa('../markdownlint.js',
+    ['--config', 'test-config.json', '**/correct.md']);
+  t.true(result.stdout.length === 0);
+});
+
+test('glob linting works with failing files', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'test-config.json', '**/.md']);
+  } catch (err) {
+    t.true(err.stderr.length > 0);
+  }
+});
+
+test('dir linting works with passing .markdown files', async t => {
+  const result = await execa('../markdownlint.js',
+    ['--config', 'test-config.json', 'subdir-correct']);
+  t.true(result.stdout.length === 0);
+});
+
+test('dir linting works with failing .markdown files', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'test-config.json', 'subdir-incorrect']);
+  } catch (err) {
+    t.true(err.stderr.length > 0);
+  }
+});
