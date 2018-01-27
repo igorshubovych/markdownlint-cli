@@ -5,6 +5,7 @@
 var fs = require('fs');
 var path = require('path');
 var program = require('commander');
+var difference = require('lodash.difference');
 var flatten = require('lodash.flatten');
 var extend = require('deep-extend');
 var markdownlint = require('markdownlint');
@@ -74,19 +75,27 @@ function printResult(lintResult) {
   }
 }
 
+function concatArray(item, array) {
+  array.push(item);
+  return array;
+}
+
 program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
-  .option('-c, --config [configFile]', 'Configuration file');
+  .option('-c, --config [configFile]', 'configuration file')
+  .option('-i, --ignore [file|directory|glob]', 'files to ignore/exclude', concatArray, []);
 
 program.parse(process.argv);
 
 var files = prepareFileList(program.args);
+var ignores = prepareFileList(program.ignore);
+var diff = difference(files, ignores);
 
-if (files && files.length > 0) {
+if (files.length > 0) {
   var config = readConfiguration(program);
-  var lintResult = lint(files, config);
+  var lintResult = lint(diff, config);
   printResult(lintResult);
 } else {
   program.help();

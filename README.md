@@ -19,9 +19,10 @@ $ markdownlint --help
 
   Options:
 
-    -h, --help                 output usage information
-    -V, --version              output the version number
-    -c, --config [configFile]  Configuration file
+    -h, --help                          output usage information
+    -V, --version                       output the version number
+    -c, --config [configFile]           configuration file
+    -i, --ignore [file|directory|glob]  files to ignore/exclude
 ```
 
 ## Configuration
