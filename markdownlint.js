@@ -5,7 +5,6 @@
 var fs = require('fs');
 var path = require('path');
 var program = require('commander');
-var values = require('lodash.values');
 var flatten = require('lodash.flatten');
 var extend = require('deep-extend');
 var markdownlint = require('markdownlint');
@@ -62,30 +61,17 @@ function lint(lintFiles, config) {
   return markdownlint.sync(lintOptions);
 }
 
-function printResult(lintResult, hasErrors) {
-  if (hasErrors) {
-    console.error(lintResult.toString());
+function printResult(lintResult) {
+  var lintResultString = lintResult.toString();
+  if (lintResultString) {
+    console.error(lintResultString);
     // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
     // streams (e.g., when the output is being piped). Just set the exit code
     // and let the program terminate normally.
     // @see {@link https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_exit_code}
     // @see {@link https://github.com/igorshubovych/markdownlint-cli/pull/29#issuecomment-343535291}
     process.exitCode = 1;
-    return;
   }
-
-  var result = lintResult.toString();
-  if (result) {
-    console.log(result);
-  }
-}
-
-function notEmptyObject(item) {
-  return Object.keys(item).length > 0;
-}
-
-function hasResultErrors(lintResult) {
-  return values(lintResult).some(notEmptyObject);
 }
 
 program
@@ -101,8 +87,7 @@ var files = prepareFileList(program.args);
 if (files && files.length > 0) {
   var config = readConfiguration(program);
   var lintResult = lint(files, config);
-  var hasErrors = hasResultErrors(lintResult);
-  printResult(lintResult, hasErrors);
+  printResult(lintResult);
 } else {
   program.help();
 }
