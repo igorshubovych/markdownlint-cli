@@ -40,14 +40,17 @@ function readConfiguration(args) {
 }
 
 function prepareFileList(files) {
+  var globOptions = {
+    nodir: true
+  };
   files = files.map(function (file) {
     try {
       if (fs.lstatSync(file).isDirectory()) {
-        return glob.sync(path.join(file, '**', '*.{md,markdown}'));
+        return glob.sync(path.join(file, '**', '*.{md,markdown}'), globOptions);
       }
     } catch (err) {
       // Not a directory, not a file, may be a glob
-      return glob.sync(file);
+      return glob.sync(file, globOptions);
     }
     return file;
   });

@@ -146,3 +146,14 @@ test('linting results are sorted by file/line/names/description', async t => {
     t.true(err.stderr === expected);
   }
 });
+
+test('glob linting does not try to lint directories as files', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'test-config.json', '**/*']);
+    t.fail();
+  } catch (err) {
+    t.true(err.stdout === '');
+    t.true(err.stderr.match(errorPattern).length > 0);
+  }
+});
