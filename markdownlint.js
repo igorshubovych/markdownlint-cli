@@ -56,6 +56,7 @@ function prepareFileList(files) {
 
 function lint(lintFiles, config) {
   var lintOptions = {
+    resultVersion: 2,
     files: lintFiles,
     config: config
   };
@@ -63,8 +64,26 @@ function lint(lintFiles, config) {
 }
 
 function printResult(lintResult) {
-  var lintResultString = lintResult.toString();
-  if (lintResultString) {
+  var results = flatten(Object.keys(lintResult).map(function (file) {
+    return lintResult[file].map(function (result) {
+      return {
+        file: file,
+        lineNumber: result.lineNumber,
+        names: result.ruleNames.join('/'),
+        description: result.ruleDescription +
+          (result.errorDetail ? ' [' + result.errorDetail + ']' : '') +
+          (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
+      };
+    });
+  }));
+  if (results.length > 0) {
+    results.sort(function (a, b) {
+      return a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber ||
+        a.names.localeCompare(b.names) || a.description.localeCompare(b.description);
+    });
+    var lintResultString = results.map(function (result) {
+      return result.file + ': ' + result.lineNumber + ': ' + result.names + ' ' + result.description;
+    }).join('\n');
     console.error(lintResultString);
     // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
     // streams (e.g., when the output is being piped). Just set the exit code
