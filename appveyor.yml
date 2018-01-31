@@ -9,7 +9,7 @@ environment:
   matrix:
     - nodejs_version: "4"
     - nodejs_version: "6"
-    - nodejs_version: "7"
+    - nodejs_version: "8"
 
 # Get the stable version of node
 install:
