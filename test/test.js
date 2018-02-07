@@ -1,5 +1,6 @@
 'use strict';
 
+import path from 'path';
 import test from 'ava';
 import execa from 'execa';
 
@@ -26,10 +27,28 @@ test('linting of correct Markdown file yields no output', async t => {
   t.true(result.stderr === '');
 });
 
+test('linting of correct Markdown file yields no output with absolute path', async t => {
+  const result = await execa('../markdownlint.js',
+    ['--config', path.resolve('test-config.json'), 'correct.md']);
+  t.true(result.stdout === '');
+  t.true(result.stderr === '');
+});
+
 test('linting of incorrect Markdown file fails', async t => {
   try {
     await execa('../markdownlint.js',
       ['--config', 'test-config.json', 'incorrect.md']);
+    t.fail();
+  } catch (err) {
+    t.true(err.stdout === '');
+    t.true(err.stderr.match(errorPattern).length === 8);
+  }
+});
+
+test('linting of incorrect Markdown file fails with absolute path', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'test-config.json', path.resolve('incorrect.md')]);
     t.fail();
   } catch (err) {
     t.true(err.stdout === '');
@@ -82,6 +101,17 @@ test('dir linting works with failing .markdown files', async t => {
   }
 });
 
+test('dir linting works with failing .markdown files and absolute path', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'test-config.json', path.resolve('subdir-incorrect')]);
+    t.fail();
+  } catch (err) {
+    t.true(err.stdout === '');
+    t.true(err.stderr.match(errorPattern).length === 10);
+  }
+});
+
 test('glob linting with failing files passes when failures ignored by glob', async t => {
   const result = await execa('../markdownlint.js',
     ['--config', 'test-config.json', '**/*.md', '--ignore', '**/incorrect.md']);
@@ -107,10 +137,32 @@ test('glob linting with failing files has fewer errors when ignored by dir', asy
   }
 });
 
+test('glob linting with failing files has fewer errors when ignored by dir and absolute path', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'test-config.json', '**/*.md', '--ignore', path.resolve('subdir-incorrect')]);
+    t.fail();
+  } catch (err) {
+    t.true(err.stdout === '');
+    t.true(err.stderr.match(errorPattern).length === 8);
+  }
+});
+
 test('dir linting with failing files has fewer errors when ignored by file', async t => {
   try {
     await execa('../markdownlint.js',
       ['--config', 'test-config.json', 'subdir-incorrect', '--ignore', 'subdir-incorrect/incorrect.md']);
+    t.fail();
+  } catch (err) {
+    t.true(err.stdout === '');
+    t.true(err.stderr.match(errorPattern).length === 2);
+  }
+});
+
+test('dir linting with failing files has fewer errors when ignored by file and absolute path', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'test-config.json', path.resolve('subdir-incorrect'), '--ignore', 'subdir-incorrect/incorrect.md']);
     t.fail();
   } catch (err) {
     t.true(err.stdout === '');

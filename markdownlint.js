@@ -5,7 +5,7 @@
 var fs = require('fs');
 var path = require('path');
 var program = require('commander');
-var difference = require('lodash.difference');
+var differenceWith = require('lodash.differencewith');
 var flatten = require('lodash.flatten');
 var extend = require('deep-extend');
 var markdownlint = require('markdownlint');
@@ -54,7 +54,12 @@ function prepareFileList(files) {
     }
     return file;
   });
-  return flatten(files);
+  return flatten(files).map(function (file) {
+    return {
+      original: file,
+      absolute: path.resolve(file)
+    };
+  });
 }
 
 function lint(lintFiles, config) {
@@ -113,7 +118,11 @@ program.parse(process.argv);
 
 var files = prepareFileList(program.args);
 var ignores = prepareFileList(program.ignore);
-var diff = difference(files, ignores);
+var diff = differenceWith(files, ignores, function (a, b) {
+  return a.absolute === b.absolute;
+}).map(function (paths) {
+  return paths.original;
+});
 
 if (files.length > 0) {
   var config = readConfiguration(program);
