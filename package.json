@@ -41,7 +41,7 @@
     "glob": "~7.0.3",
     "lodash.differencewith": "~4.5.0",
     "lodash.flatten": "~4.4.0",
-    "markdownlint": "~0.7.0",
+    "markdownlint": "~0.8.0",
     "rc": "~1.1.6"
   },
   "devDependencies": {
