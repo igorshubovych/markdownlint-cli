@@ -5,6 +5,7 @@
 var fs = require('fs');
 var path = require('path');
 var program = require('commander');
+var getStdin = require('get-stdin');
 var differenceWith = require('lodash.differencewith');
 var flatten = require('lodash.flatten');
 var extend = require('deep-extend');
@@ -62,15 +63,6 @@ function prepareFileList(files) {
   });
 }
 
-function lint(lintFiles, config) {
-  var lintOptions = {
-    resultVersion: 2,
-    files: lintFiles,
-    config: config
-  };
-  return markdownlint.sync(lintOptions);
-}
-
 function printResult(lintResult) {
   var results = flatten(Object.keys(lintResult).map(function (file) {
     return lintResult[file].map(function (result) {
@@ -111,6 +103,7 @@ program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
+  .option('-s, --stdin', 'read from STDIN (no files)')
   .option('-c, --config [configFile]', 'configuration file')
   .option('-i, --ignore [file|directory|glob]', 'files to ignore/exclude', concatArray, []);
 
@@ -124,10 +117,23 @@ var diff = differenceWith(files, ignores, function (a, b) {
   return paths.original;
 });
 
-if (files.length > 0) {
+function lintAndPrint(stdin, files) {
   var config = readConfiguration(program);
-  var lintResult = lint(diff, config);
+  var lintOptions = {
+    config: config,
+    files: files || [],
+    strings: {
+      stdin: stdin || ''
+    }
+  };
+  var lintResult = markdownlint.sync(lintOptions);
   printResult(lintResult);
+}
+
+if ((files.length > 0) && !program.stdin) {
+  lintAndPrint(null, diff);
+} else if ((files.length === 0) && program.stdin) {
+  getStdin().then(lintAndPrint);
 } else {
   program.help();
 }

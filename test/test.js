@@ -4,7 +4,7 @@ import path from 'path';
 import test from 'ava';
 import execa from 'execa';
 
-const errorPattern = /\.(md|markdown): \d+: MD\d{3}/gm;
+const errorPattern = /(\.md|\.markdown|stdin): \d+: MD\d{3}/gm;
 
 test('--version option', async t => {
   const result = await execa('../markdownlint.js', ['--version']);
@@ -16,6 +16,18 @@ test('--help option', async t => {
   const result = await execa('../markdownlint.js', ['--help']);
   t.true(result.stdout.indexOf('markdownlint') >= 0);
   t.true(result.stdout.indexOf('--version') >= 0);
+  t.true(result.stdout.indexOf('--help') >= 0);
+  t.true(result.stderr === '');
+});
+
+test('no files shows help', async t => {
+  const result = await execa('../markdownlint.js', []);
+  t.true(result.stdout.indexOf('--help') >= 0);
+  t.true(result.stderr === '');
+});
+
+test('files and --stdin shows help', async t => {
+  const result = await execa('../markdownlint.js', ['--stdin', 'correct.md']);
   t.true(result.stdout.indexOf('--help') >= 0);
   t.true(result.stderr === '');
 });
@@ -207,5 +219,38 @@ test('glob linting does not try to lint directories as files', async t => {
   } catch (err) {
     t.true(err.stdout === '');
     t.true(err.stderr.match(errorPattern).length > 0);
+  }
+});
+
+test('--stdin with empty input has no output', async t => {
+  var input = '';
+  const result = await execa('../markdownlint.js', ['--stdin'], {input: input});
+  t.true(result.stdout === '');
+  t.true(result.stderr === '');
+});
+
+test('--stdin with valid input has no output', async t => {
+  var input = [
+    '# Heading',
+    '',
+    'Text'
+  ].join('\n');
+  const result = await execa('../markdownlint.js', ['--stdin'], {input: input});
+  t.true(result.stdout === '');
+  t.true(result.stderr === '');
+});
+
+test('--stdin with invalid input reports violations', async t => {
+  var input = [
+    'Heading',
+    '',
+    'Text '
+  ].join('\n');
+  try {
+    await execa('../markdownlint.js', ['--stdin'], {input: input});
+    t.fail();
+  } catch (err) {
+    t.true(err.stdout === '');
+    t.true(err.stderr.match(errorPattern).length === 2);
   }
 });
