@@ -22,6 +22,7 @@ $ markdownlint --help
     -h, --help                          output usage information
     -V, --version                       output the version number
     -s, --stdin                         read from STDIN (no files)
+    -o, --output [outputFile]           write issues to file (no console)
     -c, --config [configFile]           configuration file
     -i, --ignore [file|directory|glob]  files to ignore/exclude
 ```

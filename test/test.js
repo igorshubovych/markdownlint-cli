@@ -1,5 +1,6 @@
 'use strict';
 
+import fs from 'fs';
 import path from 'path';
 import test from 'ava';
 import execa from 'execa';
@@ -252,5 +253,63 @@ test('--stdin with invalid input reports violations', async t => {
   } catch (err) {
     t.true(err.stdout === '');
     t.true(err.stderr.match(errorPattern).length === 2);
+  }
+});
+
+test('--output with empty input has empty output', async t => {
+  var input = '';
+  var output = 'outputA.txt';
+  const result = await execa('../markdownlint.js',
+    ['--stdin', '--output', output], {input: input});
+  t.true(result.stdout === '');
+  t.true(result.stderr === '');
+  t.true(fs.readFileSync(output, 'utf8') === '');
+  fs.unlinkSync(output);
+});
+
+test('--output with valid input has empty output', async t => {
+  var input = [
+    '# Heading',
+    '',
+    'Text'
+  ].join('\n');
+  var output = 'outputB.txt';
+  const result = await execa('../markdownlint.js',
+    ['--stdin', '--output', output], {input: input});
+  t.true(result.stdout === '');
+  t.true(result.stderr === '');
+  t.true(fs.readFileSync(output, 'utf8') === '');
+  fs.unlinkSync(output);
+});
+
+test('--output with invalid input outputs violations', async t => {
+  var input = [
+    'Heading',
+    '',
+    'Text '
+  ].join('\n');
+  var output = 'outputC.txt';
+  try {
+    await execa('../markdownlint.js', ['--stdin', '--output', output], {input: input});
+    t.fail();
+  } catch (err) {
+    t.true(err.stdout === '');
+    t.true(err.stderr === '');
+    t.true(fs.readFileSync(output, 'utf8').match(errorPattern).length === 2);
+    fs.unlinkSync(output);
+  }
+});
+
+test('--output with invalid path fails', async t => {
+  var input = '';
+  var output = 'invalid/outputD.txt';
+  try {
+    await execa('../markdownlint.js',
+      ['--stdin', '--output', output], {input: input});
+    t.fail();
+  } catch (err) {
+    t.true(err.stdout === '');
+    t.true(err.stderr.replace(/: ENOENT[^]*$/, '') === 'Cannot write to output file ' + output);
+    t.throws(() => fs.accessSync(output, 'utf8'), Error);
   }
 });
