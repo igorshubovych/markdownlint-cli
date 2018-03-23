@@ -132,11 +132,13 @@ function lintAndPrint(stdin, files) {
   var config = readConfiguration(program);
   var lintOptions = {
     config: config,
-    files: files || [],
-    strings: {
-      stdin: stdin || ''
-    }
+    files: files || []
   };
+  if (stdin) {
+    lintOptions.strings = {
+      stdin: stdin
+    };
+  }
   var lintResult = markdownlint.sync(lintOptions);
   printResult(lintResult);
 }

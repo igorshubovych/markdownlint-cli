@@ -256,6 +256,13 @@ test('--stdin with invalid input reports violations', async t => {
   }
 });
 
+test('stdin support does not interfere with file linting', async t => {
+  const result = await execa('../markdownlint.js',
+    ['--config', 'md043-config.json', 'md043-config.md']);
+  t.true(result.stdout === '');
+  t.true(result.stderr === '');
+});
+
 test('--output with empty input has empty output', async t => {
   var input = '';
   var output = 'outputA.txt';
