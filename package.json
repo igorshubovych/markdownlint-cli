@@ -1,6 +1,6 @@
 {
   "name": "markdownlint-cli",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "MarkdownLint Command Line Interface",
   "main": "markdownlint.js",
   "bin": {
