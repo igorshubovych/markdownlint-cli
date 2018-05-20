@@ -197,10 +197,10 @@ test('linting results are sorted by file/line/names/description', async t => {
     t.fail();
   } catch (err) {
     const expected = [
-      'incorrect.md: 1: MD002/first-header-h1 First header should be a top level header [Expected: h1; Actual: h2]',
-      'incorrect.md: 1: MD022/blanks-around-headers Headers should be surrounded by blank lines [Context: "## header 2"]',
-      'incorrect.md: 1: MD041/first-line-h1 First line in file should be a top level header [Context: "## header 2"]',
-      'incorrect.md: 2: MD022/blanks-around-headers Headers should be surrounded by blank lines [Context: "# header"]',
+      'incorrect.md: 1: MD002/first-heading-h1/first-header-h1 First heading should be a top level heading [Expected: h1; Actual: h2]',
+      'incorrect.md: 1: MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Context: "## header 2"]',
+      'incorrect.md: 1: MD041/first-line-h1 First line in file should be a top level heading [Context: "## header 2"]',
+      'incorrect.md: 2: MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Context: "# header"]',
       'incorrect.md: 4: MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
       'incorrect.md: 10: MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
       'incorrect.md: 16: MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
