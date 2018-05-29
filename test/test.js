@@ -320,3 +320,10 @@ test('--output with invalid path fails', async t => {
     t.throws(() => fs.accessSync(output, 'utf8'), Error);
   }
 });
+
+test('configuration file can be YAML', async t => {
+  const result = await execa('../markdownlint.js',
+    ['--config', 'md043-config.yaml', 'md043-config.md']);
+  t.true(result.stdout === '');
+  t.true(result.stderr === '');
+});

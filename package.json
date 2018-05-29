@@ -40,6 +40,7 @@
     "deep-extend": "~0.5.1",
     "get-stdin": "~5.0.1",
     "glob": "~7.0.3",
+    "js-yaml": "~3.11.0",
     "lodash.differencewith": "~4.5.0",
     "lodash.flatten": "~4.4.0",
     "markdownlint": "~0.10.0",

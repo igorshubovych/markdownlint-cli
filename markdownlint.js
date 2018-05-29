@@ -6,6 +6,7 @@ var fs = require('fs');
 var path = require('path');
 var program = require('commander');
 var getStdin = require('get-stdin');
+var jsYaml = require('js-yaml');
 var differenceWith = require('lodash.differencewith');
 var flatten = require('lodash.flatten');
 var extend = require('deep-extend');
@@ -31,7 +32,7 @@ function readConfiguration(args) {
   // from .markdownlint.json.
   if (userConfigFile) {
     try {
-      var userConfig = markdownlint.readConfigSync(userConfigFile);
+      var userConfig = markdownlint.readConfigSync(userConfigFile, [JSON.parse, jsYaml.safeLoad]);
       config = extend(config, userConfig);
     } catch (err) {
       console.warn('Cannot read or parse config file', args.config);
@@ -115,7 +116,7 @@ program
   .usage('[options] <files|directories|globs>')
   .option('-s, --stdin', 'read from STDIN (no files)')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
-  .option('-c, --config [configFile]', 'configuration file')
+  .option('-c, --config [configFile]', 'configuration file (JSON or YAML)')
   .option('-i, --ignore [file|directory|glob]', 'files to ignore/exclude', concatArray, []);
 
 program.parse(process.argv);

@@ -23,7 +23,7 @@ $ markdownlint --help
     -V, --version                       output the version number
     -s, --stdin                         read from STDIN (no files)
     -o, --output [outputFile]           write issues to file (no console)
-    -c, --config [configFile]           configuration file
+    -c, --config [configFile]           configuration file (JSON or YAML)
     -i, --ignore [file|directory|glob]  files to ignore/exclude
 ```
 
@@ -47,7 +47,7 @@ The example of configuration file:
 
 See [test configuration file][test-config] or [style folder][style-folder] for more examples.
 
-CLI argument `--config` is not mandatory. If it is not provided, `markdownlint-cli` looks for file `.markdownlint.json` in current folder, or for file `.markdownlintrc` in current or all upper folders. The algorithm is described in details on [rc package page][rc-standards].
+CLI argument `--config` is not mandatory. If it is not provided, `markdownlint-cli` looks for file `.markdownlint.json` in current folder, or for file `.markdownlintrc` in current or all upper folders. The algorithm is described in details on [rc package page][rc-standards]. If `--config` argument is provided, the file must be valid JSON or YAML.
 
 ## Related
 
