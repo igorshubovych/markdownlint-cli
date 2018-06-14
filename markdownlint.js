@@ -117,12 +117,24 @@ program
   .option('-s, --stdin', 'read from STDIN (no files)')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-c, --config [configFile]', 'configuration file (JSON or YAML)')
+  .option('-r, --rules [file]', 'custom rule files', concatArray, [])
   .option('-i, --ignore [file|directory|glob]', 'files to ignore/exclude', concatArray, []);
 
 program.parse(process.argv);
 
+function loadCustomRuleFromFile(filepath) {
+  var absolutePath = path.resolve(filepath);
+  try {
+    return require(absolutePath);
+  } catch (err) {
+    console.error('Cannot load custom rule form ' + absolutePath + ': ' + err.message);
+    process.exitCode = 3;
+  }
+}
+
 var files = prepareFileList(program.args);
 var ignores = prepareFileList(program.ignore);
+var customRules = program.rules.map(loadCustomRuleFromFile);
 var diff = differenceWith(files, ignores, function (a, b) {
   return a.absolute === b.absolute;
 }).map(function (paths) {
@@ -133,6 +145,7 @@ function lintAndPrint(stdin, files) {
   var config = readConfiguration(program);
   var lintOptions = {
     config: config,
+    customRules: customRules,
     files: files || []
   };
   if (stdin) {
