@@ -24,7 +24,7 @@ $ markdownlint --help
     -s, --stdin                         read from STDIN (no files)
     -o, --output [outputFile]           write issues to file (no console)
     -c, --config [configFile]           configuration file (JSON or YAML)
-    -r, --rules [file]                  custom rule files
+    -r, --rules  [file|directory|glob]  custom rule files
     -i, --ignore [file|directory|glob]  files to ignore/exclude
 ```
 

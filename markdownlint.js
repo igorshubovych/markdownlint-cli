@@ -41,14 +41,22 @@ function readConfiguration(args) {
   return config;
 }
 
-function prepareFileList(files) {
+function prepareFileList(files, fileExtensions) {
   var globOptions = {
     nodir: true
   };
+  var extensionGlobPart = '*';
+  if (fileExtensions && fileExtensions.length > 0) {
+    if (fileExtensions.length === 1) {
+      extensionGlobPart += '.' + fileExtensions[0];
+    } else {
+      extensionGlobPart += '.{' + fileExtensions.join(',') + '}';
+    }
+  }
   files = files.map(function (file) {
     try {
       if (fs.lstatSync(file).isDirectory()) {
-        return glob.sync(path.join(file, '**', '*.{md,markdown}'), globOptions);
+        return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
       }
     } catch (err) {
       // Not a directory, not a file, may be a glob
@@ -117,24 +125,23 @@ program
   .option('-s, --stdin', 'read from STDIN (no files)')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-c, --config [configFile]', 'configuration file (JSON or YAML)')
-  .option('-r, --rules [file]', 'custom rule files', concatArray, [])
+  .option('-r, --rules  [file|directory|glob]', 'custom rule files', concatArray, [])
   .option('-i, --ignore [file|directory|glob]', 'files to ignore/exclude', concatArray, []);
 
 program.parse(process.argv);
 
 function loadCustomRuleFromFile(filepath) {
-  var absolutePath = path.resolve(filepath);
   try {
-    return require(absolutePath);
+    return require(filepath.absolute);
   } catch (err) {
-    console.error('Cannot load custom rule form ' + absolutePath + ': ' + err.message);
+    console.error('Cannot load custom rule form ' + filepath.original + ': ' + err.message);
     process.exitCode = 3;
   }
 }
 
-var files = prepareFileList(program.args);
-var ignores = prepareFileList(program.ignore);
-var customRules = program.rules.map(loadCustomRuleFromFile);
+var files = prepareFileList(program.args, ['md', 'markdown']);
+var ignores = prepareFileList(program.ignore, ['md', 'markdown']);
+var customRules = prepareFileList(program.rules, ['js']).map(loadCustomRuleFromFile);
 var diff = differenceWith(files, ignores, function (a, b) {
   return a.absolute === b.absolute;
 }).map(function (paths) {
