@@ -11,7 +11,7 @@
   },
   "scripts": {
     "invalid": "node ./markdownlint.js --config test/test-config.json -- test/incorrect.md",
-    "test": "ava test/",
+    "test": "ava",
     "watch": "npm test -- --watch --tap | tap-growl",
     "start": "node ./markdownlint.js",
     "precommit": "xo && npm test"
@@ -53,7 +53,8 @@
     "execa": "^0.6.3",
     "husky": "^0.11.3",
     "tap-growl": "^1.1.2",
-    "xo": "*"
+    "xo": "*",
+    "test-rule-package": "./test/custom-rules/test-rule-package"
   },
   "xo": {
     "space": true,
@@ -65,6 +66,10 @@
     }
   },
   "ava": {
+    "files": [
+        "test/**/*.js",
+        "!test/custom-rules/**/*.js"
+    ],
     "failFast": true,
     "babel": {
       "presets": [

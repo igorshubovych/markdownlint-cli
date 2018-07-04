@@ -19,13 +19,13 @@ $ markdownlint --help
 
   Options:
 
-    -h, --help                          output usage information
-    -V, --version                       output the version number
-    -s, --stdin                         read from STDIN (no files)
-    -o, --output [outputFile]           write issues to file (no console)
-    -c, --config [configFile]           configuration file (JSON or YAML)
-    -r, --rules  [file|directory|glob]  custom rule files
-    -i, --ignore [file|directory|glob]  files to ignore/exclude
+    -h, --help                                  output usage information
+    -V, --version                               output the version number
+    -s, --stdin                                 read from STDIN (no files)
+    -o, --output [outputFile]                   write issues to file (no console)
+    -c, --config [configFile]                   configuration file (JSON or YAML)
+    -i, --ignore [file|directory|glob]          files to ignore/exclude
+    -r, --rules  [file|directory|glob|package]  custom rule files
 ```
 
 ## Configuration
