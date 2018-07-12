@@ -1,6 +1,6 @@
 {
   "name": "markdownlint-cli",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "MarkdownLint Command Line Interface",
   "main": "markdownlint.js",
   "bin": {
@@ -67,8 +67,8 @@
   },
   "ava": {
     "files": [
-        "test/**/*.js",
-        "!test/custom-rules/**/*.js"
+      "test/**/*.js",
+      "!test/custom-rules/**/*.js"
     ],
     "failFast": true,
     "babel": {
