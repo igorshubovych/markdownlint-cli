@@ -327,3 +327,105 @@ test('configuration file can be YAML', async t => {
   t.true(result.stdout === '');
   t.true(result.stderr === '');
 });
+
+test('Custom rule from single file loaded', async t => {
+  try {
+    var input = '# Input';
+    await execa('../markdownlint.js',
+      ['--rules', 'custom-rules/files/test-rule-1.js', '--stdin'], {input});
+    t.fail();
+  } catch (err) {
+    const expected = [
+      'stdin: 1: test-rule-1 Test rule broken',
+      ''
+    ].join('\n');
+    t.true(err.stdout === '');
+    t.true(err.stderr === expected);
+  }
+});
+
+test('Custom rules from directory loaded', async t => {
+  try {
+    var input = '# Input';
+    await execa('../markdownlint.js',
+      ['--rules', 'custom-rules/files', '--stdin'], {input});
+    t.fail();
+  } catch (err) {
+    const expected = [
+      'stdin: 1: test-rule-1 Test rule broken',
+      'stdin: 1: test-rule-2 Test rule 2 broken',
+      ''
+    ].join('\n');
+    t.true(err.stdout === '');
+    t.true(err.stderr === expected);
+  }
+});
+
+test('Custom rules from glob loaded', async t => {
+  try {
+    var input = '# Input';
+    await execa('../markdownlint.js',
+      ['--rules', 'custom-rules/files/**/*.js', '--stdin'], {input});
+    t.fail();
+  } catch (err) {
+    const expected = [
+      'stdin: 1: test-rule-1 Test rule broken',
+      'stdin: 1: test-rule-2 Test rule 2 broken',
+      ''
+    ].join('\n');
+    t.true(err.stdout === '');
+    t.true(err.stderr === expected);
+  }
+});
+
+test('Custom rule from node_modules package loaded', async t => {
+  try {
+    var input = '# Input';
+    await execa('../markdownlint.js',
+      ['--rules', 'test-rule-package', '--stdin'], {input});
+    t.fail();
+  } catch (err) {
+    const expected = [
+      'stdin: 1: test-rule-package Test rule package broken',
+      ''
+    ].join('\n');
+    t.true(err.stdout === '');
+    t.true(err.stderr === expected);
+  }
+});
+
+test('Custom rule from package loaded', async t => {
+  try {
+    var input = '# Input';
+    await execa('../markdownlint.js',
+      ['--rules', './custom-rules/test-rule-package', '--stdin'], {input});
+    t.fail();
+  } catch (err) {
+    const expected = [
+      'stdin: 1: test-rule-package Test rule package broken',
+      ''
+    ].join('\n');
+    t.true(err.stdout === '');
+    t.true(err.stderr === expected);
+  }
+});
+
+test('Custom rule from several packages loaded', async t => {
+  try {
+    var input = '# Input';
+    await execa('../markdownlint.js', [
+      '--rules', './custom-rules/test-rule-package',
+      '--rules', './custom-rules/test-rule-package-other',
+      '--stdin'
+    ], {input});
+    t.fail();
+  } catch (err) {
+    const expected = [
+      'stdin: 1: test-rule-package Test rule package broken',
+      'stdin: 1: test-rule-package-other Test rule package other broken',
+      ''
+    ].join('\n');
+    t.true(err.stdout === '');
+    t.true(err.stderr === expected);
+  }
+});
