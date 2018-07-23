@@ -394,6 +394,25 @@ test('Custom rule from node_modules package loaded', async t => {
   }
 });
 
+test('Custom rule from node_modules package loaded relative to cwd', async t => {
+  try {
+    var input = '# Input';
+    await execa('../../../markdownlint.js',
+      ['--rules', 'test-rule-package', '--stdin'], {
+        input,
+        cwd: path.join(__dirname, 'custom-rules', 'relative-to-cwd')
+      });
+    t.fail();
+  } catch (err) {
+    const expected = [
+      'stdin: 1: test-rule-package Test rule package relative to cwd broken',
+      ''
+    ].join('\n');
+    t.true(err.stdout === '');
+    t.true(err.stderr === expected);
+  }
+});
+
 test('Custom rule from package loaded', async t => {
   try {
     var input = '# Input';
