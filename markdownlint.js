@@ -4,6 +4,7 @@
 
 var fs = require('fs');
 var path = require('path');
+var Module = require('module');
 var program = require('commander');
 var getStdin = require('get-stdin');
 var jsYaml = require('js-yaml');
@@ -141,8 +142,15 @@ function loadCustomRuleFromFile(filepath) {
 function tryResolvePath(filepath) {
   try {
     if (path.basename(filepath) === filepath && path.extname(filepath) === '') {
-      // Looks like a package name
-      return require.resolve(filepath);
+      // Looks like a package name, resolve it relative to cwd
+      // Get list of directories, where requested module can be.
+      var paths = Module._nodeModulePaths(process.cwd());
+      paths = paths.concat(Module.globalPaths);
+      if (require.resolve.paths) {
+        // Node >= 8.9.0
+        return require.resolve(filepath, {paths: paths});
+      }
+      return Module._resolveFilename(filepath, {paths: paths});
     }
     // Maybe it is a path to package installed locally
     return require.resolve(path.join(process.cwd(), filepath));
