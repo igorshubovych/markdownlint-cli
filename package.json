@@ -43,7 +43,7 @@
     "js-yaml": "~3.11.0",
     "lodash.differencewith": "~4.5.0",
     "lodash.flatten": "~4.4.0",
-    "markdownlint": "~0.10.0",
+    "markdownlint": "~0.11.0",
     "rc": "~1.2.7"
   },
   "devDependencies": {
