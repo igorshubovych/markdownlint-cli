@@ -448,3 +448,22 @@ test('Custom rule from several packages loaded', async t => {
     t.true(err.stderr === expected);
   }
 });
+
+test('Invalid custom rule name reports error', async t => {
+  try {
+    var input = '# Input';
+    await execa('../markdownlint.js', [
+      '--rules', 'test-rule-package',
+      '--rules', 'invalid-package',
+      '--stdin'
+    ], {input});
+    t.fail();
+  } catch (err) {
+    const expected = [
+      'Cannot load custom rule invalid-package: No such rule',
+      ''
+    ].join('\n');
+    t.true(err.stdout === '');
+    t.true(err.stderr === expected);
+  }
+});

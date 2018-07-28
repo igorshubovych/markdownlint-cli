@@ -130,15 +130,6 @@ program
 
 program.parse(process.argv);
 
-function loadCustomRuleFromFile(filepath) {
-  try {
-    return require(filepath.absolute);
-  } catch (err) {
-    console.error('Cannot load custom rule from ' + filepath.original + ': ' + err.message);
-    process.exit(3);
-  }
-}
-
 function tryResolvePath(filepath) {
   try {
     if (path.basename(filepath) === filepath && path.extname(filepath) === '') {
@@ -159,10 +150,27 @@ function tryResolvePath(filepath) {
   }
 }
 
+function loadCustomRules(rules) {
+  return flatten(rules.map(function (rule) {
+    try {
+      var resolvedPath = [tryResolvePath(rule)];
+      var fileList = prepareFileList(resolvedPath, ['js']).map(function (filepath) {
+        return require(filepath.absolute);
+      });
+      if (fileList.length === 0) {
+        throw new Error('No such rule');
+      }
+      return fileList;
+    } catch (err) {
+      console.error('Cannot load custom rule ' + rule + ': ' + err.message);
+      process.exit(3);
+    }
+  }));
+}
+
 var files = prepareFileList(program.args, ['md', 'markdown']);
 var ignores = prepareFileList(program.ignore, ['md', 'markdown']);
-var customRuleFiles = program.rules.map(tryResolvePath);
-var customRules = prepareFileList(customRuleFiles, ['js']).map(loadCustomRuleFromFile);
+var customRules = loadCustomRules(program.rules);
 var diff = differenceWith(files, ignores, function (a, b) {
   return a.absolute === b.absolute;
 }).map(function (paths) {
