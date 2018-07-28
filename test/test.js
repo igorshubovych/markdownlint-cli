@@ -395,9 +395,10 @@ test('Custom rule from node_modules package loaded', async t => {
 });
 
 test('Custom rule from node_modules package loaded relative to cwd', async t => {
+  console.log(path.join(__dirname, 'custom-rules', 'relative-to-cwd'));
   try {
     var input = '# Input';
-    await execa('../../../markdownlint.js',
+    await execa(path.resolve('..', 'markdownlint.js'),
       ['--rules', 'test-rule-package', '--stdin'], {
         input,
         cwd: path.join(__dirname, 'custom-rules', 'relative-to-cwd')
