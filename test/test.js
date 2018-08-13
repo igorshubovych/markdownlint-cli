@@ -433,8 +433,10 @@ test('Custom rule from several packages loaded', async t => {
   try {
     var input = '# Input';
     await execa('../markdownlint.js', [
-      '--rules', './custom-rules/test-rule-package',
-      '--rules', './custom-rules/test-rule-package-other',
+      '--rules',
+      './custom-rules/test-rule-package',
+      '--rules',
+      './custom-rules/test-rule-package-other',
       '--stdin'
     ], {input});
     t.fail();
@@ -453,8 +455,10 @@ test('Invalid custom rule name reports error', async t => {
   try {
     var input = '# Input';
     await execa('../markdownlint.js', [
-      '--rules', 'test-rule-package',
-      '--rules', 'invalid-package',
+      '--rules',
+      'test-rule-package',
+      '--rules',
+      'invalid-package',
       '--stdin'
     ], {input});
     t.fail();
