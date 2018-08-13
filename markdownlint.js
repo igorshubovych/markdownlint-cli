@@ -14,6 +14,7 @@ var extend = require('deep-extend');
 var markdownlint = require('markdownlint');
 var rc = require('rc');
 var glob = require('glob');
+var minimatch = require('minimatch');
 
 var pkg = require('./package');
 
@@ -42,7 +43,7 @@ function readConfiguration(args) {
   return config;
 }
 
-function prepareFileList(files, fileExtensions) {
+function prepareFileList(files, fileExtensions, previousResults) {
   var globOptions = {
     nodir: true
   };
@@ -54,14 +55,30 @@ function prepareFileList(files, fileExtensions) {
     extensionGlobPart += '{' + fileExtensions.join(',') + '}';
   }
   files = files.map(function (file) {
+    var matcher = null;
     try {
       if (fs.lstatSync(file).isDirectory()) {
+        // Directory (file falls through to below)
+        if (previousResults) {
+          matcher = new minimatch.Minimatch(
+            path.resolve(process.cwd(), path.join(file, '**', extensionGlobPart)), globOptions);
+          return previousResults.filter(fileInfo => {
+            return matcher.match(fileInfo.absolute);
+          }).map(fileInfo => fileInfo.original);
+        }
         return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
       }
     } catch (err) {
       // Not a directory, not a file, may be a glob
+      if (previousResults) {
+        matcher = new minimatch.Minimatch(path.resolve(process.cwd(), file), globOptions);
+        return previousResults.filter(fileInfo => {
+          return matcher.match(fileInfo.absolute);
+        }).map(fileInfo => fileInfo.original);
+      }
       return glob.sync(file, globOptions);
     }
+    // File
     return file;
   });
   return flatten(files).map(function (file) {
@@ -169,7 +186,7 @@ function loadCustomRules(rules) {
 }
 
 var files = prepareFileList(program.args, ['md', 'markdown']);
-var ignores = prepareFileList(program.ignore, ['md', 'markdown']);
+var ignores = prepareFileList(program.ignore, ['md', 'markdown'], files);
 var customRules = loadCustomRules(program.rules);
 var diff = differenceWith(files, ignores, function (a, b) {
   return a.absolute === b.absolute;
