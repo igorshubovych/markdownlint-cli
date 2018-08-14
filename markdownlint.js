@@ -2,29 +2,29 @@
 
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var Module = require('module');
-var program = require('commander');
-var getStdin = require('get-stdin');
-var jsYaml = require('js-yaml');
-var differenceWith = require('lodash.differencewith');
-var flatten = require('lodash.flatten');
-var extend = require('deep-extend');
-var markdownlint = require('markdownlint');
-var rc = require('rc');
-var glob = require('glob');
-var minimatch = require('minimatch');
+const fs = require('fs');
+const path = require('path');
+const Module = require('module');
+const program = require('commander');
+const getStdin = require('get-stdin');
+const jsYaml = require('js-yaml');
+const differenceWith = require('lodash.differencewith');
+const flatten = require('lodash.flatten');
+const extend = require('deep-extend');
+const markdownlint = require('markdownlint');
+const rc = require('rc');
+const glob = require('glob');
+const minimatch = require('minimatch');
 
-var pkg = require('./package');
+const pkg = require('./package');
 
 function readConfiguration(args) {
-  var config = rc('markdownlint', {});
-  var projectConfigFile = '.markdownlint.json';
-  var userConfigFile = args.config;
+  let config = rc('markdownlint', {});
+  const projectConfigFile = '.markdownlint.json';
+  const userConfigFile = args.config;
   try {
     fs.accessSync(projectConfigFile, fs.R_OK);
-    var projectConfig = markdownlint.readConfigSync(projectConfigFile);
+    const projectConfig = markdownlint.readConfigSync(projectConfigFile);
     config = extend(config, projectConfig);
   } catch (err) {
   }
@@ -34,7 +34,7 @@ function readConfiguration(args) {
   // from .markdownlint.json.
   if (userConfigFile) {
     try {
-      var userConfig = markdownlint.readConfigSync(userConfigFile, [JSON.parse, jsYaml.safeLoad]);
+      const userConfig = markdownlint.readConfigSync(userConfigFile, [JSON.parse, jsYaml.safeLoad]);
       config = extend(config, userConfig);
     } catch (err) {
       console.warn('Cannot read or parse config file', args.config);
@@ -44,10 +44,10 @@ function readConfiguration(args) {
 }
 
 function prepareFileList(files, fileExtensions, previousResults) {
-  var globOptions = {
+  const globOptions = {
     nodir: true
   };
-  var extensionGlobPart = '*.';
+  let extensionGlobPart = '*.';
   if (fileExtensions.length === 1) {
     // Glob seems not to match patterns like 'foo.{js}'
     extensionGlobPart += fileExtensions[0];
@@ -55,26 +55,29 @@ function prepareFileList(files, fileExtensions, previousResults) {
     extensionGlobPart += '{' + fileExtensions.join(',') + '}';
   }
   files = files.map(function (file) {
-    var matcher = null;
     try {
       if (fs.lstatSync(file).isDirectory()) {
         // Directory (file falls through to below)
         if (previousResults) {
-          matcher = new minimatch.Minimatch(
+          const matcher = new minimatch.Minimatch(
             path.resolve(process.cwd(), path.join(file, '**', extensionGlobPart)), globOptions);
-          return previousResults.filter(fileInfo => {
+          return previousResults.filter(function (fileInfo) {
             return matcher.match(fileInfo.absolute);
-          }).map(fileInfo => fileInfo.original);
+          }).map(function (fileInfo) {
+            return fileInfo.original;
+          });
         }
         return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
       }
     } catch (err) {
       // Not a directory, not a file, may be a glob
       if (previousResults) {
-        matcher = new minimatch.Minimatch(path.resolve(process.cwd(), file), globOptions);
-        return previousResults.filter(fileInfo => {
+        const matcher = new minimatch.Minimatch(path.resolve(process.cwd(), file), globOptions);
+        return previousResults.filter(function (fileInfo) {
           return matcher.match(fileInfo.absolute);
-        }).map(fileInfo => fileInfo.original);
+        }).map(function (fileInfo) {
+          return fileInfo.original;
+        });
       }
       return glob.sync(file, globOptions);
     }
@@ -90,7 +93,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
 }
 
 function printResult(lintResult) {
-  var results = flatten(Object.keys(lintResult).map(function (file) {
+  const results = flatten(Object.keys(lintResult).map(function (file) {
     return lintResult[file].map(function (result) {
       return {
         file: file,
@@ -102,7 +105,7 @@ function printResult(lintResult) {
       };
     });
   }));
-  var lintResultString = '';
+  let lintResultString = '';
   if (results.length > 0) {
     results.sort(function (a, b) {
       return a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber ||
@@ -152,7 +155,7 @@ function tryResolvePath(filepath) {
     if (path.basename(filepath) === filepath && path.extname(filepath) === '') {
       // Looks like a package name, resolve it relative to cwd
       // Get list of directories, where requested module can be.
-      var paths = Module._nodeModulePaths(process.cwd());
+      let paths = Module._nodeModulePaths(process.cwd());
       paths = paths.concat(Module.globalPaths);
       if (require.resolve.paths) {
         // Node >= 8.9.0
@@ -170,8 +173,8 @@ function tryResolvePath(filepath) {
 function loadCustomRules(rules) {
   return flatten(rules.map(function (rule) {
     try {
-      var resolvedPath = [tryResolvePath(rule)];
-      var fileList = prepareFileList(resolvedPath, ['js']).map(function (filepath) {
+      const resolvedPath = [tryResolvePath(rule)];
+      const fileList = prepareFileList(resolvedPath, ['js']).map(function (filepath) {
         return require(filepath.absolute);
       });
       if (fileList.length === 0) {
@@ -185,18 +188,18 @@ function loadCustomRules(rules) {
   }));
 }
 
-var files = prepareFileList(program.args, ['md', 'markdown']);
-var ignores = prepareFileList(program.ignore, ['md', 'markdown'], files);
-var customRules = loadCustomRules(program.rules);
-var diff = differenceWith(files, ignores, function (a, b) {
+const files = prepareFileList(program.args, ['md', 'markdown']);
+const ignores = prepareFileList(program.ignore, ['md', 'markdown'], files);
+const customRules = loadCustomRules(program.rules);
+const diff = differenceWith(files, ignores, function (a, b) {
   return a.absolute === b.absolute;
 }).map(function (paths) {
   return paths.original;
 });
 
 function lintAndPrint(stdin, files) {
-  var config = readConfiguration(program);
-  var lintOptions = {
+  const config = readConfiguration(program);
+  const lintOptions = {
     config: config,
     customRules: customRules,
     files: files || []
@@ -206,7 +209,7 @@ function lintAndPrint(stdin, files) {
       stdin: stdin
     };
   }
-  var lintResult = markdownlint.sync(lintOptions);
+  const lintResult = markdownlint.sync(lintOptions);
   printResult(lintResult);
 }
 

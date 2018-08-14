@@ -224,14 +224,14 @@ test('glob linting does not try to lint directories as files', async t => {
 });
 
 test('--stdin with empty input has no output', async t => {
-  var input = '';
+  const input = '';
   const result = await execa('../markdownlint.js', ['--stdin'], {input: input});
   t.true(result.stdout === '');
   t.true(result.stderr === '');
 });
 
 test('--stdin with valid input has no output', async t => {
-  var input = [
+  const input = [
     '# Heading',
     '',
     'Text'
@@ -242,7 +242,7 @@ test('--stdin with valid input has no output', async t => {
 });
 
 test('--stdin with invalid input reports violations', async t => {
-  var input = [
+  const input = [
     'Heading',
     '',
     'Text '
@@ -264,8 +264,8 @@ test('stdin support does not interfere with file linting', async t => {
 });
 
 test('--output with empty input has empty output', async t => {
-  var input = '';
-  var output = '../outputA.txt';
+  const input = '';
+  const output = '../outputA.txt';
   const result = await execa('../markdownlint.js',
     ['--stdin', '--output', output], {input: input});
   t.true(result.stdout === '');
@@ -275,12 +275,12 @@ test('--output with empty input has empty output', async t => {
 });
 
 test('--output with valid input has empty output', async t => {
-  var input = [
+  const input = [
     '# Heading',
     '',
     'Text'
   ].join('\n');
-  var output = '../outputB.txt';
+  const output = '../outputB.txt';
   const result = await execa('../markdownlint.js',
     ['--stdin', '--output', output], {input: input});
   t.true(result.stdout === '');
@@ -290,12 +290,12 @@ test('--output with valid input has empty output', async t => {
 });
 
 test('--output with invalid input outputs violations', async t => {
-  var input = [
+  const input = [
     'Heading',
     '',
     'Text '
   ].join('\n');
-  var output = '../outputC.txt';
+  const output = '../outputC.txt';
   try {
     await execa('../markdownlint.js', ['--stdin', '--output', output], {input: input});
     t.fail();
@@ -308,8 +308,8 @@ test('--output with invalid input outputs violations', async t => {
 });
 
 test('--output with invalid path fails', async t => {
-  var input = '';
-  var output = 'invalid/outputD.txt';
+  const input = '';
+  const output = 'invalid/outputD.txt';
   try {
     await execa('../markdownlint.js',
       ['--stdin', '--output', output], {input: input});
@@ -330,7 +330,7 @@ test('configuration file can be YAML', async t => {
 
 test('Custom rule from single file loaded', async t => {
   try {
-    var input = '# Input';
+    const input = '# Input';
     await execa('../markdownlint.js',
       ['--rules', 'custom-rules/files/test-rule-1.js', '--stdin'], {input});
     t.fail();
@@ -346,7 +346,7 @@ test('Custom rule from single file loaded', async t => {
 
 test('Custom rules from directory loaded', async t => {
   try {
-    var input = '# Input';
+    const input = '# Input';
     await execa('../markdownlint.js',
       ['--rules', 'custom-rules/files', '--stdin'], {input});
     t.fail();
@@ -363,7 +363,7 @@ test('Custom rules from directory loaded', async t => {
 
 test('Custom rules from glob loaded', async t => {
   try {
-    var input = '# Input';
+    const input = '# Input';
     await execa('../markdownlint.js',
       ['--rules', 'custom-rules/files/**/*.js', '--stdin'], {input});
     t.fail();
@@ -380,7 +380,7 @@ test('Custom rules from glob loaded', async t => {
 
 test('Custom rule from node_modules package loaded', async t => {
   try {
-    var input = '# Input';
+    const input = '# Input';
     await execa('../markdownlint.js',
       ['--rules', 'test-rule-package', '--stdin'], {input});
     t.fail();
@@ -396,7 +396,7 @@ test('Custom rule from node_modules package loaded', async t => {
 
 test('Custom rule from node_modules package loaded relative to cwd', async t => {
   try {
-    var input = '# Input';
+    const input = '# Input';
     await execa(path.resolve('..', 'markdownlint.js'),
       ['--rules', 'test-rule-package', '--stdin'], {
         input,
@@ -415,7 +415,7 @@ test('Custom rule from node_modules package loaded relative to cwd', async t => 
 
 test('Custom rule from package loaded', async t => {
   try {
-    var input = '# Input';
+    const input = '# Input';
     await execa('../markdownlint.js',
       ['--rules', './custom-rules/test-rule-package', '--stdin'], {input});
     t.fail();
@@ -431,7 +431,7 @@ test('Custom rule from package loaded', async t => {
 
 test('Custom rule from several packages loaded', async t => {
   try {
-    var input = '# Input';
+    const input = '# Input';
     await execa('../markdownlint.js', [
       '--rules',
       './custom-rules/test-rule-package',
@@ -453,7 +453,7 @@ test('Custom rule from several packages loaded', async t => {
 
 test('Invalid custom rule name reports error', async t => {
   try {
-    var input = '# Input';
+    const input = '# Input';
     await execa('../markdownlint.js', [
       '--rules',
       'test-rule-package',
