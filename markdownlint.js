@@ -26,7 +26,7 @@ function readConfiguration(args) {
     fs.accessSync(projectConfigFile, fs.R_OK);
     const projectConfig = markdownlint.readConfigSync(projectConfigFile);
     config = extend(config, projectConfig);
-  } catch (err) {
+  } catch (error) {
   }
   // Normally parsing this file is not needed,
   // because it is already parsed by rc package.
@@ -36,7 +36,7 @@ function readConfiguration(args) {
     try {
       const userConfig = markdownlint.readConfigSync(userConfigFile, [JSON.parse, jsYaml.safeLoad]);
       config = extend(config, userConfig);
-    } catch (err) {
+    } catch (error) {
       console.warn('Cannot read or parse config file', args.config);
     }
   }
@@ -69,7 +69,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
         }
         return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
       }
-    } catch (err) {
+    } catch (error) {
       // Not a directory, not a file, may be a glob
       if (previousResults) {
         const matcher = new minimatch.Minimatch(path.resolve(process.cwd(), file), globOptions);
@@ -124,8 +124,8 @@ function printResult(lintResult) {
   if (program.output) {
     try {
       fs.writeFileSync(program.output, lintResultString);
-    } catch (err) {
-      console.warn('Cannot write to output file ' + program.output + ': ' + err.message);
+    } catch (error) {
+      console.warn('Cannot write to output file ' + program.output + ': ' + error.message);
       process.exitCode = 2;
     }
   } else if (lintResultString) {
@@ -165,7 +165,7 @@ function tryResolvePath(filepath) {
     }
     // Maybe it is a path to package installed locally
     return require.resolve(path.join(process.cwd(), filepath));
-  } catch (err) {
+  } catch (error) {
     return filepath;
   }
 }
@@ -181,8 +181,8 @@ function loadCustomRules(rules) {
         throw new Error('No such rule');
       }
       return fileList;
-    } catch (err) {
-      console.error('Cannot load custom rule ' + rule + ': ' + err.message);
+    } catch (error) {
+      console.error('Cannot load custom rule ' + rule + ': ' + error.message);
       process.exit(3);
     }
   }));
