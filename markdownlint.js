@@ -174,9 +174,9 @@ function loadCustomRules(rules) {
   return flatten(rules.map(function (rule) {
     try {
       const resolvedPath = [tryResolvePath(rule)];
-      const fileList = prepareFileList(resolvedPath, ['js']).map(function (filepath) {
+      const fileList = flatten(prepareFileList(resolvedPath, ['js']).map(function (filepath) {
         return require(filepath.absolute);
-      });
+      }));
       if (fileList.length === 0) {
         throw new Error('No such rule');
       }

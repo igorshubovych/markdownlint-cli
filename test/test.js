@@ -344,6 +344,23 @@ test('Custom rule from single file loaded', async t => {
   }
 });
 
+test('Multiple custom rules from single file loaded', async t => {
+  try {
+    const input = '# Input';
+    await execa('../markdownlint.js',
+      ['--rules', 'custom-rules/files/test-rule-3-4.js', '--stdin'], {input});
+    t.fail();
+  } catch (error) {
+    const expected = [
+      'stdin: 1: test-rule-3 Test rule 3 broken',
+      'stdin: 1: test-rule-4 Test rule 4 broken',
+      ''
+    ].join('\n');
+    t.true(error.stdout === '');
+    t.true(error.stderr === expected);
+  }
+});
+
 test('Custom rules from directory loaded', async t => {
   try {
     const input = '# Input';
@@ -354,6 +371,8 @@ test('Custom rules from directory loaded', async t => {
     const expected = [
       'stdin: 1: test-rule-1 Test rule broken',
       'stdin: 1: test-rule-2 Test rule 2 broken',
+      'stdin: 1: test-rule-3 Test rule 3 broken',
+      'stdin: 1: test-rule-4 Test rule 4 broken',
       ''
     ].join('\n');
     t.true(error.stdout === '');
@@ -371,6 +390,8 @@ test('Custom rules from glob loaded', async t => {
     const expected = [
       'stdin: 1: test-rule-1 Test rule broken',
       'stdin: 1: test-rule-2 Test rule 2 broken',
+      'stdin: 1: test-rule-3 Test rule 3 broken',
+      'stdin: 1: test-rule-4 Test rule 4 broken',
       ''
     ].join('\n');
     t.true(error.stdout === '');
