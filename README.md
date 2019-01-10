@@ -32,7 +32,7 @@ $ markdownlint --help
 
 `markdownlint-cli` reuses [the rules][rules] from `markdownlint` package.
 
-Configuration is stored JSON or INI files in the same [config format][config].
+Configuration is stored in JSON, YAML or INI files in the same [config format][config].
 
 The example of configuration file:
 
