@@ -32,6 +32,7 @@ function readConfiguration(args) {
   // because it is already parsed by rc package.
   // However I have to do it to overwrite configuration
   // from .markdownlint.json.
+
   if (userConfigFile) {
     try {
       const userConfig = markdownlint.readConfigSync(userConfigFile, [JSON.parse, jsYaml.safeLoad]);
@@ -40,6 +41,7 @@ function readConfiguration(args) {
       console.warn('Cannot read or parse config file', args.config);
     }
   }
+
   return config;
 }
 
@@ -54,6 +56,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
   } else {
     extensionGlobPart += '{' + fileExtensions.join(',') + '}';
   }
+
   files = files.map(function (file) {
     try {
       if (fs.lstatSync(file).isDirectory()) {
@@ -67,6 +70,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
             return fileInfo.original;
           });
         }
+
         return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
       }
     } catch (error) {
@@ -79,8 +83,10 @@ function prepareFileList(files, fileExtensions, previousResults) {
           return fileInfo.original;
         });
       }
+
       return glob.sync(file, globOptions);
     }
+
     // File
     return file;
   });
@@ -121,6 +127,7 @@ function printResult(lintResult) {
     // @see {@link https://github.com/igorshubovych/markdownlint-cli/pull/29#issuecomment-343535291}
     process.exitCode = 1;
   }
+
   if (program.output) {
     try {
       fs.writeFileSync(program.output, lintResultString);
@@ -161,8 +168,10 @@ function tryResolvePath(filepath) {
         // Node >= 8.9.0
         return require.resolve(filepath, {paths: paths});
       }
+
       return Module._resolveFilename(filepath, {paths: paths});
     }
+
     // Maybe it is a path to package installed locally
     return require.resolve(path.join(process.cwd(), filepath));
   } catch (error) {
@@ -180,6 +189,7 @@ function loadCustomRules(rules) {
       if (fileList.length === 0) {
         throw new Error('No such rule');
       }
+
       return fileList;
     } catch (error) {
       console.error('Cannot load custom rule ' + rule + ': ' + error.message);
@@ -209,6 +219,7 @@ function lintAndPrint(stdin, files) {
       stdin: stdin
     };
   }
+
   const lintResult = markdownlint.sync(lintOptions);
   printResult(lintResult);
 }
