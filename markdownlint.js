@@ -15,27 +15,36 @@ const markdownlint = require('markdownlint');
 const rc = require('rc');
 const glob = require('glob');
 const minimatch = require('minimatch');
-
 const pkg = require('./package');
+
+const projectConfigFiles = [
+  '.markdownlint.json',
+  '.markdownlint.yaml',
+  '.markdownlint.yml'
+];
+const configFileParsers = [JSON.parse, jsYaml.safeLoad];
 
 function readConfiguration(args) {
   let config = rc('markdownlint', {});
-  const projectConfigFile = '.markdownlint.json';
   const userConfigFile = args.config;
-  try {
-    fs.accessSync(projectConfigFile, fs.R_OK);
-    const projectConfig = markdownlint.readConfigSync(projectConfigFile);
-    config = extend(config, projectConfig);
-  } catch (error) {
+  for (const projectConfigFile of projectConfigFiles) {
+    try {
+      fs.accessSync(projectConfigFile, fs.R_OK);
+      const projectConfig = markdownlint.readConfigSync(projectConfigFile, configFileParsers);
+      config = extend(config, projectConfig);
+      break;
+    } catch (error) {
+      // Ignore failure
+    }
   }
   // Normally parsing this file is not needed,
   // because it is already parsed by rc package.
   // However I have to do it to overwrite configuration
-  // from .markdownlint.json.
+  // from .markdownlint.{json,yaml,yml}.
 
   if (userConfigFile) {
     try {
-      const userConfig = markdownlint.readConfigSync(userConfigFile, [JSON.parse, jsYaml.safeLoad]);
+      const userConfig = markdownlint.readConfigSync(userConfigFile, configFileParsers);
       config = extend(config, userConfig);
     } catch (error) {
       console.warn('Cannot read or parse config file', args.config);

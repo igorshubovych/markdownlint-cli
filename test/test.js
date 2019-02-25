@@ -328,6 +328,35 @@ test('configuration file can be YAML', async t => {
   t.true(result.stderr === '');
 });
 
+function getCwdConfigFileTest(extension) {
+  return async t => {
+    try {
+      await execa(
+        path.resolve('..', 'markdownlint.js'), ['.'], {
+          cwd: path.join(__dirname, 'config-files', extension)
+        });
+      t.fail();
+    } catch (error) {
+      const expected = [
+        'heading-dollar.md: 1: MD026/no-trailing-punctuation Trailing punctuation in heading [Punctuation: \'$\']',
+        ''
+      ].join('\n');
+      t.true(error.stdout === '');
+      t.true(error.stderr === expected);
+    }
+  };
+}
+
+test('.markdownlint.json in cwd is used automatically', getCwdConfigFileTest('json'));
+
+test('.markdownlint.yaml in cwd is used automatically', getCwdConfigFileTest('yaml'));
+
+test('.markdownlint.yml in cwd is used automatically', getCwdConfigFileTest('yml'));
+
+test('.markdownlint.json in cwd is used instead of .markdownlint.yaml or .markdownlint.yml', getCwdConfigFileTest('json-yaml-yml'));
+
+test('.markdownlint.yaml in cwd is used instead of .markdownlint.yml', getCwdConfigFileTest('yaml-yml'));
+
 test('Custom rule from single file loaded', async t => {
   try {
     const input = '# Input';
