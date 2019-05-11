@@ -7,7 +7,7 @@
     "markdownlint": "markdownlint.js"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "scripts": {
     "invalid": "node ./markdownlint.js --config test/test-config.json -- test/incorrect.md",
@@ -63,6 +63,7 @@
       "linebreak-style": 0,
       "no-var": 0,
       "prefer-arrow-callback": 0,
+      "promise/prefer-await-to-then": 0,
       "object-shorthand": 0
     }
   },
