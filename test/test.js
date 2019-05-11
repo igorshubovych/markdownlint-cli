@@ -7,6 +7,8 @@ import execa from 'execa';
 
 const errorPattern = /(\.md|\.markdown|stdin): \d+: MD\d{3}/gm;
 
+process.chdir('./test');
+
 test('--version option', async t => {
   const result = await execa('../markdownlint.js', ['--version']);
   t.true(/^\d+\.\d+\.\d+$/.test(result.stdout));
