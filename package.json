@@ -48,10 +48,10 @@
     "rc": "~1.2.7"
   },
   "devDependencies": {
-    "ava": "^1.4.1",
+    "ava": "^2.2.0",
     "execa": "^1.0.0",
-    "husky": "^0.11.3",
-    "tap-growl": "^1.1.2",
+    "husky": "^3.0.4",
+    "tap-growl": "^3.0.0",
     "test-rule-package": "./test/custom-rules/test-rule-package",
     "xo": "*"
   },
