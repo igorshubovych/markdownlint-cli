@@ -5,7 +5,7 @@ import path from 'path';
 import test from 'ava';
 import execa from 'execa';
 
-const errorPattern = /(\.md|\.markdown|stdin): \d+: MD\d{3}/gm;
+const errorPattern = /(\.md|\.markdown|stdin):\d+ MD\d{3}/gm;
 
 process.chdir('./test');
 
@@ -216,14 +216,14 @@ test('linting results are sorted by file/line/names/description', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'incorrect.md: 1: MD002/first-heading-h1/first-header-h1 First heading should be a top level heading [Expected: h1; Actual: h2]',
-      'incorrect.md: 1: MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below] [Context: "## header 2"]',
-      'incorrect.md: 1: MD041/first-line-heading/first-line-h1 First line in file should be a top level heading [Context: "## header 2"]',
-      'incorrect.md: 2: MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "# header"]',
-      'incorrect.md: 4: MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
-      'incorrect.md: 10: MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
-      'incorrect.md: 16: MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
-      'incorrect.md: 23: MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
+      'incorrect.md:1 MD002/first-heading-h1/first-header-h1 First heading should be a top level heading [Expected: h1; Actual: h2]',
+      'incorrect.md:1 MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below] [Context: "## header 2"]',
+      'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in file should be a top level heading [Context: "## header 2"]',
+      'incorrect.md:2 MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "# header"]',
+      'incorrect.md:4 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
+      'incorrect.md:10 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
+      'incorrect.md:16 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
+      'incorrect.md:23 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
       ''
     ].join('\n');
     t.true(error.stdout === '');
@@ -370,7 +370,7 @@ function getCwdConfigFileTest(extension) {
       t.fail();
     } catch (error) {
       const expected = [
-        'heading-dollar.md: 1: MD026/no-trailing-punctuation Trailing punctuation in heading [Punctuation: \'$\']',
+        'heading-dollar.md:1 MD026/no-trailing-punctuation Trailing punctuation in heading [Punctuation: \'$\']',
         ''
       ].join('\n');
       t.true(error.stdout === '');
@@ -398,7 +398,7 @@ test('Custom rule from single file loaded', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'stdin: 1: test-rule-1 Test rule broken',
+      'stdin:1 test-rule-1 Test rule broken',
       ''
     ].join('\n');
     t.true(error.stdout === '');
@@ -415,8 +415,8 @@ test('Multiple custom rules from single file loaded', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'stdin: 1: test-rule-3 Test rule 3 broken',
-      'stdin: 1: test-rule-4 Test rule 4 broken',
+      'stdin:1 test-rule-3 Test rule 3 broken',
+      'stdin:1 test-rule-4 Test rule 4 broken',
       ''
     ].join('\n');
     t.true(error.stdout === '');
@@ -433,10 +433,10 @@ test('Custom rules from directory loaded', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'stdin: 1: test-rule-1 Test rule broken',
-      'stdin: 1: test-rule-2 Test rule 2 broken',
-      'stdin: 1: test-rule-3 Test rule 3 broken',
-      'stdin: 1: test-rule-4 Test rule 4 broken',
+      'stdin:1 test-rule-1 Test rule broken',
+      'stdin:1 test-rule-2 Test rule 2 broken',
+      'stdin:1 test-rule-3 Test rule 3 broken',
+      'stdin:1 test-rule-4 Test rule 4 broken',
       ''
     ].join('\n');
     t.true(error.stdout === '');
@@ -453,10 +453,10 @@ test('Custom rules from glob loaded', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'stdin: 1: test-rule-1 Test rule broken',
-      'stdin: 1: test-rule-2 Test rule 2 broken',
-      'stdin: 1: test-rule-3 Test rule 3 broken',
-      'stdin: 1: test-rule-4 Test rule 4 broken',
+      'stdin:1 test-rule-1 Test rule broken',
+      'stdin:1 test-rule-2 Test rule 2 broken',
+      'stdin:1 test-rule-3 Test rule 3 broken',
+      'stdin:1 test-rule-4 Test rule 4 broken',
       ''
     ].join('\n');
     t.true(error.stdout === '');
@@ -473,7 +473,7 @@ test('Custom rule from node_modules package loaded', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'stdin: 1: test-rule-package Test rule package broken',
+      'stdin:1 test-rule-package Test rule package broken',
       ''
     ].join('\n');
     t.true(error.stdout === '');
@@ -493,7 +493,7 @@ test('Custom rule from node_modules package loaded relative to cwd', async t => 
     t.fail();
   } catch (error) {
     const expected = [
-      'stdin: 1: test-rule-package Test rule package relative to cwd broken',
+      'stdin:1 test-rule-package Test rule package relative to cwd broken',
       ''
     ].join('\n');
     t.true(error.stdout === '');
@@ -510,7 +510,7 @@ test('Custom rule from package loaded', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'stdin: 1: test-rule-package Test rule package broken',
+      'stdin:1 test-rule-package Test rule package broken',
       ''
     ].join('\n');
     t.true(error.stdout === '');
@@ -533,8 +533,8 @@ test('Custom rule from several packages loaded', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'stdin: 1: test-rule-package Test rule package broken',
-      'stdin: 1: test-rule-package-other Test rule package other broken',
+      'stdin:1 test-rule-package Test rule package broken',
+      'stdin:1 test-rule-package-other Test rule package other broken',
       ''
     ].join('\n');
     t.true(error.stdout === '');
