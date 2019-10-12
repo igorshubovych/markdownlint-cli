@@ -127,7 +127,7 @@ function printResult(lintResult) {
         a.names.localeCompare(b.names) || a.description.localeCompare(b.description);
     });
     lintResultString = results.map(function (result) {
-      return result.file + ': ' + result.lineNumber + ': ' + result.names + ' ' + result.description;
+      return result.file + ':' + result.lineNumber + ' ' + result.names + ' ' + result.description;
     }).join('\n');
     // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
     // streams (e.g., when the output is being piped). Just set the exit code
