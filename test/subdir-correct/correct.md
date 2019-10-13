@@ -12,7 +12,6 @@ text
 
 ```fence
 $ code
-
 output
 ```
 

@@ -15,13 +15,11 @@ text
 
 ```fence
 $ code
-$ code
 ```
 
 text
 
 ```fence
-$ code
 $ code
 ```
 
