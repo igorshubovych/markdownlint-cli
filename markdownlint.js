@@ -47,7 +47,7 @@ function readConfiguration(args) {
       const userConfig = markdownlint.readConfigSync(userConfigFile, configFileParsers);
       config = extend(config, userConfig);
     } catch (error) {
-      console.warn('Cannot read or parse config file', args.config);
+      console.warn('Cannot read or parse config file ' + args.config + ': ' + error.message);
     }
   }
 
