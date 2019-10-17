@@ -12,6 +12,7 @@ const differenceWith = require('lodash.differencewith');
 const flatten = require('lodash.flatten');
 const extend = require('deep-extend');
 const markdownlint = require('markdownlint');
+const markdownlintRuleHelpers = require('markdownlint-rule-helpers');
 const rc = require('rc');
 const glob = require('glob');
 const minimatch = require('minimatch');
@@ -158,7 +159,8 @@ program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
-  .option('-s, --stdin', 'read from STDIN (no files)')
+  .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
+  .option('-s, --stdin', 'read from STDIN (does not work with files)')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-c, --config [configFile]', 'configuration file (JSON or YAML)')
   .option('-i, --ignore [file|directory|glob]', 'files to ignore/exclude', concatArray, [])
@@ -217,16 +219,37 @@ const diff = differenceWith(files, ignores, function (a, b) {
 });
 
 function lintAndPrint(stdin, files) {
+  files = files || [];
   const config = readConfiguration(program);
   const lintOptions = {
-    config: config,
-    customRules: customRules,
-    files: files || []
+    config,
+    customRules,
+    files
   };
   if (stdin) {
     lintOptions.strings = {
-      stdin: stdin
+      stdin
     };
+  }
+
+  if (program.fix) {
+    const fixOptions = {
+      ...lintOptions,
+      resultVersion: 3
+    };
+    const fsOptions = {encoding: 'utf8'};
+    files.forEach(file => {
+      fixOptions.files = [file];
+      const fixResult = markdownlint.sync(fixOptions);
+      const fixes = fixResult[file].filter(error => error.fixInfo);
+      if (fixes.length > 0) {
+        const originalText = fs.readFileSync(file, fsOptions);
+        const fixedText = markdownlintRuleHelpers.applyFixes(originalText, fixes);
+        if (originalText !== fixedText) {
+          fs.writeFileSync(file, fixedText, fsOptions);
+        }
+      }
+    });
   }
 
   const lintResult = markdownlint.sync(lintOptions);
@@ -235,7 +258,7 @@ function lintAndPrint(stdin, files) {
 
 if ((files.length > 0) && !program.stdin) {
   lintAndPrint(null, diff);
-} else if ((files.length === 0) && program.stdin) {
+} else if ((files.length === 0) && program.stdin && !program.fix) {
   getStdin().then(lintAndPrint);
 } else {
   program.help();

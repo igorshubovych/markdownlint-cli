@@ -11,6 +11,7 @@
   },
   "scripts": {
     "invalid": "node ./markdownlint.js --config test/test-config.json -- test/incorrect.md",
+    "fix": "cp test/incorrect.md test/incorrect.copy.md && node ./markdownlint.js --fix test/incorrect.copy.md ; cat test/incorrect.copy.md && rm test/incorrect.copy.md",
     "test": "ava",
     "watch": "npm test -- --watch --tap | tap-growl",
     "start": "node ./markdownlint.js",
@@ -44,6 +45,7 @@
     "lodash.differencewith": "~4.5.0",
     "lodash.flatten": "~4.4.0",
     "markdownlint": "~0.17.0",
+    "markdownlint-rule-helpers": "~0.5.0",
     "minimatch": "~3.0.4",
     "rc": "~1.2.7"
   },

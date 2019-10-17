@@ -5,7 +5,7 @@ import path from 'path';
 import test from 'ava';
 import execa from 'execa';
 
-const errorPattern = /(\.md|\.markdown|stdin):\d+ MD\d{3}/gm;
+const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+ MD\d{3}/gm;
 
 process.chdir('./test');
 
@@ -31,6 +31,12 @@ test('no files shows help', async t => {
 
 test('files and --stdin shows help', async t => {
   const result = await execa('../markdownlint.js', ['--stdin', 'correct.md'], {stripFinalNewline: false});
+  t.true(result.stdout.indexOf('--help') >= 0);
+  t.true(result.stderr === '');
+});
+
+test('--fix and --stdin shows help', async t => {
+  const result = await execa('../markdownlint.js', ['--fix', '--stdin', 'correct.md'], {stripFinalNewline: false});
   t.true(result.stdout.indexOf('--help') >= 0);
   t.true(result.stderr === '');
 });
@@ -562,5 +568,59 @@ test('Invalid custom rule name reports error', async t => {
     ].join('\n');
     t.true(error.stdout === '');
     t.true(error.stderr === expected);
+  }
+});
+
+test('fixing errors in a file yields fewer errors', async t => {
+  const fixFileA = 'incorrect.a.mdf';
+  try {
+    fs.copyFileSync('incorrect.md', fixFileA);
+    await execa('../markdownlint.js',
+      ['--fix', '--config', 'test-config.json', fixFileA],
+      {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    const expected = [
+      fixFileA + ':1 MD002/first-heading-h1/first-header-h1 First heading should be a top level heading [Expected: h1; Actual: h2]',
+      fixFileA + ':1 MD041/first-line-heading/first-line-h1 First line in file should be a top level heading [Context: "## header 2"]',
+      ''
+    ].join('\n');
+    t.deepEqual(error.stdout, '');
+    t.deepEqual(error.stderr, expected);
+    fs.unlinkSync(fixFileA);
+  }
+});
+
+test('fixing errors in a file with absolute path yields fewer errors', async t => {
+  const fixFileB = 'incorrect.b.mdf';
+  try {
+    fs.copyFileSync('incorrect.md', fixFileB);
+    await execa('../markdownlint.js',
+      ['--fix', '--config', 'test-config.json', path.resolve(fixFileB)],
+      {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.deepEqual(error.stdout, '');
+    t.deepEqual(error.stderr.match(errorPattern).length, 2);
+    fs.unlinkSync(fixFileB);
+  }
+});
+
+test('fixing errors with a glob yields fewer errors', async t => {
+  const fixFileC = 'incorrect.c.mdf';
+  const fixSubFileC = 'subdir-incorrect/incorrect.c.mdf';
+  const fixFileGlob = '**/*.c.mdf';
+  try {
+    fs.copyFileSync('incorrect.md', fixFileC);
+    fs.copyFileSync('subdir-incorrect/incorrect.md', fixSubFileC);
+    await execa('../markdownlint.js',
+      ['--fix', '--config', 'test-config.json', fixFileGlob],
+      {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.deepEqual(error.stdout, '');
+    t.deepEqual(error.stderr.match(errorPattern).length, 4);
+    fs.unlinkSync(fixFileC);
+    fs.unlinkSync(fixSubFileC);
   }
 });

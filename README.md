@@ -11,7 +11,7 @@ npm install -g markdownlint-cli
 ## Usage
 
 ```bash
-$ markdownlint --help
+markdownlint --help
 
   Usage: markdownlint [options] <files|directories|globs>
 
@@ -21,12 +21,19 @@ $ markdownlint --help
 
     -h, --help                                  output usage information
     -V, --version                               output the version number
-    -s, --stdin                                 read from STDIN (no files)
+    -f, --fix                                   fix basic errors (does not work with STDIN)
+    -s, --stdin                                 read from STDIN (does not work with files)
     -o, --output [outputFile]                   write issues to file (no console)
     -c, --config [configFile]                   configuration file (JSON or YAML)
     -i, --ignore [file|directory|glob]          files to ignore/exclude
     -r, --rules  [file|directory|glob|package]  custom rule files
 ```
+
+### Fixing errors
+
+When the `--fix` option is specified, `markdownlint-cli ` tries to apply all fixes reported by the active rules and reports any errors that remain. Because this option makes changes to the input files, it is good to make a backup first or work with files under source control so any unwanted changes can be undone.
+
+> Because not all rules include fix information when reporting errors, fixes may overlap, and not all errors are fixable, `--fix` will not usually address all errors.
 
 ## Configuration
 
