@@ -31,7 +31,7 @@ markdownlint --help
 
 ### Fixing errors
 
-When the `--fix` option is specified, `markdownlint-cli ` tries to apply all fixes reported by the active rules and reports any errors that remain. Because this option makes changes to the input files, it is good to make a backup first or work with files under source control so any unwanted changes can be undone.
+When the `--fix` option is specified, `markdownlint-cli` tries to apply all fixes reported by the active rules and reports any errors that remain. Because this option makes changes to the input files, it is good to make a backup first or work with files under source control so any unwanted changes can be undone.
 
 > Because not all rules include fix information when reporting errors, fixes may overlap, and not all errors are fixable, `--fix` will not usually address all errors.
 
