@@ -29,6 +29,21 @@ markdownlint --help
     -r, --rules  [file|directory|glob|package]  custom rule files
 ```
 
+### Globbing
+
+`markdownlint-cli` supports advanced globbing patterns like `**/*.md` ([more information][globprimer]).
+With shells like Bash, it may be necessary to quote globs so they are not interpreted by the shell.
+For example, `--ignore *.md` would be expanded by Bash to `--ignore a.md b.md ...` before invoking `markdownlint-cli`, causing it to ignore only the first file because `--ignore` takes a single parameter (though it can be used multiple times).
+Quoting the glob like `--ignore '*.md'` passes it through unexpanded and ignores the set of files.
+
+#### Examples
+
+To lint all Markdown files in a Node.js project (excluding dependencies), the following commands might be used:
+
+Windows CMD: `markdownlint **/*.md --ignore node_modules`
+
+Linux Bash: `markdownlint '**/*.md' --ignore node_modules`
+
 ### Fixing errors
 
 When the `--fix` option is specified, `markdownlint-cli` tries to apply all fixes reported by the active rules and reports any errors that remain. Because this option makes changes to the input files, it is good to make a backup first or work with files under source control so any unwanted changes can be undone.
@@ -79,3 +94,4 @@ MIT © Igor Shubovych
 [test-config]: https://github.com/igorshubovych/markdownlint-cli/blob/master/test/test-config.json
 [rc-standards]: https://www.npmjs.com/package/rc#standards
 [glob]: https://github.com/isaacs/node-glob
+[globprimer]: https://github.com/isaacs/node-glob/blob/master/README.md#glob-primer
