@@ -8,6 +8,7 @@ const Module = require('module');
 const program = require('commander');
 const getStdin = require('get-stdin');
 const jsYaml = require('js-yaml');
+const jsoncParser = require('jsonc-parser');
 const differenceWith = require('lodash.differencewith');
 const flatten = require('lodash.flatten');
 const extend = require('deep-extend');
@@ -18,12 +19,16 @@ const glob = require('glob');
 const minimatch = require('minimatch');
 const pkg = require('./package');
 
+function jsoncParse(text) {
+  return JSON.parse(jsoncParser.stripComments(text));
+}
+
 const projectConfigFiles = [
   '.markdownlint.json',
   '.markdownlint.yaml',
   '.markdownlint.yml'
 ];
-const configFileParsers = [JSON.parse, jsYaml.safeLoad];
+const configFileParsers = [jsoncParse, jsYaml.safeLoad];
 
 function readConfiguration(args) {
   let config = rc('markdownlint', {});
@@ -162,7 +167,7 @@ program
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
-  .option('-c, --config [configFile]', 'configuration file (JSON or YAML)')
+  .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, or YAML)')
   .option('-i, --ignore [file|directory|glob]', 'files to ignore/exclude', concatArray, [])
   .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, []);
 

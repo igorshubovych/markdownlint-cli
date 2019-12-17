@@ -395,6 +395,8 @@ test('.markdownlint.json in cwd is used instead of .markdownlint.yaml or .markdo
 
 test('.markdownlint.yaml in cwd is used instead of .markdownlint.yml', getCwdConfigFileTest('yaml-yml'));
 
+test('.markdownlint.json with JavaScript-style comments is handled', getCwdConfigFileTest('jsonc'));
+
 test('Custom rule from single file loaded', async t => {
   try {
     const input = '# Input\n';

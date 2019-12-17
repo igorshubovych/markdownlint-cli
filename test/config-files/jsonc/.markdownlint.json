@@ -1,0 +1,9 @@
+{
+  // Inline comment
+  "no-trailing-punctuation": {
+    /*
+     * Block comment
+     */
+    "punctuation": "$"
+  }
+}

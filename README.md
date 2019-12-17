@@ -24,7 +24,7 @@ markdownlint --help
     -f, --fix                                   fix basic errors (does not work with STDIN)
     -s, --stdin                                 read from STDIN (does not work with files)
     -o, --output [outputFile]                   write issues to file (no console)
-    -c, --config [configFile]                   configuration file (JSON or YAML)
+    -c, --config [configFile]                   configuration file (JSON, JSONC, or YAML)
     -i, --ignore [file|directory|glob]          files to ignore/exclude
     -r, --rules  [file|directory|glob|package]  custom rule files
 ```
@@ -54,7 +54,7 @@ When the `--fix` option is specified, `markdownlint-cli` tries to apply all fixe
 
 `markdownlint-cli` reuses [the rules][rules] from `markdownlint` package.
 
-Configuration is stored in JSON, YAML or INI files in the same [config format][config].
+Configuration is stored in JSON, JSONC, YAML, or INI files in the same [config format][config].
 
 The example of configuration file:
 
@@ -70,7 +70,7 @@ The example of configuration file:
 
 See [test configuration file][test-config] or [style folder][style-folder] for more examples.
 
-CLI argument `--config` is not mandatory. If it is not provided, `markdownlint-cli` looks for file `.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for file `.markdownlintrc` in current or all upper folders. The algorithm is described in details on [rc package page][rc-standards]. If `--config` argument is provided, the file must be valid JSON or YAML.
+CLI argument `--config` is not mandatory. If it is not provided, `markdownlint-cli` looks for file `.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for file `.markdownlintrc` in current or all upper folders. The algorithm is described in details on [rc package page][rc-standards]. If `--config` argument is provided, the file must be valid JSON, JSONC, or YAML.
 
 ## Related
 
