@@ -44,8 +44,8 @@
     "js-yaml": "^3.13.1",
     "lodash.differencewith": "~4.5.0",
     "lodash.flatten": "~4.4.0",
-    "markdownlint": "~0.17.1",
-    "markdownlint-rule-helpers": "~0.5.0",
+    "markdownlint": "~0.18.0",
+    "markdownlint-rule-helpers": "~0.6.0",
     "minimatch": "~3.0.4",
     "rc": "~1.2.7"
   },
