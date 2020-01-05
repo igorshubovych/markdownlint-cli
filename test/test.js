@@ -106,7 +106,7 @@ test('glob linting works with failing files', async t => {
     t.fail();
   } catch (error) {
     t.deepEqual(error.stdout, '');
-    t.deepEqual(error.stderr.match(errorPattern).length, 16);
+    t.deepEqual(error.stderr.match(errorPattern).length, 17);
   }
 });
 
@@ -166,7 +166,7 @@ test('glob linting with failing files has fewer errors when ignored by dir', asy
     t.fail();
   } catch (error) {
     t.deepEqual(error.stdout, '');
-    t.deepEqual(error.stderr.match(errorPattern).length, 8);
+    t.deepEqual(error.stderr.match(errorPattern).length, 9);
   }
 });
 
@@ -178,7 +178,7 @@ test('glob linting with failing files has fewer errors when ignored by dir and a
     t.fail();
   } catch (error) {
     t.deepEqual(error.stdout, '');
-    t.deepEqual(error.stderr.match(errorPattern).length, 8);
+    t.deepEqual(error.stderr.match(errorPattern).length, 9);
   }
 });
 
@@ -624,5 +624,24 @@ test('fixing errors with a glob yields fewer errors', async t => {
     t.deepEqual(error.stderr.match(errorPattern).length, 4);
     fs.unlinkSync(fixFileC);
     fs.unlinkSync(fixSubFileC);
+  }
+});
+
+test('.markdownlintignore is applied correctly', async t => {
+  try {
+    await execa(
+      path.resolve('..', 'markdownlint.js'), ['.'], {
+        cwd: path.join(__dirname, 'markdownlintignore'),
+        stripFinalNewline: false
+      });
+    t.fail();
+  } catch (error) {
+    const expected = [
+      'incorrect.md:1 MD047/single-trailing-newline Files should end with a single newline character',
+      'subdir/incorrect.markdown:1 MD047/single-trailing-newline Files should end with a single newline character',
+      ''
+    ].join('\n');
+    t.deepEqual(error.stdout, '');
+    t.deepEqual(error.stderr, expected);
   }
 });

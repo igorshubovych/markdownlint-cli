@@ -12,6 +12,7 @@ const jsoncParser = require('jsonc-parser');
 const differenceWith = require('lodash.differencewith');
 const flatten = require('lodash.flatten');
 const extend = require('deep-extend');
+const ignore = require('ignore');
 const markdownlint = require('markdownlint');
 const markdownlintRuleHelpers = require('markdownlint-rule-helpers');
 const rc = require('rc');
@@ -29,6 +30,7 @@ const projectConfigFiles = [
   '.markdownlint.yml'
 ];
 const configFileParsers = [jsoncParse, jsYaml.safeLoad];
+const fsOptions = {encoding: 'utf8'};
 
 function readConfiguration(args) {
   let config = rc('markdownlint', {});
@@ -214,7 +216,16 @@ function loadCustomRules(rules) {
   }));
 }
 
-const files = prepareFileList(program.args, ['md', 'markdown']);
+const markdownlintIgnore = '.markdownlintignore';
+let ignoreFilter = () => true;
+if (fs.existsSync(markdownlintIgnore)) {
+  const ignoreText = fs.readFileSync(markdownlintIgnore, fsOptions);
+  const ignoreInstance = ignore().add(ignoreText);
+  ignoreFilter = fileInfo => !ignoreInstance.ignores(fileInfo.original);
+}
+
+const files = prepareFileList(program.args, ['md', 'markdown'])
+  .filter(ignoreFilter);
 const ignores = prepareFileList(program.ignore, ['md', 'markdown'], files);
 const customRules = loadCustomRules(program.rules);
 const diff = differenceWith(files, ignores, function (a, b) {
@@ -242,7 +253,6 @@ function lintAndPrint(stdin, files) {
       ...lintOptions,
       resultVersion: 3
     };
-    const fsOptions = {encoding: 'utf8'};
     files.forEach(file => {
       fixOptions.files = [file];
       const fixResult = markdownlint.sync(fixOptions);

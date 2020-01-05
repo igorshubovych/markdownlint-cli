@@ -1,0 +1,6 @@
+# comment followed by blank line
+
+# star-star pattern with trailing space
+**/*.markdown 
+# negated star pattern
+!subd*/incorrect.markdown

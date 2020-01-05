@@ -36,7 +36,7 @@ With shells like Bash, it may be necessary to quote globs so they are not interp
 For example, `--ignore *.md` would be expanded by Bash to `--ignore a.md b.md ...` before invoking `markdownlint-cli`, causing it to ignore only the first file because `--ignore` takes a single parameter (though it can be used multiple times).
 Quoting the glob like `--ignore '*.md'` passes it through unexpanded and ignores the set of files.
 
-#### Examples
+#### Globbing examples
 
 To lint all Markdown files in a Node.js project (excluding dependencies), the following commands might be used:
 
@@ -44,9 +44,20 @@ Windows CMD: `markdownlint **/*.md --ignore node_modules`
 
 Linux Bash: `markdownlint '**/*.md' --ignore node_modules`
 
+### Ignoring files
+
+If present in the current folder, a `.markdownlintignore` file will be used to ignore files and /or directories according to the rules for [gitignore][gitignore].
+
+The order of operations is:
+
+- Enumerate files/directories/globs on the command line
+- Apply exclusions from `.markdownlintignore`
+- Apply exclusions from `-i`/`--ignore` option(s)
+
 ### Fixing errors
 
-When the `--fix` option is specified, `markdownlint-cli` tries to apply all fixes reported by the active rules and reports any errors that remain. Because this option makes changes to the input files, it is good to make a backup first or work with files under source control so any unwanted changes can be undone.
+When the `--fix` option is specified, `markdownlint-cli` tries to apply all fixes reported by the active rules and reports any errors that remain.
+Because this option makes changes to the input files, it is good to make a backup first or work with files under source control so any unwanted changes can be undone.
 
 > Because not all rules include fix information when reporting errors, fixes may overlap, and not all errors are fixable, `--fix` will not usually address all errors.
 
@@ -70,12 +81,16 @@ The example of configuration file:
 
 See [test configuration file][test-config] or [style folder][style-folder] for more examples.
 
-CLI argument `--config` is not mandatory. If it is not provided, `markdownlint-cli` looks for file `.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for file `.markdownlintrc` in current or all upper folders. The algorithm is described in details on [rc package page][rc-standards]. If `--config` argument is provided, the file must be valid JSON, JSONC, or YAML.
+CLI argument `--config` is not mandatory.
+If it is not provided, `markdownlint-cli` looks for file `.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for file `.markdownlintrc` in current or all upper folders.
+The algorithm is described in details on [rc package page][rc-standards].
+If `--config` argument is provided, the file must be valid JSON, JSONC, or YAML.
 
 ## Related
 
 - [markdownlint][markdownlint] - API for this module
 - [glob][glob] - Pattern matching implementation
+- [ignore][ignore] - `.markdownlintignore` implementation
 
 ## License
 
@@ -95,3 +110,5 @@ MIT © Igor Shubovych
 [rc-standards]: https://www.npmjs.com/package/rc#standards
 [glob]: https://github.com/isaacs/node-glob
 [globprimer]: https://github.com/isaacs/node-glob/blob/master/README.md#glob-primer
+[ignore]: https://github.com/kaelzhang/node-ignore
+[gitignore]: https://git-scm.com/docs/gitignore
