@@ -645,3 +645,57 @@ test('.markdownlintignore is applied correctly', async t => {
     t.deepEqual(error.stderr, expected);
   }
 });
+
+test('--ignore-path works with .markdownlintignore', async t => {
+  try {
+    await execa(
+      path.resolve('..', 'markdownlint.js'), ['--ignore-path', '.markdownlintignore', '.'], {
+        cwd: path.join(__dirname, 'markdownlintignore'),
+        stripFinalNewline: false
+      });
+    t.fail();
+  } catch (error) {
+    const expected = [
+      'incorrect.md:1 MD047/single-trailing-newline Files should end with a single newline character',
+      'subdir/incorrect.markdown:1 MD047/single-trailing-newline Files should end with a single newline character',
+      ''
+    ].join('\n');
+    t.deepEqual(error.stdout, '');
+    t.deepEqual(error.stderr, expected);
+  }
+});
+
+test('--ignore-path works with .ignorefile', async t => {
+  try {
+    await execa(
+      path.resolve('..', 'markdownlint.js'), ['--ignore-path', '.ignorefile', '.'], {
+        cwd: path.join(__dirname, 'markdownlintignore'),
+        stripFinalNewline: false
+      });
+    t.fail();
+  } catch (error) {
+    const expected = [
+      'incorrect.markdown:1 MD047/single-trailing-newline Files should end with a single newline character',
+      ''
+    ].join('\n');
+    t.deepEqual(error.stdout, '');
+    t.deepEqual(error.stderr, expected);
+  }
+});
+
+test('--ignore-path fails for missing file', async t => {
+  const missingFile = 'missing-file';
+  try {
+    await execa(
+      path.resolve('..', 'markdownlint.js'),
+      ['--ignore-path', missingFile, '.'], {
+        cwd: path.join(__dirname, 'markdownlintignore'),
+        stripFinalNewline: false
+      }
+    );
+    t.fail();
+  } catch (error) {
+    t.deepEqual(error.stdout, '');
+    t.true(/ENOENT.*no such file or directory/i.test(error.stderr));
+  }
+});

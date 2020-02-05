@@ -170,7 +170,8 @@ program
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, or YAML)')
-  .option('-i, --ignore [file|directory|glob]', 'files to ignore/exclude', concatArray, [])
+  .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
+  .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
   .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, []);
 
 program.parse(process.argv);
@@ -216,10 +217,16 @@ function loadCustomRules(rules) {
   }));
 }
 
-const markdownlintIgnore = '.markdownlintignore';
+let ignorePath = '.markdownlintignore';
+let {existsSync} = fs;
+if (program.ignorePath) {
+  ignorePath = program.ignorePath;
+  existsSync = () => true;
+}
+
 let ignoreFilter = () => true;
-if (fs.existsSync(markdownlintIgnore)) {
-  const ignoreText = fs.readFileSync(markdownlintIgnore, fsOptions);
+if (existsSync(ignorePath)) {
+  const ignoreText = fs.readFileSync(ignorePath, fsOptions);
   const ignoreInstance = ignore().add(ignoreText);
   ignoreFilter = fileInfo => !ignoreInstance.ignores(fileInfo.original);
 }

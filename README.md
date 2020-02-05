@@ -25,7 +25,8 @@ markdownlint --help
     -s, --stdin                                 read from STDIN (does not work with files)
     -o, --output [outputFile]                   write issues to file (no console)
     -c, --config [configFile]                   configuration file (JSON, JSONC, or YAML)
-    -i, --ignore [file|directory|glob]          files to ignore/exclude
+    -i, --ignore [file|directory|glob]          file(s) to ignore/exclude
+    -p, --ignore-path [file]                    path to file with ignore pattern(s)
     -r, --rules  [file|directory|glob|package]  custom rule files
 ```
 
@@ -46,13 +47,14 @@ Linux Bash: `markdownlint '**/*.md' --ignore node_modules`
 
 ### Ignoring files
 
-If present in the current folder, a `.markdownlintignore` file will be used to ignore files and /or directories according to the rules for [gitignore][gitignore].
+If present in the current folder, a `.markdownlintignore` file will be used to ignore files and/or directories according to the rules for [gitignore][gitignore].
+If the `-p`/`--ignore-path` option is present, the specified file will be used instead of `.markdownlintignore`.
 
 The order of operations is:
 
-- Enumerate files/directories/globs on the command line
-- Apply exclusions from `.markdownlintignore`
-- Apply exclusions from `-i`/`--ignore` option(s)
+- Enumerate files/directories/globs passed on the command line
+- Apply exclusions from `-p`/`--ignore-path` (if specified) or `.markdownlintignore` (if present)
+- Apply exclusions from any `-i`/`--ignore` option(s) that are specified
 
 ### Fixing errors
 
