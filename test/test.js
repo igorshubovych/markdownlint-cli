@@ -5,7 +5,7 @@ import path from 'path';
 import test from 'ava';
 import execa from 'execa';
 
-const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+ MD\d{3}/gm;
+const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+(:\d+)? MD\d{3}/gm;
 
 process.chdir('./test');
 
@@ -226,10 +226,10 @@ test('linting results are sorted by file/line/names/description', async t => {
       'incorrect.md:1 MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below] [Context: "## header 2"]',
       'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in file should be a top level heading [Context: "## header 2"]',
       'incorrect.md:2 MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "# header"]',
-      'incorrect.md:5 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
-      'incorrect.md:11 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
-      'incorrect.md:17 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
-      'incorrect.md:23 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
+      'incorrect.md:5:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
+      'incorrect.md:11:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
+      'incorrect.md:17:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
+      'incorrect.md:23:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
       ''
     ].join('\n');
     t.deepEqual(error.stdout, '');
@@ -376,7 +376,7 @@ function getCwdConfigFileTest(extension) {
       t.fail();
     } catch (error) {
       const expected = [
-        'heading-dollar.md:1 MD026/no-trailing-punctuation Trailing punctuation in heading [Punctuation: \'$\']',
+        'heading-dollar.md:1:10 MD026/no-trailing-punctuation Trailing punctuation in heading [Punctuation: \'$\']',
         ''
       ].join('\n');
       t.deepEqual(error.stdout, '');
@@ -637,8 +637,8 @@ test('.markdownlintignore is applied correctly', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'incorrect.md:1 MD047/single-trailing-newline Files should end with a single newline character',
-      'subdir/incorrect.markdown:1 MD047/single-trailing-newline Files should end with a single newline character',
+      'incorrect.md:1:8 MD047/single-trailing-newline Files should end with a single newline character',
+      'subdir/incorrect.markdown:1:8 MD047/single-trailing-newline Files should end with a single newline character',
       ''
     ].join('\n');
     t.deepEqual(error.stdout, '');
@@ -656,8 +656,8 @@ test('--ignore-path works with .markdownlintignore', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'incorrect.md:1 MD047/single-trailing-newline Files should end with a single newline character',
-      'subdir/incorrect.markdown:1 MD047/single-trailing-newline Files should end with a single newline character',
+      'incorrect.md:1:8 MD047/single-trailing-newline Files should end with a single newline character',
+      'subdir/incorrect.markdown:1:8 MD047/single-trailing-newline Files should end with a single newline character',
       ''
     ].join('\n');
     t.deepEqual(error.stdout, '');
@@ -675,7 +675,7 @@ test('--ignore-path works with .ignorefile', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'incorrect.markdown:1 MD047/single-trailing-newline Files should end with a single newline character',
+      'incorrect.markdown:1:8 MD047/single-trailing-newline Files should end with a single newline character',
       ''
     ].join('\n');
     t.deepEqual(error.stdout, '');

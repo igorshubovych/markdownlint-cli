@@ -116,11 +116,12 @@ function prepareFileList(files, fileExtensions, previousResults) {
 }
 
 function printResult(lintResult) {
-  const results = flatten(Object.keys(lintResult).map(function (file) {
-    return lintResult[file].map(function (result) {
+  const results = flatten(Object.keys(lintResult).map(file => {
+    return lintResult[file].map(result => {
       return {
         file: file,
         lineNumber: result.lineNumber,
+        column: (result.errorRange && result.errorRange[0]) || 0,
         names: result.ruleNames.join('/'),
         description: result.ruleDescription +
           (result.errorDetail ? ' [' + result.errorDetail + ']' : '') +
@@ -130,12 +131,14 @@ function printResult(lintResult) {
   }));
   let lintResultString = '';
   if (results.length > 0) {
-    results.sort(function (a, b) {
+    results.sort((a, b) => {
       return a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber ||
         a.names.localeCompare(b.names) || a.description.localeCompare(b.description);
     });
-    lintResultString = results.map(function (result) {
-      return result.file + ':' + result.lineNumber + ' ' + result.names + ' ' + result.description;
+    lintResultString = results.map(result => {
+      const {file, lineNumber, column, names, description} = result;
+      const columnText = column ? `:${column}` : '';
+      return `${file}:${lineNumber}${columnText} ${names} ${description}`;
     }).join('\n');
     // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
     // streams (e.g., when the output is being piped). Just set the exit code
