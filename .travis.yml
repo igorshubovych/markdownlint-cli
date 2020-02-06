@@ -1,11 +1,10 @@
 sudo: false
 language: node_js
 node_js:
+  - '13'
   - '12'
   - '11'
   - '10'
-  - '9'
-  - '8'
 env:
   - CXX=g++-4.8
 addons:
