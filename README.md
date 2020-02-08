@@ -88,6 +88,15 @@ If it is not provided, `markdownlint-cli` looks for file `.markdownlint.json`/`.
 The algorithm is described in details on [rc package page][rc-standards].
 If `--config` argument is provided, the file must be valid JSON, JSONC, or YAML.
 
+## Exit codes
+
+`markdownlint-cli` returns one of the following exit codes:
+
+- `0`: Program ran successfully
+- `1`: Linting errors / bad parameter
+- `2`: Unable to write `-o`/`--output` output file
+- `3`: Unable to load `-r`/`--rules` custom rule
+
 ## Related
 
 - [markdownlint][markdownlint] - API for this module
