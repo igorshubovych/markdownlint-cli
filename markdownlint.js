@@ -110,6 +110,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
   return flatten(files).map(function (file) {
     return {
       original: file,
+      relative: path.relative(process.cwd(), file),
       absolute: path.resolve(file)
     };
   });
@@ -231,7 +232,7 @@ let ignoreFilter = () => true;
 if (existsSync(ignorePath)) {
   const ignoreText = fs.readFileSync(ignorePath, fsOptions);
   const ignoreInstance = ignore().add(ignoreText);
-  ignoreFilter = fileInfo => !ignoreInstance.ignores(fileInfo.original);
+  ignoreFilter = fileInfo => !ignoreInstance.ignores(fileInfo.relative);
 }
 
 const files = prepareFileList(program.args, ['md', 'markdown'])

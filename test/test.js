@@ -646,6 +646,24 @@ test('.markdownlintignore is applied correctly', async t => {
   }
 });
 
+test('.markdownlintignore works with semi-absolute paths', async t => {
+  try {
+    await execa(
+      path.resolve('..', 'markdownlint.js'), ['./incorrect.md'], {
+        cwd: path.join(__dirname, 'markdownlintignore'),
+        stripFinalNewline: false
+      });
+    t.fail();
+  } catch (error) {
+    const expected = [
+      './incorrect.md:1:8 MD047/single-trailing-newline Files should end with a single newline character',
+      ''
+    ].join('\n');
+    t.deepEqual(error.stdout, '');
+    t.deepEqual(error.stderr, expected);
+  }
+});
+
 test('--ignore-path works with .markdownlintignore', async t => {
   try {
     await execa(
