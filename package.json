@@ -46,7 +46,7 @@
     "jsonc-parser": "~2.2.0",
     "lodash.differencewith": "~4.5.0",
     "lodash.flatten": "~4.4.0",
-    "markdownlint": "~0.19.0",
+    "markdownlint": "~0.20.1",
     "markdownlint-rule-helpers": "~0.7.0",
     "minimatch": "~3.0.4",
     "rc": "~1.2.7"
