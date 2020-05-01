@@ -7,59 +7,58 @@ const path = require('path');
 const Module = require('module');
 const program = require('commander');
 const getStdin = require('get-stdin');
-const jsYaml = require('js-yaml');
 const jsoncParser = require('jsonc-parser');
 const differenceWith = require('lodash.differencewith');
 const flatten = require('lodash.flatten');
-const extend = require('deep-extend');
 const ignore = require('ignore');
 const markdownlint = require('markdownlint');
 const markdownlintRuleHelpers = require('markdownlint-rule-helpers');
-const rc = require('rc');
+const {cosmiconfigSync, defaultLoaders} = require('cosmiconfig');
 const glob = require('glob');
 const minimatch = require('minimatch');
 const pkg = require('./package');
 
-function jsoncParse(text) {
-  return JSON.parse(jsoncParser.stripComments(text));
+function jsoncLoader(filepath, content) {
+  return defaultLoaders['.json'](filepath, jsoncParser.stripComments(content));
 }
 
-const projectConfigFiles = [
+const isTest = process.env.NODE_ENV === 'test';
+const stopDir = isTest ? path.resolve(__dirname, '..') : undefined;
+const searchPlaces = [
+  'package.json',
+  '.markdownlint.js',
+  '.markdownlintrc.js',
   '.markdownlint.json',
+  '.markdownlintrc.json',
   '.markdownlint.yaml',
-  '.markdownlint.yml'
+  '.markdownlintrc.yaml',
+  '.markdownlint.yml',
+  '.markdownlintrc.yaml',
+  '.markdownlintrc'
 ];
-const configFileParsers = [jsoncParse, jsYaml.safeLoad];
+const loaders = {'.json': jsoncLoader};
 const fsOptions = {encoding: 'utf8'};
 
 function readConfiguration(args) {
-  let config = rc('markdownlint', {});
+  const config = cosmiconfigSync('markdownlint', {searchPlaces, loaders, stopDir});
   const userConfigFile = args.config;
-  for (const projectConfigFile of projectConfigFiles) {
-    try {
-      fs.accessSync(projectConfigFile, fs.R_OK);
-      const projectConfig = markdownlint.readConfigSync(projectConfigFile, configFileParsers);
-      config = extend(config, projectConfig);
-      break;
-    } catch (_) {
-      // Ignore failure
-    }
-  }
-  // Normally parsing this file is not needed,
-  // because it is already parsed by rc package.
-  // However I have to do it to overwrite configuration
-  // from .markdownlint.{json,yaml,yml}.
+  let result = {};
 
   if (userConfigFile) {
     try {
-      const userConfig = markdownlint.readConfigSync(userConfigFile, configFileParsers);
-      config = extend(config, userConfig);
+      result = config.load(userConfigFile) || {};
     } catch (error) {
       console.warn('Cannot read or parse config file ' + args.config + ': ' + error.message);
     }
+  } else {
+    try {
+      result = config.search() || {};
+    } catch (error) {
+      console.warn('Cannot read or parse config file: ' + error.message);
+    }
   }
 
-  return config;
+  return result.config || {};
 }
 
 function prepareFileList(files, fileExtensions, previousResults) {
@@ -173,7 +172,7 @@ program
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
-  .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, or YAML)')
+  .option('-c, --config [configFile]', 'configuration file (JS, JSON, JSONC or YAML)')
   .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
   .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, []);

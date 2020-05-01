@@ -24,7 +24,7 @@ markdownlint --help
     -f, --fix                                   fix basic errors (does not work with STDIN)
     -s, --stdin                                 read from STDIN (does not work with files)
     -o, --output [outputFile]                   write issues to file (no console)
-    -c, --config [configFile]                   configuration file (JSON, JSONC, or YAML)
+    -c, --config [configFile]                   configuration file (JS, JSON, JSONC, or YAML)
     -i, --ignore [file|directory|glob]          file(s) to ignore/exclude
     -p, --ignore-path [file]                    path to file with ignore pattern(s)
     -r, --rules  [file|directory|glob|package]  custom rule files
@@ -67,7 +67,7 @@ Because this option makes changes to the input files, it is good to make a backu
 
 `markdownlint-cli` reuses [the rules][rules] from `markdownlint` package.
 
-Configuration is stored in JSON, JSONC, YAML, or INI files in the same [config format][config].
+Configuration is stored in JS, JSON, JSONC, YAML, or INI files in the same [config format][config].
 
 The example of configuration file:
 
@@ -84,9 +84,13 @@ The example of configuration file:
 See [test configuration file][test-config] or [style folder][style-folder] for more examples.
 
 CLI argument `--config` is not mandatory.
-If it is not provided, `markdownlint-cli` looks for file `.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for file `.markdownlintrc` in current or all upper folders.
-The algorithm is described in details on [rc package page][rc-standards].
-If `--config` argument is provided, the file must be valid JSON, JSONC, or YAML.
+If it is not provided, `markdownlint-cli` looks for the 'markdownlint-cli' section in
+the `package.json`. If the configuration is not present in the `package.json`, it looks for
+the file `.markdownlint.js`/`.markdownlintrc.js`/`.markdownlint.json`/`.markdownlintrc.json`/
+`.markdownlint.yaml`/`.markdownlintrc.yaml`/`.markdownlint.yml`/`.markdownlintrc.yml`
+in current or all upper folders.
+The algorithm is described in details on [cosmiconfig package page][explorer-search].
+If `--config` argument is provided, the file must be valid JS, JSON, JSONC, or YAML.
 
 ## Exit codes
 
@@ -118,7 +122,7 @@ MIT © Igor Shubovych
 [config]: https://github.com/DavidAnson/markdownlint#optionsconfig
 [style-folder]: https://github.com/DavidAnson/markdownlint/tree/master/style
 [test-config]: https://github.com/igorshubovych/markdownlint-cli/blob/master/test/test-config.json
-[rc-standards]: https://www.npmjs.com/package/rc#standards
+[explorer-search]: https://github.com/davidtheclark/cosmiconfig#explorersearch
 [glob]: https://github.com/isaacs/node-glob
 [globprimer]: https://github.com/isaacs/node-glob/blob/master/README.md#glob-primer
 [ignore]: https://github.com/kaelzhang/node-ignore

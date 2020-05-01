@@ -38,18 +38,16 @@
   "homepage": "https://github.com/igorshubovych/markdownlint-cli#readme",
   "dependencies": {
     "commander": "~2.9.0",
-    "deep-extend": "~0.5.1",
+    "cosmiconfig": "~6.0.0",
     "get-stdin": "~5.0.1",
     "glob": "~7.1.2",
     "ignore": "~5.1.4",
-    "js-yaml": "~3.13.1",
     "jsonc-parser": "~2.2.0",
     "lodash.differencewith": "~4.5.0",
     "lodash.flatten": "~4.4.0",
     "markdownlint": "~0.20.2",
     "markdownlint-rule-helpers": "~0.9.0",
-    "minimatch": "~3.0.4",
-    "rc": "~1.2.7"
+    "minimatch": "~3.0.4"
   },
   "devDependencies": {
     "ava": "^2.2.0",
