@@ -41,7 +41,7 @@ function readConfiguration(args) {
       const projectConfig = markdownlint.readConfigSync(projectConfigFile, configFileParsers);
       config = extend(config, projectConfig);
       break;
-    } catch (error) {
+    } catch (_) {
       // Ignore failure
     }
   }
@@ -90,7 +90,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
 
         return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
       }
-    } catch (error) {
+    } catch (_) {
       // Not a directory, not a file, may be a glob
       if (previousResults) {
         const matcher = new minimatch.Minimatch(path.resolve(process.cwd(), file), globOptions);
@@ -197,7 +197,7 @@ function tryResolvePath(filepath) {
 
     // Maybe it is a path to package installed locally
     return require.resolve(path.join(process.cwd(), filepath));
-  } catch (error) {
+  } catch (_) {
     return filepath;
   }
 }
@@ -236,7 +236,7 @@ if (existsSync(ignorePath)) {
 }
 
 const files = prepareFileList(program.args, ['md', 'markdown'])
-  .filter(ignoreFilter);
+  .filter(value => ignoreFilter(value));
 const ignores = prepareFileList(program.ignore, ['md', 'markdown'], files);
 const customRules = loadCustomRules(program.rules);
 const diff = differenceWith(files, ignores, function (a, b) {
