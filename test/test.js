@@ -1,9 +1,9 @@
 'use strict';
 
-import fs from 'fs';
-import path from 'path';
-import test from 'ava';
-import execa from 'execa';
+const fs = require('fs');
+const path = require('path');
+const test = require('ava');
+const execa = require('execa');
 
 const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+(:\d+)? MD\d{3}/gm;
 
@@ -353,7 +353,7 @@ test('--output with invalid path fails', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.replace(/: ENOENT[^]*$/, ''), 'Cannot write to output file ' + output);
-    t.throws(() => fs.accessSync(output, 'utf8'), Error);
+    t.throws(() => fs.accessSync(output, 'utf8'));
   }
 });
 

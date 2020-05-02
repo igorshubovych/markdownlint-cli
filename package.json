@@ -52,7 +52,7 @@
     "rc": "~1.2.7"
   },
   "devDependencies": {
-    "ava": "^2.2.0",
+    "ava": "^3.8.1",
     "execa": "^2.0.4",
     "husky": "^3.0.4",
     "tap-growl": "^3.0.0",
