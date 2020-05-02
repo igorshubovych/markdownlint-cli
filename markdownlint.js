@@ -6,22 +6,20 @@ const fs = require('fs');
 const path = require('path');
 const Module = require('module');
 const program = require('commander');
-const getStdin = require('get-stdin');
-const jsYaml = require('js-yaml');
-const jsoncParser = require('jsonc-parser');
 const differenceWith = require('lodash.differencewith');
 const flatten = require('lodash.flatten');
-const extend = require('deep-extend');
-const ignore = require('ignore');
 const markdownlint = require('markdownlint');
-const markdownlintRuleHelpers = require('markdownlint-rule-helpers');
 const rc = require('rc');
 const glob = require('glob');
 const minimatch = require('minimatch');
 const pkg = require('./package');
 
 function jsoncParse(text) {
-  return JSON.parse(jsoncParser.stripComments(text));
+  return JSON.parse(require('jsonc-parser').stripComments(text));
+}
+
+function jsYamlSafeLoad(text) {
+  return require('js-yaml').safeLoad(text);
 }
 
 const projectConfigFiles = [
@@ -29,7 +27,7 @@ const projectConfigFiles = [
   '.markdownlint.yaml',
   '.markdownlint.yml'
 ];
-const configFileParsers = [jsoncParse, jsYaml.safeLoad];
+const configFileParsers = [jsoncParse, jsYamlSafeLoad];
 const fsOptions = {encoding: 'utf8'};
 
 function readConfiguration(args) {
@@ -39,7 +37,7 @@ function readConfiguration(args) {
     try {
       fs.accessSync(projectConfigFile, fs.R_OK);
       const projectConfig = markdownlint.readConfigSync(projectConfigFile, configFileParsers);
-      config = extend(config, projectConfig);
+      config = require('deep-extend')(config, projectConfig);
       break;
     } catch (_) {
       // Ignore failure
@@ -53,7 +51,7 @@ function readConfiguration(args) {
   if (userConfigFile) {
     try {
       const userConfig = markdownlint.readConfigSync(userConfigFile, configFileParsers);
-      config = extend(config, userConfig);
+      config = require('deep-extend')(config, userConfig);
     } catch (error) {
       console.warn('Cannot read or parse config file ' + args.config + ': ' + error.message);
     }
@@ -231,6 +229,7 @@ if (program.ignorePath) {
 let ignoreFilter = () => true;
 if (existsSync(ignorePath)) {
   const ignoreText = fs.readFileSync(ignorePath, fsOptions);
+  const ignore = require('ignore');
   const ignoreInstance = ignore().add(ignoreText);
   ignoreFilter = fileInfo => !ignoreInstance.ignores(fileInfo.relative);
 }
@@ -264,6 +263,7 @@ function lintAndPrint(stdin, files) {
       ...lintOptions,
       resultVersion: 3
     };
+    const markdownlintRuleHelpers = require('markdownlint-rule-helpers');
     files.forEach(file => {
       fixOptions.files = [file];
       const fixResult = markdownlint.sync(fixOptions);
@@ -285,6 +285,7 @@ function lintAndPrint(stdin, files) {
 if ((files.length > 0) && !program.stdin) {
   lintAndPrint(null, diff);
 } else if ((files.length === 0) && program.stdin && !program.fix) {
+  const getStdin = require('get-stdin');
   getStdin().then(lintAndPrint);
 } else {
   program.help();
