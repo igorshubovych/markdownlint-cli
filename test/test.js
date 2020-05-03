@@ -365,6 +365,14 @@ test('configuration file can be YAML', async t => {
   t.is(result.stderr, '');
 });
 
+test('configuration file can be JavaScript', async t => {
+  const result = await execa('../markdownlint.js',
+    ['--config', 'md043-config.js', 'md043-config.md'],
+    {stripFinalNewline: false});
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+});
+
 function getCwdConfigFileTest(extension) {
   return async t => {
     try {

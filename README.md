@@ -24,7 +24,7 @@ markdownlint --help
     -f, --fix                                   fix basic errors (does not work with STDIN)
     -s, --stdin                                 read from STDIN (does not work with files)
     -o, --output [outputFile]                   write issues to file (no console)
-    -c, --config [configFile]                   configuration file (JSON, JSONC, or YAML)
+    -c, --config [configFile]                   configuration file (JSON, JSONC, JS, or YAML)
     -i, --ignore [file|directory|glob]          file(s) to ignore/exclude
     -p, --ignore-path [file]                    path to file with ignore pattern(s)
     -r, --rules  [file|directory|glob|package]  custom rule files
@@ -83,10 +83,14 @@ The example of configuration file:
 
 See [test configuration file][test-config] or [style folder][style-folder] for more examples.
 
-CLI argument `--config` is not mandatory.
-If it is not provided, `markdownlint-cli` looks for file `.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for file `.markdownlintrc` in current or all upper folders.
-The algorithm is described in details on [rc package page][rc-standards].
-If `--config` argument is provided, the file must be valid JSON, JSONC, or YAML.
+The CLI argument `--config` is not required.
+If it is not provided, `markdownlint-cli` looks for the file `.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for the file `.markdownlintrc` in the current or all parent folders.
+The algorithm is described in detail on the [`rc` package page][rc-standards].
+If the `--config` argument is provided, the file must be valid JSON, JSONC, JS, or YAML.
+JS configuration files contain JavaScript code, must have the `.js` extension, and must export (via `module.exports = ...`) a configuration object of the form shown above.
+A JS configuration file may internally `require` one or more npm packages as a way of reusing configuration across projects.
+
+> JS configuration files must be provided via the `--config` argument; they are not automatically loaded because running untrusted code is a security concern.
 
 ## Exit codes
 

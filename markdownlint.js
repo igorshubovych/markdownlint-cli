@@ -12,6 +12,7 @@ const markdownlint = require('markdownlint');
 const rc = require('rc');
 const glob = require('glob');
 const minimatch = require('minimatch');
+const minimist = require('minimist');
 const pkg = require('./package');
 
 function jsoncParse(text) {
@@ -29,10 +30,19 @@ const projectConfigFiles = [
 ];
 const configFileParsers = [jsoncParse, jsYamlSafeLoad];
 const fsOptions = {encoding: 'utf8'};
+const processCwd = process.cwd();
 
 function readConfiguration(args) {
-  let config = rc('markdownlint', {});
   const userConfigFile = args.config;
+  const jsConfigFile = /\.js$/i.test(userConfigFile);
+  const rcArgv = minimist(process.argv.slice(2));
+  if (jsConfigFile) {
+    // Prevent rc package from parsing .js config file as INI
+    delete rcArgv.config;
+  }
+
+  // Load from well-known config files
+  let config = rc('markdownlint', {}, rcArgv);
   for (const projectConfigFile of projectConfigFiles) {
     try {
       fs.accessSync(projectConfigFile, fs.R_OK);
@@ -43,17 +53,21 @@ function readConfiguration(args) {
       // Ignore failure
     }
   }
+
   // Normally parsing this file is not needed,
   // because it is already parsed by rc package.
   // However I have to do it to overwrite configuration
   // from .markdownlint.{json,yaml,yml}.
-
   if (userConfigFile) {
     try {
-      const userConfig = markdownlint.readConfigSync(userConfigFile, configFileParsers);
+      const userConfig = jsConfigFile ?
+        // Evaluate .js configuration file as code
+        require(path.resolve(processCwd, userConfigFile)) :
+        // Load JSON/YAML configuration as data
+        markdownlint.readConfigSync(userConfigFile, configFileParsers);
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
-      console.warn('Cannot read or parse config file ' + args.config + ': ' + error.message);
+      console.warn('Cannot read or parse config file ' + userConfigFile + ': ' + error.message);
     }
   }
 
@@ -78,7 +92,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
         // Directory (file falls through to below)
         if (previousResults) {
           const matcher = new minimatch.Minimatch(
-            path.resolve(process.cwd(), path.join(file, '**', extensionGlobPart)), globOptions);
+            path.resolve(processCwd, path.join(file, '**', extensionGlobPart)), globOptions);
           return previousResults.filter(function (fileInfo) {
             return matcher.match(fileInfo.absolute);
           }).map(function (fileInfo) {
@@ -91,7 +105,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
     } catch (_) {
       // Not a directory, not a file, may be a glob
       if (previousResults) {
-        const matcher = new minimatch.Minimatch(path.resolve(process.cwd(), file), globOptions);
+        const matcher = new minimatch.Minimatch(path.resolve(processCwd, file), globOptions);
         return previousResults.filter(function (fileInfo) {
           return matcher.match(fileInfo.absolute);
         }).map(function (fileInfo) {
@@ -108,7 +122,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
   return flatten(files).map(function (file) {
     return {
       original: file,
-      relative: path.relative(process.cwd(), file),
+      relative: path.relative(processCwd, file),
       absolute: path.resolve(file)
     };
   });
@@ -171,7 +185,7 @@ program
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
-  .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, or YAML)')
+  .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
   .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
   .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, []);
@@ -183,7 +197,7 @@ function tryResolvePath(filepath) {
     if (path.basename(filepath) === filepath && path.extname(filepath) === '') {
       // Looks like a package name, resolve it relative to cwd
       // Get list of directories, where requested module can be.
-      let paths = Module._nodeModulePaths(process.cwd());
+      let paths = Module._nodeModulePaths(processCwd);
       paths = paths.concat(Module.globalPaths);
       if (require.resolve.paths) {
         // Node >= 8.9.0
@@ -194,7 +208,7 @@ function tryResolvePath(filepath) {
     }
 
     // Maybe it is a path to package installed locally
-    return require.resolve(path.join(process.cwd(), filepath));
+    return require.resolve(path.join(processCwd, filepath));
   } catch (_) {
     return filepath;
   }
