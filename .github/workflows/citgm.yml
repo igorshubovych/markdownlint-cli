@@ -1,0 +1,33 @@
+name: Canary in the Gold Mine build
+
+on: [push, pull_request]
+
+jobs:
+  citgm:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+        - repo: dotnet/docs
+          command: markdownlint "**/*.md" -i "samples/**/*.md"
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - run: npm ci
+
+    - name: Link Markdownlint globally
+      run: sudo npm link
+
+    - name: Checkout ${{ matrix.repo }}
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ matrix.repo }}
+        path: ${{ matrix.repo }}
+
+    - name: Test ${{ matrix.repo }}
+      run: |
+        cd ${{ matrix.repo }}
+        ${{ matrix.command }}
