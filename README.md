@@ -118,9 +118,9 @@ MIT © Igor Shubovych
 [appveyor-url]: https://ci.appveyor.com/project/igorshubovych/markdownlint-cli
 
 [markdownlint]: https://github.com/DavidAnson/markdownlint
-[rules]: https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md
+[rules]: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
 [config]: https://github.com/DavidAnson/markdownlint#optionsconfig
-[style-folder]: https://github.com/DavidAnson/markdownlint/tree/master/style
+[style-folder]: https://github.com/DavidAnson/markdownlint/tree/main/style
 [test-config]: https://github.com/igorshubovych/markdownlint-cli/blob/master/test/test-config.json
 [rc-standards]: https://www.npmjs.com/package/rc#standards
 [glob]: https://github.com/isaacs/node-glob
