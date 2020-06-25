@@ -164,11 +164,19 @@ function printResult(lintResult) {
   if (program.junit) {
     const builder = require('junit-report-builder');
     const reportStart = new Date();
-    const suite = builder.testSuite().name('Markdownlint').timestamp(reportStart.toISOString());
+    const suite = builder
+      .testSuite()
+      .name('Markdownlint')
+      .timestamp(reportStart.toISOString());
     results.forEach(result => {
       const {file, lineNumber, column, names, description} = result;
       const columnText = column ? `:${column}` : '';
-      suite.testCase().className(file).name(`${file}:${lineNumber}${columnText} ${names}`).failure(`${file}:${lineNumber}${columnText} ${names} ${description}`, names).time(0.001);
+      suite
+        .testCase()
+        .className(file)
+        .name(`${file}:${lineNumber}${columnText} ${names}`)
+        .failure(`${file}:${lineNumber}${columnText} ${names} ${description}`, names)
+        .time(0.001);
     });
     const reportTime = (new Date().getTime() - reportStart.getTime()) / 1000;
     suite.time(reportTime);
