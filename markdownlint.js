@@ -163,11 +163,10 @@ function printResult(lintResult) {
 
   if (program.junit) {
     const builder = require('junit-report-builder');
-    const reportStart = new Date();
     const suite = builder
       .testSuite()
       .name('Markdownlint')
-      .timestamp(reportStart.toISOString());
+      .timestamp(new Date().toISOString());
     results.forEach(result => {
       const {file, lineNumber, column, names, description} = result;
       const columnText = column ? `:${column}` : '';
@@ -176,10 +175,9 @@ function printResult(lintResult) {
         .className(file)
         .name(`${file}:${lineNumber}${columnText} ${names}`)
         .failure(`${file}:${lineNumber}${columnText} ${names} ${description}`, names)
-        .time(0.001);
+        .time(0);
     });
-    const reportTime = (new Date().getTime() - reportStart.getTime()) / 1000;
-    suite.time(reportTime);
+    suite.time(0);
     try {
       builder.writeTo(program.junit);
     } catch (error) {
@@ -209,9 +207,10 @@ program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
+  .arguments('[options] <files|directories|globs>')
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
-  .option('-o, --output [outputFile]', 'write issues to file (no console)')
+  .option('-o, --output <outputFile>', 'write issues to file (no console)')
   .option('-j, --junit [junitFile]', 'write issues to file in junit format as well as to the console')
   .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
   .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
