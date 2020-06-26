@@ -167,16 +167,21 @@ function printResult(lintResult) {
       .testSuite()
       .name('Markdownlint')
       .timestamp(new Date().toISOString());
-    results.forEach(result => {
-      const {file, lineNumber, column, names, description} = result;
-      const columnText = column ? `:${column}` : '';
-      suite
-        .testCase()
-        .className(file)
-        .name(`${file}:${lineNumber}${columnText} ${names}`)
-        .failure(`${file}:${lineNumber}${columnText} ${names} ${description}`, names)
-        .time(0);
-    });
+    if (results.length > 0) {
+      results.forEach(result => {
+        const {file, lineNumber, column, names, description} = result;
+        const columnText = column ? `:${column}` : '';
+        suite
+          .testCase()
+          .className(file)
+          .name(`${file}:${lineNumber}${columnText} ${names}`)
+          .failure(`${file}:${lineNumber}${columnText} ${names} ${description}`, names)
+          .time(0);
+      });
+    } else {
+      suite.testCase().className(program.args).name('Markdownlint');
+    }
+
     suite.time(0);
     try {
       builder.writeTo(program.junit);
