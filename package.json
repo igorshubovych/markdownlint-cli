@@ -44,7 +44,7 @@
     "ignore": "~5.1.4",
     "js-yaml": "~3.13.1",
     "jsonc-parser": "~2.2.0",
-    "junit-report-builder": "^2.0.0",
+    "junit-report-builder": "~2.0.0",
     "lodash.differencewith": "~4.5.0",
     "lodash.flatten": "~4.4.0",
     "markdownlint": "~0.20.3",

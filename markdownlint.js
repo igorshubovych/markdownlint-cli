@@ -67,7 +67,7 @@ function readConfiguration(args) {
         markdownlint.readConfigSync(userConfigFile, configFileParsers);
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
-      console.warn('Cannot read or parse config file ' + userConfigFile + ': ' + error.message);
+      console.warn(`Cannot read or parse config file ${userConfigFile}: ${error.message}`);
     }
   }
 
@@ -161,43 +161,44 @@ function printResult(lintResult) {
     process.exitCode = 1;
   }
 
-  if (program.junit) {
+  if (program.output) {
+    try {
+      fs.writeFileSync(program.output, lintResultString);
+    } catch (error) {
+      console.warn(`Cannot write to output file ${program.output}: ${error.message}`);
+      process.exitCode = 2;
+    }
+  } else if (program.junit) {
     const builder = require('junit-report-builder');
-    const suite = builder
+    const testSuite = builder
       .testSuite()
-      .name('Markdownlint')
-      .timestamp(new Date().toISOString());
+      .name('markdownlint')
+      .timestamp(new Date().toISOString())
+      .time(0);
     if (results.length > 0) {
       results.forEach(result => {
         const {file, lineNumber, column, names, description} = result;
         const columnText = column ? `:${column}` : '';
-        suite
+        const testName = `${file}:${lineNumber}${columnText} ${names}`;
+        testSuite
           .testCase()
           .className(file)
-          .name(`${file}:${lineNumber}${columnText} ${names}`)
-          .failure(`${file}:${lineNumber}${columnText} ${names} ${description}`, names)
+          .name(testName)
+          .failure(`${testName} ${description}`, names)
           .time(0);
       });
     } else {
-      suite.testCase().className(program.args).name('Markdownlint');
+      testSuite.testCase().className(program.args).name('markdownlint');
     }
 
-    suite.time(0);
     try {
       builder.writeTo(program.junit);
     } catch (error) {
-      console.warn('Cannot write to output file ' + program.junit + ': ' + error.message);
-      process.exitCode = 2;
+      console.warn(`Cannot write to JUnit file ${program.junit}: ${error.message}`);
+      process.exitCode = 4;
     }
 
-    console.log(lintResultString);
-  } else if (program.output) {
-    try {
-      fs.writeFileSync(program.output, lintResultString);
-    } catch (error) {
-      console.warn('Cannot write to output file ' + program.output + ': ' + error.message);
-      process.exitCode = 2;
-    }
+    console.error(lintResultString);
   } else if (lintResultString) {
     console.error(lintResultString);
   }
@@ -212,15 +213,14 @@ program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
-  .arguments('[options] <files|directories|globs>')
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
   .option('-o, --output <outputFile>', 'write issues to file (no console)')
-  .option('-j, --junit [junitFile]', 'write issues to file in junit format as well as to the console')
-  .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
-  .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
-  .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
-  .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, []);
+  .option('-j, --junit <junitFile>', 'write issues to file in JUnit format and to the console')
+  .option('-c, --config <configFile>', 'configuration file (JSON, JSONC, JS, or YAML)')
+  .option('-i, --ignore <file|directory|glob>', 'file(s) to ignore/exclude', concatArray, [])
+  .option('-p, --ignore-path <file>', 'path to file with ignore pattern(s)')
+  .option('-r, --rules  <file|directory|glob|package>', 'custom rule files', concatArray, []);
 
 program.parse(process.argv);
 
@@ -259,7 +259,7 @@ function loadCustomRules(rules) {
 
       return fileList;
     } catch (error) {
-      console.error('Cannot load custom rule ' + rule + ': ' + error.message);
+      console.error(`Cannot load custom rule ${rule}: ${error.message}`);
       process.exit(3);
     }
   }));

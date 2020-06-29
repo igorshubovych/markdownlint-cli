@@ -23,11 +23,12 @@ markdownlint --help
     -V, --version                               output the version number
     -f, --fix                                   fix basic errors (does not work with STDIN)
     -s, --stdin                                 read from STDIN (does not work with files)
-    -o, --output [outputFile]                   write issues to file (no console)
-    -c, --config [configFile]                   configuration file (JSON, JSONC, JS, or YAML)
-    -i, --ignore [file|directory|glob]          file(s) to ignore/exclude
-    -p, --ignore-path [file]                    path to file with ignore pattern(s)
-    -r, --rules  [file|directory|glob|package]  custom rule files
+    -o, --output <outputFile>                   write issues to file (no console)
+    -j, --junit <junitFile>                     write issues to file in JUnit format and to the console
+    -c, --config <configFile>                   configuration file (JSON, JSONC, JS, or YAML)
+    -i, --ignore <file|directory|glob>          file(s) to ignore/exclude
+    -p, --ignore-path <file>                    path to file with ignore pattern(s)
+    -r, --rules  <file|directory|glob|package>  custom rule files
 ```
 
 ### Globbing
@@ -62,6 +63,13 @@ When the `--fix` option is specified, `markdownlint-cli` tries to apply all fixe
 Because this option makes changes to the input files, it is good to make a backup first or work with files under source control so any unwanted changes can be undone.
 
 > Because not all rules include fix information when reporting errors, fixes may overlap, and not all errors are fixable, `--fix` will not usually address all errors.
+
+### JUnit report
+
+If the `-j`/`--junit` option is specified, `markdownlint-cli` will output an XML report in JUnit format.
+This report can be used in CI/CD environments to make the `markdownlint-cli` results available to your CI/CD tool.
+If both `-j`/`--junit` and `-o`/`--output` are specified, `-o`/`--output` will take precedence.
+Only one of these options should be specified.
 
 ## Configuration
 
@@ -100,6 +108,7 @@ A JS configuration file may internally `require` one or more npm packages as a w
 - `1`: Linting errors / bad parameter
 - `2`: Unable to write `-o`/`--output` output file
 - `3`: Unable to load `-r`/`--rules` custom rule
+- `4`: Unable to write `-j`/`--junit` output file
 
 ## Related
 
