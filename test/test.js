@@ -358,13 +358,13 @@ test('--output with invalid path fails', async t => {
   }
 });
 
-test('--junit with empty input has empty output', async t => {
+test('--junit with empty input has single successful test', async t => {
   const input = '';
-  const output = '../outputA.xml';
+  const junit = '../junitA.xml';
   const result = await execa('../markdownlint.js',
-    ['--stdin', '--junit', output],
+    ['--stdin', '--junit', junit],
     {input, stripFinalNewline: false});
-  const xml = fs.readFileSync(output, 'utf8');
+  const xml = fs.readFileSync(junit, 'utf8');
   const parsedXml = xmlParser.xml2js(xml, {compact: true});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
@@ -380,7 +380,7 @@ test('--junit with empty input has empty output', async t => {
   t.is(parsedXml.testsuites.testsuite.testcase._attributes.classname, 'stdin');
   t.is(parsedXml.testsuites.testsuite.testcase._attributes.name, 'markdownlint');
   t.is(parsedXml.testsuites.testsuite.testcase._attributes.time, '0');
-  fs.unlinkSync(output);
+  fs.unlinkSync(junit);
 });
 
 // WIP
