@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const test = require('ava');
 const execa = require('execa');
+const xmlParser = require('xml-js');
 
 const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+(:\d+)? MD\d{3}/gm;
 
@@ -356,6 +357,85 @@ test('--output with invalid path fails', async t => {
     t.throws(() => fs.accessSync(output, 'utf8'));
   }
 });
+
+test('--junit with empty input has empty output', async t => {
+  const input = '';
+  const output = '../outputA.xml';
+  const result = await execa('../markdownlint.js',
+    ['--stdin', '--junit', output],
+    {input, stripFinalNewline: false});
+  const xml = fs.readFileSync(output, 'utf8');
+  const parsedXml = xmlParser.xml2js(xml, {compact: true});
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(Object.keys(parsedXml.testsuites).length, 1);
+  t.is(Object.keys(parsedXml.testsuites.testsuite).length, 2);
+  t.is(parsedXml.testsuites.testsuite._attributes.name, 'markdownlint');
+  t.is(parsedXml.testsuites.testsuite._attributes.timestamp.match(/\d{4}-[01]\d-[0-3]\dT[0-2](?:\d:[0-5]){2}\d\.\d+Z/gm).length, 1);
+  t.is(parsedXml.testsuites.testsuite._attributes.time, '0');
+  t.is(parsedXml.testsuites.testsuite._attributes.tests, '1');
+  t.is(parsedXml.testsuites.testsuite._attributes.failures, '0');
+  t.is(parsedXml.testsuites.testsuite._attributes.errors, '0');
+  t.is(parsedXml.testsuites.testsuite._attributes.skipped, '0');
+  t.is(parsedXml.testsuites.testsuite.testcase._attributes.classname, 'stdin');
+  t.is(parsedXml.testsuites.testsuite.testcase._attributes.name, 'markdownlint');
+  t.is(parsedXml.testsuites.testsuite.testcase._attributes.time, '0');
+  fs.unlinkSync(output);
+});
+
+// WIP
+// test('--junit with valid input has empty output', async t => {
+//   const input = [
+//     '# Heading',
+//     '',
+//     'Text',
+//     ''
+//   ].join('\n');
+//   const output = '../outputB.txt';
+//   const result = await execa('../markdownlint.js',
+//     ['--stdin', '--output', output],
+//     {input, stripFinalNewline: false});
+//   t.is(result.stdout, '');
+//   t.is(result.stderr, '');
+//   t.is(fs.readFileSync(output, 'utf8'), '');
+//   fs.unlinkSync(output);
+// });
+
+// test('--junit with invalid input outputs violations', async t => {
+//   const input = [
+//     'Heading',
+//     '',
+//     'Text ',
+//     ''
+//   ].join('\n');
+//   const output = '../outputC.txt';
+//   try {
+//     await execa('../markdownlint.js',
+//       ['--stdin', '--output', output],
+//       {input, stripFinalNewline: false});
+//     t.fail();
+//   } catch (error) {
+//     t.is(error.stdout, '');
+//     t.is(error.stderr, '');
+//     t.is(fs.readFileSync(output, 'utf8').match(errorPattern).length, 2);
+//     fs.unlinkSync(output);
+//   }
+// });
+
+// test('--junit with invalid path fails', async t => {
+//   const input = '';
+//   const output = 'invalid/outputD.txt';
+//   try {
+//     await execa('../markdownlint.js',
+//       ['--stdin', '--output', output],
+//       {input, stripFinalNewline: false});
+//     t.fail();
+//   } catch (error) {
+//     t.is(error.stdout, '');
+//     t.is(error.stderr.replace(/: ENOENT[^]*$/, ''), 'Cannot write to output file ' + output);
+//     t.throws(() => fs.accessSync(output, 'utf8'));
+//   }
+// });
 
 test('configuration file can be YAML', async t => {
   const result = await execa('../markdownlint.js',

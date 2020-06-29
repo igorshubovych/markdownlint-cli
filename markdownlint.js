@@ -188,7 +188,8 @@ function printResult(lintResult) {
           .time(0);
       });
     } else {
-      testSuite.testCase().className(program.args).name('markdownlint');
+      const className = program.stdin ? 'stdin' : program.args;
+      testSuite.testCase().className(className).name('markdownlint').time(0);
     }
 
     try {
@@ -198,7 +199,9 @@ function printResult(lintResult) {
       process.exitCode = 4;
     }
 
-    console.error(lintResultString);
+    if (lintResultString) {
+      console.error(lintResultString);
+    }
   } else if (lintResultString) {
     console.error(lintResultString);
   }
