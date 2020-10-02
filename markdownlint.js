@@ -49,7 +49,7 @@ function readConfiguration(args) {
       const projectConfig = markdownlint.readConfigSync(projectConfigFile, configFileParsers);
       config = require('deep-extend')(config, projectConfig);
       break;
-    } catch (_) {
+    } catch {
       // Ignore failure
     }
   }
@@ -102,7 +102,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
 
         return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
       }
-    } catch (_) {
+    } catch {
       // Not a directory, not a file, may be a glob
       if (previousResults) {
         const matcher = new minimatch.Minimatch(path.resolve(processCwd, file), globOptions);
@@ -209,7 +209,7 @@ function tryResolvePath(filepath) {
 
     // Maybe it is a path to package installed locally
     return require.resolve(path.join(processCwd, filepath));
-  } catch (_) {
+  } catch {
     return filepath;
   }
 }
