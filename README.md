@@ -119,8 +119,8 @@ A JS configuration file may internally `require` one or more npm packages as a w
 
 MIT © Igor Shubovych
 
-[actions-badge]: https://github.com/igorshubovych/markdownlint-cli/workflows/Test/badge.svg?branch=master
-[actions-url]: https://github.com/igorshubovych/markdownlint-cli/actions?query=workflow%3ATest
+[actions-badge]: https://github.com/igorshubovych/markdownlint-cli/workflows/CI/badge.svg?branch=master
+[actions-url]: https://github.com/igorshubovych/markdownlint-cli/actions?query=workflow%3ACI
 
 [markdownlint]: https://github.com/DavidAnson/markdownlint
 [rules]: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
