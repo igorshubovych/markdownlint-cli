@@ -8,6 +8,12 @@
 npm install -g markdownlint-cli
 ```
 
+On macOS you can install via [Homebrew](https://brew.sh/):
+
+```bash
+brew install markdownlint-cli
+```
+
 ## Usage
 
 ```bash
