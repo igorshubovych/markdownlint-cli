@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/igorshubovych/markdownlint-cli#readme",
   "dependencies": {
-    "commander": "~2.9.0",
+    "commander": "~6.2.0",
     "deep-extend": "~0.5.1",
     "get-stdin": "~8.0.0",
     "glob": "~7.1.2",
