@@ -43,7 +43,7 @@
     "glob": "~7.1.2",
     "ignore": "~5.1.4",
     "js-yaml": "~3.13.1",
-    "jsonc-parser": "~2.2.0",
+    "jsonc-parser": "~2.3.1",
     "lodash.differencewith": "~4.5.0",
     "lodash.flatten": "~4.4.0",
     "markdownlint": "~0.21.0",
