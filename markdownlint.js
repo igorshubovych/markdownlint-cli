@@ -183,6 +183,7 @@ program
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
+  .option('--fix-rule [rule]', 'only fix a specific rule (does not work with STDIN)', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
@@ -272,7 +273,7 @@ function lintAndPrint(stdin, files) {
     };
   }
 
-  if (program.fix) {
+  if (program.fix || program.fixRule) {
     const fixOptions = {
       ...lintOptions,
       resultVersion: 3
@@ -281,7 +282,15 @@ function lintAndPrint(stdin, files) {
     files.forEach(file => {
       fixOptions.files = [file];
       const fixResult = markdownlint.sync(fixOptions);
-      const fixes = fixResult[file].filter(error => error.fixInfo);
+      const fixes = fixResult[file].filter(error => {
+        if (error.fixInfo) {
+          if (program.fixRule.length > 0) {
+            return program.fixRule.includes(error.ruleNames[0]);
+          }
+          return true;
+        }
+        return false;
+      });
       if (fixes.length > 0) {
         const originalText = fs.readFileSync(file, fsOptions);
         const fixedText = markdownlintRuleHelpers.applyFixes(originalText, fixes);
@@ -298,7 +307,7 @@ function lintAndPrint(stdin, files) {
 
 if ((files.length > 0) && !program.stdin) {
   lintAndPrint(null, diff);
-} else if ((files.length === 0) && program.stdin && !program.fix) {
+} else if ((files.length === 0) && program.stdin && !program.fix && !program.fixRule) {
   const getStdin = require('get-stdin');
   getStdin().then(lintAndPrint);
 } else {
