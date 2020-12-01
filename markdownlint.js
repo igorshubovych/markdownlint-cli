@@ -273,7 +273,7 @@ function lintAndPrint(stdin, files) {
     };
   }
 
-  if (program.fix || program.fixRule) {
+  if (program.fix || program.fixRule.length > 0) {
     const fixOptions = {
       ...lintOptions,
       resultVersion: 3
@@ -307,7 +307,7 @@ function lintAndPrint(stdin, files) {
 
 if ((files.length > 0) && !program.stdin) {
   lintAndPrint(null, diff);
-} else if ((files.length === 0) && program.stdin && !program.fix && !program.fixRule) {
+} else if ((files.length === 0) && program.stdin && !program.fix && program.fixRule.length === 0) {
   const getStdin = require('get-stdin');
   getStdin().then(lintAndPrint);
 } else {
