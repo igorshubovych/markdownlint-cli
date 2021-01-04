@@ -58,7 +58,7 @@
     "husky": "^4.3.6",
     "tap-growl": "^3.0.0",
     "test-rule-package": "./test/custom-rules/test-rule-package",
-    "xo": "^0.36.1"
+    "xo": "^0.37.1"
   },
   "xo": {
     "space": true,
