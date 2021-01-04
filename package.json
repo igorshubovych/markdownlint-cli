@@ -42,7 +42,7 @@
     "get-stdin": "~8.0.0",
     "glob": "~7.1.6",
     "ignore": "~5.1.8",
-    "js-yaml": "~3.14.1",
+    "js-yaml": "~4.0.0",
     "jsonc-parser": "~3.0.0",
     "lodash.differencewith": "~4.5.0",
     "lodash.flatten": "~4.4.0",
