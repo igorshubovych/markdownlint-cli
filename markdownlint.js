@@ -20,7 +20,7 @@ function jsoncParse(text) {
 }
 
 function jsYamlSafeLoad(text) {
-  return require('js-yaml').safeLoad(text);
+  return require('js-yaml').load(text);
 }
 
 const projectConfigFiles = [
