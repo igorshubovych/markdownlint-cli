@@ -182,8 +182,8 @@ program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
-  .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
-  .option('-s, --stdin', 'read from STDIN (does not work with files)')
+  .option('-f, --fix', 'fix basic errors')
+  .option('-s, --stdin', 'read from STDIN')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
   .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
@@ -296,11 +296,46 @@ function lintAndPrint(stdin, files) {
   printResult(lintResult);
 }
 
+function lintAndFixStdinAndPrint(stdin) {
+  const config = readConfiguration(program);
+  const fixOptions = {
+    config,
+    customRules,
+    strings: {stdin},
+    resultVersion: 3
+  };
+
+  const fixResult = markdownlint.sync(fixOptions);
+  const fixes = fixResult.stdin.filter(error => error.fixInfo);
+  let text = stdin;
+
+  if (fixes.length > 0) {
+    const markdownlintRuleHelpers = require('markdownlint-rule-helpers');
+    text = markdownlintRuleHelpers.applyFixes(text, fixes);
+  }
+
+  if (program.output) {
+    try {
+      fs.writeFileSync(program.output, text);
+    } catch (error) {
+      console.warn('Cannot write to output file ' + program.output + ': ' + error.message);
+      process.exitCode = 2;
+    }
+  } else {
+    process.stdout.write(text);
+  }
+}
+
 if ((files.length > 0) && !program.stdin) {
   lintAndPrint(null, diff);
-} else if ((files.length === 0) && program.stdin && !program.fix) {
+} else if ((files.length === 0) && program.stdin) {
   const getStdin = require('get-stdin');
-  getStdin().then(lintAndPrint);
+  const stdin = getStdin();
+  if (program.fix) {
+    stdin.then(lintAndFixStdinAndPrint);
+  } else {
+    stdin.then(lintAndPrint);
+  }
 } else {
   program.help();
 }
