@@ -128,8 +128,8 @@ function prepareFileList(files, fileExtensions, previousResults) {
   });
 }
 
-function printResult(lintResult) {
-  const results = flatten(Object.keys(lintResult).map(file => {
+function flattenResults(lintResult) {
+  return flatten(Object.keys(lintResult).map(file => {
     return lintResult[file].map(result => {
       return {
         file: file,
@@ -142,7 +142,11 @@ function printResult(lintResult) {
       };
     });
   }));
+}
+
+function buildResultString(results) {
   let lintResultString = '';
+
   if (results.length > 0) {
     results.sort((a, b) => {
       return a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber ||
@@ -153,6 +157,15 @@ function printResult(lintResult) {
       const columnText = column ? `:${column}` : '';
       return `${file}:${lineNumber}${columnText} ${names} ${description}`;
     }).join('\n');
+  }
+
+  return lintResultString;
+}
+
+function printResult(lintResult) {
+  const results = flattenResults(lintResult)
+  const lintResultString = buildResultString(results);
+  if (results.length > 0) {
     // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
     // streams (e.g., when the output is being piped). Just set the exit code
     // and let the program terminate normally.
@@ -160,7 +173,7 @@ function printResult(lintResult) {
     // @see {@link https://github.com/igorshubovych/markdownlint-cli/pull/29#issuecomment-343535291}
     process.exitCode = 1;
   }
-
+  
   if (program.output) {
     try {
       fs.writeFileSync(program.output, lintResultString);
@@ -314,6 +327,10 @@ function lintAndFixStdinAndPrint(stdin) {
     text = markdownlintRuleHelpers.applyFixes(text, fixes);
   }
 
+  const results = flattenResults(fixResult);
+  const lintResultString = buildResultString(results);
+  console.error(lintResultString);
+
   if (program.output) {
     try {
       fs.writeFileSync(program.output, text);
@@ -322,6 +339,7 @@ function lintAndFixStdinAndPrint(stdin) {
       process.exitCode = 2;
     }
   } else {
+    
     process.stdout.write(text);
   }
 }
