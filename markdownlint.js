@@ -163,7 +163,7 @@ function printResult(lintResult) {
 
   if (program.output) {
     try {
-      fs.writeFileSync(program.output, lintResultString);
+      fs.writeFileSync(program.output, lintResultString + '\n');
     } catch (error) {
       console.warn('Cannot write to output file ' + program.output + ': ' + error.message);
       process.exitCode = 2;
