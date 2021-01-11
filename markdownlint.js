@@ -163,19 +163,17 @@ function printResult(lintResult) {
   }
 
   if (program.output) {
-      try {
-        if (lintResultString.length > 0) {
-          fs.writeFileSync(program.output, lintResultString + os.EOL); // We need to append a newline to make a valid POSIX file.
-        }
-        else {
-          fs.writeFileSync(program.output, lintResultString); // This is effectively writing a blank file.
-        }
-      } catch (error) {
-        console.warn('Cannot write to output file ' + program.output + ': ' + error.message);
-        process.exitCode = 2;
-      }
-  } else if (lintResultString) {
-    console.error(lintResultString);
+    lintResultString = lintResultString.length > 0 ?
+      lintResultString + os.EOL :
+      lintResultString
+    try {
+      fs.writeFileSync(program.output, lintResultString);
+    } catch (error) {
+      console.warn('Cannot write to output file ' + program.output + ': ' + error.message);
+      process.exitCode = 2;
+    }
+    } else if (lintResultString) {
+      console.error(lintResultString);
   }
 }
 

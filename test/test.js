@@ -729,14 +729,14 @@ test('--ignore-path fails for missing file', async t => {
 
 test('Linter text file --output must end with EOF newline', async t => {
   const output = '../outputE.txt';
-  let endOfLine = new RegExp(os.EOL + '$');
+  const endOfLine = new RegExp(os.EOL + '$');
   try {
     await execa('../markdownlint.js',
       ['--config', 'test-config.json', '--output', output, 'incorrect.md'],
       {stripFinalNewline: false});
     t.fail();
   } catch (error) {
-    t.is(endOfLine.test(fs.readFileSync(output, 'utf8')), true);
+    t.true(endOfLine.test(fs.readFileSync(output, 'utf8')));
     fs.unlinkSync(output);
   }
 });
