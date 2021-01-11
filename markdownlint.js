@@ -14,6 +14,7 @@ const glob = require('glob');
 const minimatch = require('minimatch');
 const minimist = require('minimist');
 const pkg = require('./package');
+const os = require ('os');
 
 function jsoncParse(text) {
   return JSON.parse(require('jsonc-parser').stripComments(text));
@@ -162,22 +163,17 @@ function printResult(lintResult) {
   }
 
   if (program.output) {
-    if (lintResultString.length > 0) {
       try {
-        fs.writeFileSync(program.output, lintResultString + '\n'); // We need to append a newline to make a valid POSIX file.
+        if (lintResultString.length > 0) {
+          fs.writeFileSync(program.output, lintResultString + os.EOL); // We need to append a newline to make a valid POSIX file.
+        }
+        else {
+          fs.writeFileSync(program.output, lintResultString); // This is effectively writing a blank file.
+        }
       } catch (error) {
         console.warn('Cannot write to output file ' + program.output + ': ' + error.message);
         process.exitCode = 2;
       }
-    }
-    else {
-      try {
-        fs.writeFileSync(program.output, lintResultString); // This is effectively writing a blank file.
-      } catch (error) {
-        console.warn('Cannot write to output file ' + program.output + ': ' + error.message);
-        process.exitCode = 2;
-      }
-    }
   } else if (lintResultString) {
     console.error(lintResultString);
   }
