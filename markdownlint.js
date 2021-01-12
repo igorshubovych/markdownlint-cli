@@ -172,7 +172,7 @@ function printResult(lintResult) {
       console.warn('Cannot write to output file ' + program.output + ': ' + error.message);
       process.exitCode = 2;
     }
-    } else if (lintResultString) {
+  } else if (lintResultString) {
       console.error(lintResultString);
   }
 }
