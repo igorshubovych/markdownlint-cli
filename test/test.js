@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const test = require('ava');
 const execa = require('execa');
+const os = require('os');
 
 const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+(:\d+)? MD\d{3}/gm;
 
@@ -723,5 +724,19 @@ test('--ignore-path fails for missing file', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.regex(error.stderr, /enoent.*no such file or directory/i);
+  }
+});
+
+test('Linter text file --output must end with EOF newline', async t => {
+  const output = '../outputE.txt';
+  const endOfLine = new RegExp(os.EOL + '$');
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'test-config.json', '--output', output, 'incorrect.md'],
+      {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.true(endOfLine.test(fs.readFileSync(output, 'utf8')));
+    fs.unlinkSync(output);
   }
 });

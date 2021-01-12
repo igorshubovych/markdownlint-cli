@@ -14,6 +14,7 @@ const glob = require('glob');
 const minimatch = require('minimatch');
 const minimist = require('minimist');
 const pkg = require('./package');
+const os = require ('os');
 
 function jsoncParse(text) {
   return JSON.parse(require('jsonc-parser').stripComments(text));
@@ -162,6 +163,9 @@ function printResult(lintResult) {
   }
 
   if (program.output) {
+    lintResultString = lintResultString.length > 0 ?
+      lintResultString + os.EOL :
+      lintResultString
     try {
       fs.writeFileSync(program.output, lintResultString);
     } catch (error) {
@@ -169,7 +173,7 @@ function printResult(lintResult) {
       process.exitCode = 2;
     }
   } else if (lintResultString) {
-    console.error(lintResultString);
+      console.error(lintResultString);
   }
 }
 
