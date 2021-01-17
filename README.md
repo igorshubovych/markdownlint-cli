@@ -109,6 +109,17 @@ A JS configuration file may internally `require` one or more npm packages as a w
 - `2`: Unable to write `-o`/`--output` output file
 - `3`: Unable to load `-r`/`--rules` custom rule
 
+## Use with pre-commit
+
+To run `markdownlint-cli` as part of a [pre-commit](https://pre-commit.com/) workflow, add something like the below to the `repos` list in the project's `.pre-commit-config.yaml`:
+
+```yaml
+- repo: https://github.com/igorshubovych/markdownlint-cli
+  rev: v0.26.0
+  hooks:
+  - id: markdownlint
+```
+
 ## Related
 
 - [markdownlint][markdownlint] - API for this module
