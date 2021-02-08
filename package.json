@@ -47,7 +47,7 @@
     "lodash.differencewith": "~4.5.0",
     "lodash.flatten": "~4.4.0",
     "markdownlint": "~0.22.0",
-    "markdownlint-rule-helpers": "~0.13.0",
+    "markdownlint-rule-helpers": "~0.14.0",
     "minimatch": "~3.0.4",
     "minimist": "~1.2.5",
     "rc": "~1.2.8"
