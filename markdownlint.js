@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const Module = require('module');
 const program = require('commander');
+const options = program.opts();
 const differenceWith = require('lodash.differencewith');
 const flatten = require('lodash.flatten');
 const markdownlint = require('markdownlint');
@@ -162,14 +163,14 @@ function printResult(lintResult) {
     process.exitCode = 1;
   }
 
-  if (program.output) {
+  if (options.output) {
     lintResultString = lintResultString.length > 0 ?
       lintResultString + os.EOL :
       lintResultString;
     try {
-      fs.writeFileSync(program.output, lintResultString);
+      fs.writeFileSync(options.output, lintResultString);
     } catch (error) {
-      console.warn('Cannot write to output file ' + program.output + ': ' + error.message);
+      console.warn('Cannot write to output file ' + options.output + ': ' + error.message);
       process.exitCode = 2;
     }
   } else if (lintResultString) {
@@ -239,8 +240,8 @@ function loadCustomRules(rules) {
 
 let ignorePath = '.markdownlintignore';
 let {existsSync} = fs;
-if (program.ignorePath) {
-  ignorePath = program.ignorePath;
+if (options.ignorePath) {
+  ignorePath = options.ignorePath;
   existsSync = () => true;
 }
 
@@ -254,8 +255,8 @@ if (existsSync(ignorePath)) {
 
 const files = prepareFileList(program.args, ['md', 'markdown'])
   .filter(value => ignoreFilter(value));
-const ignores = prepareFileList(program.ignore, ['md', 'markdown'], files);
-const customRules = loadCustomRules(program.rules);
+const ignores = prepareFileList(options.ignore, ['md', 'markdown'], files);
+const customRules = loadCustomRules(options.rules);
 const diff = differenceWith(files, ignores, function (a, b) {
   return a.absolute === b.absolute;
 }).map(function (paths) {
@@ -276,7 +277,7 @@ function lintAndPrint(stdin, files) {
     };
   }
 
-  if (program.fix) {
+  if (options.fix) {
     const fixOptions = {
       ...lintOptions,
       resultVersion: 3
@@ -300,9 +301,9 @@ function lintAndPrint(stdin, files) {
   printResult(lintResult);
 }
 
-if ((files.length > 0) && !program.stdin) {
+if ((files.length > 0) && !options.stdin) {
   lintAndPrint(null, diff);
-} else if ((files.length === 0) && program.stdin && !program.fix) {
+} else if ((files.length === 0) && options.stdin && !options.fix) {
   const getStdin = require('get-stdin');
   getStdin().then(lintAndPrint);
 } else {
