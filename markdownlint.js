@@ -129,8 +129,8 @@ function prepareFileList(files, fileExtensions, previousResults) {
   });
 }
 
-function printResult(lintResult) {
-  const results = flatten(Object.keys(lintResult).map(file => {
+function flattenResults(lintResult) {
+  return flatten(Object.keys(lintResult).map(file => {
     return lintResult[file].map(result => {
       return {
         file: file,
@@ -143,7 +143,11 @@ function printResult(lintResult) {
       };
     });
   }));
+}
+
+function buildResultString(results) {
   let lintResultString = '';
+
   if (results.length > 0) {
     results.sort((a, b) => {
       return a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber ||
@@ -154,6 +158,15 @@ function printResult(lintResult) {
       const columnText = column ? `:${column}` : '';
       return `${file}:${lineNumber}${columnText} ${names} ${description}`;
     }).join('\n');
+  }
+
+  return lintResultString;
+}
+
+function printResult(lintResult) {
+  const results = flattenResults(lintResult)
+  const lintResultString = buildResultString(results);
+  if (results.length > 0) {
     // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
     // streams (e.g., when the output is being piped). Just set the exit code
     // and let the program terminate normally.
@@ -161,7 +174,7 @@ function printResult(lintResult) {
     // @see {@link https://github.com/igorshubovych/markdownlint-cli/pull/29#issuecomment-343535291}
     process.exitCode = 1;
   }
-
+  
   if (program.output) {
     lintResultString = lintResultString.length > 0 ?
       lintResultString + os.EOL :
@@ -186,8 +199,8 @@ program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
-  .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
-  .option('-s, --stdin', 'read from STDIN (does not work with files)')
+  .option('-f, --fix', 'fix basic errors')
+  .option('-s, --stdin', 'read from STDIN')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
   .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
@@ -300,11 +313,51 @@ function lintAndPrint(stdin, files) {
   printResult(lintResult);
 }
 
+function lintAndFixStdinAndPrint(stdin) {
+  const config = readConfiguration(program);
+  const fixOptions = {
+    config,
+    customRules,
+    strings: {stdin},
+    resultVersion: 3
+  };
+
+  const fixResult = markdownlint.sync(fixOptions);
+  const fixes = fixResult.stdin.filter(error => error.fixInfo);
+  let text = stdin;
+
+  if (fixes.length > 0) {
+    const markdownlintRuleHelpers = require('markdownlint-rule-helpers');
+    text = markdownlintRuleHelpers.applyFixes(text, fixes);
+  }
+
+  const results = flattenResults(fixResult);
+  const lintResultString = buildResultString(results);
+  console.error(lintResultString);
+
+  if (program.output) {
+    try {
+      fs.writeFileSync(program.output, text);
+    } catch (error) {
+      console.warn('Cannot write to output file ' + program.output + ': ' + error.message);
+      process.exitCode = 2;
+    }
+  } else {
+    
+    process.stdout.write(text);
+  }
+}
+
 if ((files.length > 0) && !program.stdin) {
   lintAndPrint(null, diff);
-} else if ((files.length === 0) && program.stdin && !program.fix) {
+} else if ((files.length === 0) && program.stdin) {
   const getStdin = require('get-stdin');
-  getStdin().then(lintAndPrint);
+  const stdin = getStdin();
+  if (program.fix) {
+    stdin.then(lintAndFixStdinAndPrint);
+  } else {
+    stdin.then(lintAndPrint);
+  }
 } else {
   program.help();
 }
