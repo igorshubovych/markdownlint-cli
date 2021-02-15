@@ -735,7 +735,7 @@ test('Linter text file --output must end with EOF newline', async t => {
       ['--config', 'test-config.json', '--output', output, 'incorrect.md'],
       {stripFinalNewline: false});
     t.fail();
-  } catch (error) {
+  } catch {
     t.true(endOfLine.test(fs.readFileSync(output, 'utf8')));
     fs.unlinkSync(output);
   }
