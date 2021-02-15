@@ -223,9 +223,9 @@ test('linting results are sorted by file/line/names/description', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      'incorrect.md:1 MD002/first-heading-h1/first-header-h1 First heading should be a top level heading [Expected: h1; Actual: h2]',
+      'incorrect.md:1 MD002/first-heading-h1/first-header-h1 First heading should be a top-level heading [Expected: h1; Actual: h2]',
       'incorrect.md:1 MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below] [Context: "## header 2"]',
-      'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in file should be a top level heading [Context: "## header 2"]',
+      'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]',
       'incorrect.md:2 MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "# header"]',
       'incorrect.md:5:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
       'incorrect.md:11:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
@@ -592,8 +592,8 @@ test('fixing errors in a file yields fewer errors', async t => {
     t.fail();
   } catch (error) {
     const expected = [
-      fixFileA + ':1 MD002/first-heading-h1/first-header-h1 First heading should be a top level heading [Expected: h1; Actual: h2]',
-      fixFileA + ':1 MD041/first-line-heading/first-line-h1 First line in file should be a top level heading [Context: "## header 2"]',
+      fixFileA + ':1 MD002/first-heading-h1/first-header-h1 First heading should be a top-level heading [Expected: h1; Actual: h2]',
+      fixFileA + ':1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]',
       ''
     ].join('\n');
     t.is(error.stdout, '');
