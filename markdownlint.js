@@ -78,7 +78,8 @@ function readConfiguration(args) {
 
 function prepareFileList(files, fileExtensions, previousResults) {
   const globOptions = {
-    nodir: true
+    nodir: true,
+    dot: true
   };
   let extensionGlobPart = '*.';
   if (fileExtensions.length === 1) {
