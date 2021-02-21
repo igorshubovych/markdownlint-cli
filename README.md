@@ -36,6 +36,7 @@ markdownlint --help
     -i, --ignore [file|directory|glob]          file(s) to ignore/exclude
     -p, --ignore-path [file]                    path to file with ignore pattern(s)
     -r, --rules  [file|directory|glob|package]  custom rule files
+    -d, --dot                                   include files/folders with a dot (for example `.github`)
 ```
 
 ### Globbing

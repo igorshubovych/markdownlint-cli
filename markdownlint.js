@@ -79,7 +79,7 @@ function readConfiguration(args) {
 function prepareFileList(files, fileExtensions, previousResults) {
   const globOptions = {
     nodir: true,
-    dot: true
+    dot: options.dot != null ? true : false
   };
   let extensionGlobPart = '*.';
   if (fileExtensions.length === 1) {
@@ -194,7 +194,8 @@ program
   .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
   .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
-  .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, []);
+  .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, [])
+  .option('-d, --dot', 'include files/folders with a dot (for example `.github`)');
 
 program.parse(process.argv);
 
