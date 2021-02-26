@@ -29,13 +29,14 @@ markdownlint --help
 
     -h, --help                                  output usage information
     -V, --version                               output the version number
-    -f, --fix                                   fix basic errors (does not work with STDIN)
-    -s, --stdin                                 read from STDIN (does not work with files)
-    -o, --output [outputFile]                   write issues to file (no console)
     -c, --config [configFile]                   configuration file (JSON, JSONC, JS, or YAML)
+    -d, --dot                                   include files/folders with a dot (for example `.github`)
+    -f, --fix                                   fix basic errors (does not work with STDIN)
     -i, --ignore [file|directory|glob]          file(s) to ignore/exclude
+    -o, --output [outputFile]                   write issues to file (no console)
     -p, --ignore-path [file]                    path to file with ignore pattern(s)
     -r, --rules  [file|directory|glob|package]  custom rule files
+    -s, --stdin                                 read from STDIN (does not work with files)
 ```
 
 ### Globbing

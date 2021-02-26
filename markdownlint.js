@@ -78,6 +78,7 @@ function readConfiguration(args) {
 
 function prepareFileList(files, fileExtensions, previousResults) {
   const globOptions = {
+    dot: !!options.dot,
     nodir: true
   };
   let extensionGlobPart = '*.';
@@ -187,13 +188,14 @@ program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
-  .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
-  .option('-s, --stdin', 'read from STDIN (does not work with files)')
-  .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
+  .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
+  .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
   .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
+  .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
-  .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, []);
+  .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, [])
+  .option('-s, --stdin', 'read from STDIN (does not work with files)');
 
 program.parse(process.argv);
 
