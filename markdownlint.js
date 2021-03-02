@@ -34,8 +34,7 @@ const configFileParsers = [jsoncParse, jsYamlSafeLoad];
 const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();
 
-function readConfiguration(args) {
-  const userConfigFile = args.config;
+function readConfiguration(userConfigFile) {
   const jsConfigFile = /\.js$/i.test(userConfigFile);
   const rcArgv = minimist(process.argv.slice(2));
   if (jsConfigFile) {
@@ -268,7 +267,7 @@ const diff = differenceWith(files, ignores, function (a, b) {
 
 function lintAndPrint(stdin, files) {
   files = files || [];
-  const config = readConfiguration(program);
+  const config = readConfiguration(options.config);
   const lintOptions = {
     config,
     customRules,
