@@ -78,7 +78,7 @@ Because this option makes changes to the input files, it is good to make a backu
 
 Configuration is stored in JSON, JSONC, YAML, or INI files in the same [config format][config].
 
-The example of configuration file:
+A sample configuration file:
 
 ```json
 {
@@ -90,7 +90,7 @@ The example of configuration file:
 }
 ```
 
-See [test configuration file][test-config] or [style folder][style-folder] for more examples.
+For more examples, see [.markdownlint.jsonc][markdownlint-jsonc], [.markdownlint.yaml][markdownlint-yaml], or the [style folder][style-folder].
 
 The CLI argument `--config` is not required.
 If it is not provided, `markdownlint-cli` looks for the file `.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for the file `.markdownlintrc` in the current or all parent folders.
@@ -133,12 +133,12 @@ MIT © Igor Shubovych
 
 [actions-badge]: https://github.com/igorshubovych/markdownlint-cli/workflows/CI/badge.svg?branch=master
 [actions-url]: https://github.com/igorshubovych/markdownlint-cli/actions?query=workflow%3ACI
-
 [markdownlint]: https://github.com/DavidAnson/markdownlint
+[markdownlint-jsonc]: https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.jsonc
+[markdownlint-yaml]: https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.yaml
 [rules]: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
 [config]: https://github.com/DavidAnson/markdownlint#optionsconfig
 [style-folder]: https://github.com/DavidAnson/markdownlint/tree/main/style
-[test-config]: https://github.com/igorshubovych/markdownlint-cli/blob/master/test/test-config.json
 [rc-standards]: https://www.npmjs.com/package/rc#standards
 [glob]: https://github.com/isaacs/node-glob
 [globprimer]: https://github.com/isaacs/node-glob/blob/master/README.md#glob-primer
