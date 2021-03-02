@@ -741,7 +741,7 @@ test('Linter text file --output must end with EOF newline', async t => {
   }
 });
 
-test('--dot option to include folders/files with a dot', async (t) => {
+test('--dot option to include folders/files with a dot', async t => {
   try {
     await execa('../markdownlint.js',
       ['--config', 'test-config.json', '--dot', '**/incorrect-dot.md', '**/.file-with-dot.md', '**/correct.md'],
@@ -753,7 +753,7 @@ test('--dot option to include folders/files with a dot', async (t) => {
   }
 });
 
-test('without --dot option exclude folders/files with a dot', async (t) => {
+test('without --dot option exclude folders/files with a dot', async t => {
   const result = await execa('../markdownlint.js',
     ['--config', 'test-config.json', '**/incorrect-dot.md', '**/.file-with-dot.md', '**/correct.md'],
     {stripFinalNewline: false});

@@ -78,7 +78,7 @@ function readConfiguration(args) {
 
 function prepareFileList(files, fileExtensions, previousResults) {
   const globOptions = {
-    dot: !!options.dot,
+    dot: Boolean(options.dot),
     nodir: true
   };
   let extensionGlobPart = '*.';
@@ -205,6 +205,7 @@ function tryResolvePath(filepath) {
       // Looks like a package name, resolve it relative to cwd
       // Get list of directories, where requested module can be.
       let paths = Module._nodeModulePaths(processCwd);
+      // eslint-disable-next-line unicorn/prefer-spread
       paths = paths.concat(Module.globalPaths);
       if (require.resolve.paths) {
         // Node >= 8.9.0
@@ -285,7 +286,7 @@ function lintAndPrint(stdin, files) {
       resultVersion: 3
     };
     const markdownlintRuleHelpers = require('markdownlint-rule-helpers');
-    files.forEach(file => {
+    for (const file of files) {
       fixOptions.files = [file];
       const fixResult = markdownlint.sync(fixOptions);
       const fixes = fixResult[file].filter(error => error.fixInfo);
@@ -296,7 +297,7 @@ function lintAndPrint(stdin, files) {
           fs.writeFileSync(file, fixedText, fsOptions);
         }
       }
-    });
+    }
   }
 
   const lintResult = markdownlint.sync(lintOptions);
