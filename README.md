@@ -112,7 +112,7 @@ A JS configuration file may internally `require` one or more npm packages as a w
 
 ## Use with pre-commit
 
-To run `markdownlint-cli` as part of a [pre-commit](https://pre-commit.com/) workflow, add something like the below to the `repos` list in the project's `.pre-commit-config.yaml`:
+To run `markdownlint-cli` as part of a [pre-commit][pre-commit] workflow, add something like the below to the `repos` list in the project's `.pre-commit-config.yaml`:
 
 ```yaml
 - repo: https://github.com/igorshubovych/markdownlint-cli
@@ -120,6 +120,8 @@ To run `markdownlint-cli` as part of a [pre-commit](https://pre-commit.com/) wor
   hooks:
   - id: markdownlint
 ```
+
+> Depending on the environment this workflow runs in, it may be necessary to [override the language version of Node.js used by pre-commit][pre-commit-version].
 
 ## Related
 
@@ -144,3 +146,5 @@ MIT © Igor Shubovych
 [globprimer]: https://github.com/isaacs/node-glob/blob/master/README.md#glob-primer
 [ignore]: https://github.com/kaelzhang/node-ignore
 [gitignore]: https://git-scm.com/docs/gitignore
+[pre-commit]: https://pre-commit.com/
+[pre-commit-version]: https://pre-commit.com/#overriding-language-version
