@@ -87,7 +87,7 @@ test('linting of incorrect Markdown via npm run file fails with eol', async t =>
     await execa('npm', ['run', 'invalid'], {stripFinalNewline: false});
     t.fail();
   } catch (error) {
-    t.regex(error.stderr, /MD\d{3}.*\nnpm ERR!/);
+    t.regex(error.stderr, /MD\d{3}.*((\nnpm ERR!)|(\n$))/);
   }
 });
 
