@@ -50,7 +50,7 @@
     "markdownlint-rule-helpers": "~0.14.0",
     "minimatch": "~3.0.4",
     "minimist": "~1.2.5",
-    "rc": "~1.2.8"
+    "run-con": "~1.2.10"
   },
   "devDependencies": {
     "ava": "^3.15.0",
