@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "ava": "^3.15.0",
-    "execa": "^5.0.0",
+    "execa": "^5.0.1",
     "husky": "^6.0.0",
     "tap-growl": "^3.0.0",
     "test-rule-package": "./test/custom-rules/test-rule-package",
