@@ -131,28 +131,41 @@ function prepareFileList(files, fileExtensions, previousResults) {
 }
 
 function printResult(lintResult) {
+  let lintResultString = '';
   const results = flatten(Object.keys(lintResult).map(file => {
     return lintResult[file].map(result => {
-      return {
-        file: file,
-        lineNumber: result.lineNumber,
-        column: (result.errorRange && result.errorRange[0]) || 0,
-        names: result.ruleNames.join('/'),
-        description: result.ruleDescription +
-          (result.errorDetail ? ' [' + result.errorDetail + ']' : '') +
-          (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
-      };
+      if (options.json) {
+        return {
+          fileName: file,
+          ...result          
+        }        
+      } else {
+        return {
+          file: file,
+          lineNumber: result.lineNumber,
+          column: (result.errorRange && result.errorRange[0]) || 0,
+          names: result.ruleNames.join('/'),
+          description: result.ruleDescription +
+            (result.errorDetail ? ' [' + result.errorDetail + ']' : '') +
+            (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
+        };
+      }
     });
   }));
-  let lintResultString = '';
+  
   if (results.length > 0) {
-    results.sort((a, b) => {
-      return a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber ||
-        a.names.localeCompare(b.names) || a.description.localeCompare(b.description);
-    });
     if (options.json) {
+      results.sort((a, b) => {
+        return a.fileName.localeCompare(b.fileName) || a.lineNumber - b.lineNumber ||
+          a.ruleDescription.localeCompare(b.ruleDescription);
+      });
       lintResultString = JSON.stringify(results, null, 2);
     } else {
+      results.sort((a, b) => {
+        return a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber ||
+          a.names.localeCompare(b.names) || a.description.localeCompare(b.description);
+      });
+
       lintResultString = results.map(result => {
         const {file, lineNumber, column, names, description} = result;
         const columnText = column ? `:${column}` : '';
@@ -283,6 +296,9 @@ function lintAndPrint(stdin, files) {
       stdin
     };
   }
+  if (options.json) {
+    lintOptions.resultVersion = 3;
+  }
 
   if (options.fix) {
     const fixOptions = {
@@ -305,7 +321,7 @@ function lintAndPrint(stdin, files) {
   }
 
   const lintResult = markdownlint.sync(lintOptions);
-  printResult(lintResult);
+  printResult(lintResult);  
 }
 
 if ((files.length > 0) && !options.stdin) {

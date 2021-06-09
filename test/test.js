@@ -78,7 +78,10 @@ test('linting of incorrect Markdown file fails prints issues as json', async t =
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(JSON.parse(error.stderr).length, 8);    
+    const issues = JSON.parse(error.stderr);
+    t.is(issues.length, 8);
+    t.is(issues[0].fileName, "incorrect.md");
+
   }
 });
 
@@ -362,7 +365,7 @@ test('--output with invalid input and --json outputs issues as json', async t =>
     'Text ',
     ''
   ].join('\n');
-  const output = '../outputC.txt';
+  const output = '../outputC.json';
   try {
     await execa('../markdownlint.js',
       ['--stdin', '--output', output, '--json'],
