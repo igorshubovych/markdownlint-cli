@@ -321,7 +321,7 @@ function lintAndPrint(stdin, files) {
   }
 
   const lintResult = markdownlint.sync(lintOptions);
-  printResult(lintResult);  
+  printResult(lintResult);
 }
 
 if ((files.length > 0) && !options.stdin) {
