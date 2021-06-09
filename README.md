@@ -34,6 +34,7 @@ markdownlint --help
     -f, --fix                                   fix basic errors (does not work with STDIN)
     -i, --ignore [file|directory|glob]          file(s) to ignore/exclude
     -o, --output [outputFile]                   write issues to file (no console)
+    -j, --json                                  write issues in json format
     -p, --ignore-path [file]                    path to file with ignore pattern(s)
     -r, --rules  [file|directory|glob|package]  custom rule files
     -s, --stdin                                 read from STDIN (does not work with files)
