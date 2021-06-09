@@ -77,6 +77,6 @@
       "!test/custom-rules/**/*.js",
       "!test/md043-config.js"
     ],
-    "failFast": false
+    "failFast": true
   }
 }
