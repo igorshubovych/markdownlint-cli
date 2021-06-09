@@ -70,6 +70,18 @@ test('linting of incorrect Markdown file fails', async t => {
   }
 });
 
+test('linting of incorrect Markdown file fails prints issues as json', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'test-config.json', 'incorrect.md', '--json'],
+      {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(JSON.parse(error.stderr).length, 8);    
+  }
+});
+
 test('linting of incorrect Markdown file fails with absolute path', async t => {
   try {
     await execa('../markdownlint.js',
@@ -339,6 +351,27 @@ test('--output with invalid input outputs violations', async t => {
     t.is(error.stdout, '');
     t.is(error.stderr, '');
     t.is(fs.readFileSync(output, 'utf8').match(errorPattern).length, 2);
+    fs.unlinkSync(output);
+  }
+});
+
+test('--output with invalid input and --json outputs issues as json', async t => {
+  const input = [
+    'Heading',
+    '',
+    'Text ',
+    ''
+  ].join('\n');
+  const output = '../outputC.txt';
+  try {
+    await execa('../markdownlint.js',
+      ['--stdin', '--output', output, '--json'],
+      {input, stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr, '');
+    t.is(JSON.parse(fs.readFileSync(output, 'utf8')).length, 2);
     fs.unlinkSync(output);
   }
 });
