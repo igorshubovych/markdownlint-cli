@@ -150,11 +150,15 @@ function printResult(lintResult) {
       return a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber ||
         a.names.localeCompare(b.names) || a.description.localeCompare(b.description);
     });
-    lintResultString = results.map(result => {
-      const {file, lineNumber, column, names, description} = result;
-      const columnText = column ? `:${column}` : '';
-      return `${file}:${lineNumber}${columnText} ${names} ${description}`;
-    }).join('\n');
+    if (options.json) {
+      lintResultString = JSON.stringify(results, null, 2);
+    } else {
+      lintResultString = results.map(result => {
+        const {file, lineNumber, column, names, description} = result;
+        const columnText = column ? `:${column}` : '';
+        return `${file}:${lineNumber}${columnText} ${names} ${description}`;
+      }).join('\n');
+    }
     // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
     // streams (e.g., when the output is being piped). Just set the exit code
     // and let the program terminate normally.
@@ -192,6 +196,7 @@ program
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
   .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
+  .option('-j, --json', 'write issues in json format')
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
   .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)');
