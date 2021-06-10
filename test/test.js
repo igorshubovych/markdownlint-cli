@@ -79,9 +79,23 @@ test('linting of incorrect Markdown file fails prints issues as json', async t =
   } catch (error) {
     t.is(error.stdout, '');
     const issues = JSON.parse(error.stderr);
-    t.is(issues.length, 8);
-    t.is(issues[0].fileName, "incorrect.md");
-
+    t.is(issues.length, 8);        
+    const expected = {
+      fileName: "incorrect.md",
+      lineNumber: 1,
+      ruleNames: [
+        "MD002",
+        "first-heading-h1",
+        "first-header-h1",
+      ],
+      ruleDescription: "First heading should be a top-level heading",
+      ruleInformation: "https://github.com/DavidAnson/markdownlint/blob/v0.23.1/doc/Rules.md#md002",
+      errorContext: null,
+      errorDetail: "Expected: h1; Actual: h2",
+      errorRange: null,
+      fixInfo: null,
+    };
+    t.deepEqual(issues[0], expected);
   }
 });
 
@@ -365,7 +379,7 @@ test('--output with invalid input and --json outputs issues as json', async t =>
     'Text ',
     ''
   ].join('\n');
-  const output = '../outputC.json';
+  const output = '../outputF.json';
   try {
     await execa('../markdownlint.js',
       ['--stdin', '--output', output, '--json'],
