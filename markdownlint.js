@@ -131,7 +131,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
 }
 
 function printResult(lintResult) {
-  let lintResultString = '';
+  
   const results = flatten(Object.keys(lintResult).map(file => {
     return lintResult[file].map(result => {
       if (options.json) {
@@ -153,6 +153,7 @@ function printResult(lintResult) {
     });
   }));
   
+  let lintResultString = '';
   if (results.length > 0) {
     if (options.json) {
       results.sort((a, b) => {

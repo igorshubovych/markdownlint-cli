@@ -79,7 +79,11 @@ test('linting of incorrect Markdown file fails prints issues as json', async t =
   } catch (error) {
     t.is(error.stdout, '');
     const issues = JSON.parse(error.stderr);
-    t.is(issues.length, 8);        
+    t.is(issues.length, 8);
+    // ruleInformation changes with version so that field just check not null and present
+    const issue = issues[0];
+    t.true(issue.ruleInformation.length > 0);
+    issue.ruleInformation = null;
     const expected = {
       fileName: "incorrect.md",
       lineNumber: 1,
@@ -89,7 +93,7 @@ test('linting of incorrect Markdown file fails prints issues as json', async t =
         "first-header-h1",
       ],
       ruleDescription: "First heading should be a top-level heading",
-      ruleInformation: "https://github.com/DavidAnson/markdownlint/blob/v0.23.1/doc/Rules.md#md002",
+      ruleInformation: null,
       errorContext: null,
       errorDetail: "Expected: h1; Actual: h2",
       errorRange: null,
