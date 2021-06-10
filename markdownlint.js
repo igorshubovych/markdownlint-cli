@@ -206,7 +206,7 @@ program
   .usage('[options] <files|directories|globs>')
   .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
   .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
-  .option('-f, --fix', 'fix basic errors (does not work with STDIN)')  
+  .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
   .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
   .option('-j, --json', 'write issues in json format')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')  
