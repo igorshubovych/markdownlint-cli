@@ -70,6 +70,39 @@ test('linting of incorrect Markdown file fails', async t => {
   }
 });
 
+test('linting of incorrect Markdown file fails prints issues as json', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'test-config.json', 'incorrect.md', '--json'],
+      {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    const issues = JSON.parse(error.stderr);
+    t.is(issues.length, 8);
+    // ruleInformation changes with version so that field just check not null and present
+    const issue = issues[0];
+    t.true(issue.ruleInformation.length > 0);
+    issue.ruleInformation = null;
+    const expected = {
+      fileName: "incorrect.md",
+      lineNumber: 1,
+      ruleNames: [
+        "MD002",
+        "first-heading-h1",
+        "first-header-h1",
+      ],
+      ruleDescription: "First heading should be a top-level heading",
+      ruleInformation: null,
+      errorContext: null,
+      errorDetail: "Expected: h1; Actual: h2",
+      errorRange: null,
+      fixInfo: null,
+    };
+    t.deepEqual(issues[0], expected);
+  }
+});
+
 test('linting of incorrect Markdown file fails with absolute path', async t => {
   try {
     await execa('../markdownlint.js',
@@ -339,6 +372,27 @@ test('--output with invalid input outputs violations', async t => {
     t.is(error.stdout, '');
     t.is(error.stderr, '');
     t.is(fs.readFileSync(output, 'utf8').match(errorPattern).length, 2);
+    fs.unlinkSync(output);
+  }
+});
+
+test('--output with invalid input and --json outputs issues as json', async t => {
+  const input = [
+    'Heading',
+    '',
+    'Text ',
+    ''
+  ].join('\n');
+  const output = '../outputF.json';
+  try {
+    await execa('../markdownlint.js',
+      ['--stdin', '--output', output, '--json'],
+      {input, stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr, '');
+    t.is(JSON.parse(fs.readFileSync(output, 'utf8')).length, 2);
     fs.unlinkSync(output);
   }
 });

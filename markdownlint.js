@@ -131,30 +131,48 @@ function prepareFileList(files, fileExtensions, previousResults) {
 }
 
 function printResult(lintResult) {
+  
   const results = flatten(Object.keys(lintResult).map(file => {
     return lintResult[file].map(result => {
-      return {
-        file: file,
-        lineNumber: result.lineNumber,
-        column: (result.errorRange && result.errorRange[0]) || 0,
-        names: result.ruleNames.join('/'),
-        description: result.ruleDescription +
-          (result.errorDetail ? ' [' + result.errorDetail + ']' : '') +
-          (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
-      };
+      if (options.json) {
+        return {
+          fileName: file,
+          ...result          
+        }        
+      } else {
+        return {
+          file: file,
+          lineNumber: result.lineNumber,
+          column: (result.errorRange && result.errorRange[0]) || 0,
+          names: result.ruleNames.join('/'),
+          description: result.ruleDescription +
+            (result.errorDetail ? ' [' + result.errorDetail + ']' : '') +
+            (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
+        };
+      }
     });
   }));
+  
   let lintResultString = '';
   if (results.length > 0) {
-    results.sort((a, b) => {
-      return a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber ||
-        a.names.localeCompare(b.names) || a.description.localeCompare(b.description);
-    });
-    lintResultString = results.map(result => {
-      const {file, lineNumber, column, names, description} = result;
-      const columnText = column ? `:${column}` : '';
-      return `${file}:${lineNumber}${columnText} ${names} ${description}`;
-    }).join('\n');
+    if (options.json) {
+      results.sort((a, b) => {
+        return a.fileName.localeCompare(b.fileName) || a.lineNumber - b.lineNumber ||
+          a.ruleDescription.localeCompare(b.ruleDescription);
+      });
+      lintResultString = JSON.stringify(results, null, 2);
+    } else {
+      results.sort((a, b) => {
+        return a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber ||
+          a.names.localeCompare(b.names) || a.description.localeCompare(b.description);
+      });
+
+      lintResultString = results.map(result => {
+        const {file, lineNumber, column, names, description} = result;
+        const columnText = column ? `:${column}` : '';
+        return `${file}:${lineNumber}${columnText} ${names} ${description}`;
+      }).join('\n');
+    }
     // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
     // streams (e.g., when the output is being piped). Just set the exit code
     // and let the program terminate normally.
@@ -191,6 +209,7 @@ program
   .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
   .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
+  .option('-j, --json', 'write issues in json format')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
   .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, [])
@@ -277,6 +296,9 @@ function lintAndPrint(stdin, files) {
     lintOptions.strings = {
       stdin
     };
+  }
+  if (options.json) {
+    lintOptions.resultVersion = 3;
   }
 
   if (options.fix) {
