@@ -39,7 +39,7 @@
   "dependencies": {
     "commander": "~8.0.0",
     "deep-extend": "~0.6.0",
-    "get-stdin": "~8.0.0",
+    "get-stdin": "~9.0.0",
     "glob": "~7.1.7",
     "ignore": "~5.1.8",
     "js-yaml": "^4.1.0",
