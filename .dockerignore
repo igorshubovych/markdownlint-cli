@@ -5,6 +5,6 @@ test/
 .editorconfig
 .travis.yml
 appveyor.yml
-node_modules\
-dist\
+node_modules/
+dist/
 node_modules
