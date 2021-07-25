@@ -33,7 +33,7 @@ markdownlint --help
     -d, --dot                                   include files/folders with a dot (for example `.github`)
     -f, --fix                                   fix basic errors (does not work with STDIN)
     -i, --ignore [file|directory|glob]          file(s) to ignore/exclude
-    -j, --json                                  write issues in json format    
+    -j, --json                                  write issues in json format
     -o, --output [outputFile]                   write issues to file (no console)
     -p, --ignore-path [file]                    path to file with ignore pattern(s)
     -r, --rules  [file|directory|glob|package]  custom rule files
@@ -117,7 +117,7 @@ To run `markdownlint-cli` as part of a [pre-commit][pre-commit] workflow, add so
 
 ```yaml
 - repo: https://github.com/igorshubovych/markdownlint-cli
-  rev: v0.27.1
+  rev: v0.28.1
   hooks:
   - id: markdownlint
 ```
