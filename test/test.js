@@ -814,3 +814,10 @@ test('without --dot option exclude folders/files with a dot', async t => {
   t.is(result.stdout, '');
   t.is(result.stderr, '');
 });
+
+test('with --quiet option does not print to stdout', async t => {
+  const result = await execa('../markdownlint.js',
+    ['--quiet', 'test-config.json', '**/incorrect-dot.md', '**/.file-with-dot.md', '**/correct.md'],
+    {stripFinalNewline: false});
+  t.is(result.stdout, '');
+});

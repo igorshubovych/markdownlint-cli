@@ -212,6 +212,7 @@ program
   .option('-j, --json', 'write issues in json format')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
+  .option('-q, --quiet', 'do not write issues to STDOUT')
   .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)');
 
@@ -322,7 +323,9 @@ function lintAndPrint(stdin, files) {
   }
 
   const lintResult = markdownlint.sync(lintOptions);
-  printResult(lintResult);
+  if (!options.quiet) {
+    printResult(lintResult);
+  }
 }
 
 if ((files.length > 0) && !options.stdin) {
