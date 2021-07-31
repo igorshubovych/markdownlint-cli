@@ -36,6 +36,7 @@ markdownlint --help
     -j, --json                                  write issues in json format
     -o, --output [outputFile]                   write issues to file (no console)
     -p, --ignore-path [file]                    path to file with ignore pattern(s)
+    -q, --quiet                                 do not write issues to STDOUT
     -r, --rules  [file|directory|glob|package]  custom rule files
     -s, --stdin                                 read from STDIN (does not work with files)
 ```
