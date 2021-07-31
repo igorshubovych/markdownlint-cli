@@ -820,4 +820,5 @@ test('with --quiet option does not print to stdout', async t => {
     ['--quiet', 'test-config.json', '**/incorrect-dot.md', '**/.file-with-dot.md', '**/correct.md'],
     {stripFinalNewline: false});
   t.is(result.stdout, '');
+  t.is(result.exitCode, 0);
 });
