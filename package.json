@@ -7,7 +7,7 @@
     "markdownlint": "markdownlint.js"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "scripts": {
     "invalid": "node ./markdownlint.js --config test/test-config.json -- test/incorrect.md",
