@@ -428,6 +428,28 @@ test('configuration file can be JavaScript', async t => {
   t.is(result.stderr, '');
 });
 
+test('error on configuration file not found', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'non-existent-file-path.yaml', 'correct.md'],
+      {stripFinalNewline: false});
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.regex(error.stderr, /Cannot read or parse config file 'non-existent-file-path.yaml': ENOENT: no such file or directory, open 'non-existent-file-path.yaml'/);
+  }
+});
+
+test('error on malformed YAML configuration file', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--config', 'malformed-config.yaml', 'correct.md'],
+      {stripFinalNewline: false});
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.regex(error.stderr, /Cannot read or parse config file 'malformed-config.yaml': Unable to parse 'malformed-config.yaml'; Unexpected token/);
+  }
+});
+
 function getCwdConfigFileTest(extension) {
   return async t => {
     try {
