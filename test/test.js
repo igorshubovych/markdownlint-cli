@@ -434,6 +434,7 @@ test('error on configuration file not found', async t => {
       ['--config', 'non-existent-file-path.yaml', 'correct.md'],
       {stripFinalNewline: false});
   } catch (error) {
+    t.is(error.exitCode, 1);
     t.is(error.stdout, '');
     t.regex(error.stderr, /Cannot read or parse config file 'non-existent-file-path.yaml': ENOENT: no such file or directory, open 'non-existent-file-path.yaml'/);
   }
@@ -445,6 +446,7 @@ test('error on malformed YAML configuration file', async t => {
       ['--config', 'malformed-config.yaml', 'correct.md'],
       {stripFinalNewline: false});
   } catch (error) {
+    t.is(error.exitCode, 1);
     t.is(error.stdout, '');
     t.regex(error.stderr, /Cannot read or parse config file 'malformed-config.yaml': Unable to parse 'malformed-config.yaml'; Unexpected token/);
   }
