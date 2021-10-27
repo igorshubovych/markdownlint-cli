@@ -68,7 +68,8 @@ function readConfiguration(userConfigFile) {
         markdownlint.readConfigSync(userConfigFile, configFileParsers);
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
-      console.warn('Cannot read or parse config file ' + userConfigFile + ': ' + error.message);
+      console.error(`Cannot read or parse config file '${userConfigFile}': ${error.message}`);
+      process.exitCode = 1;
     }
   }
 
@@ -131,14 +132,14 @@ function prepareFileList(files, fileExtensions, previousResults) {
 }
 
 function printResult(lintResult) {
-  
+
   const results = flatten(Object.keys(lintResult).map(file => {
     return lintResult[file].map(result => {
       if (options.json) {
         return {
           fileName: file,
-          ...result          
-        }        
+          ...result
+        }
       } else {
         return {
           file: file,
@@ -152,7 +153,7 @@ function printResult(lintResult) {
       }
     });
   }));
-  
+
   let lintResultString = '';
   if (results.length > 0) {
     if (options.json) {
