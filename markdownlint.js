@@ -192,7 +192,7 @@ function printResult(lintResult) {
       process.exitCode = 2;
     }
   } else if (lintResultString) {
-    if(!options.quiet){
+    if (!options.quiet) {
       console.error(lintResultString);
     }
   }
