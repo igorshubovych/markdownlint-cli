@@ -192,7 +192,9 @@ function printResult(lintResult) {
       process.exitCode = 2;
     }
   } else if (lintResultString) {
-    console.error(lintResultString);
+    if(!options.quiet){
+      console.error(lintResultString);
+    }
   }
 }
 
@@ -323,9 +325,7 @@ function lintAndPrint(stdin, files) {
   }
 
   const lintResult = markdownlint.sync(lintOptions);
-  if (!options.quiet) {
-    printResult(lintResult);
-  }
+  printResult(lintResult);
 }
 
 if ((files.length > 0) && !options.stdin) {
