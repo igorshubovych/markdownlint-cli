@@ -823,7 +823,7 @@ test('with --quiet option does not print to stdout or stderr', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 8);
+    t.is(error.stderr, '');
     t.is(error.exitCode, 1)
   }
 });
