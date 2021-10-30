@@ -816,17 +816,14 @@ test('without --dot option exclude folders/files with a dot', async t => {
 });
 
 test('with --quiet option does not print to stdout or stderr', async t => {
-  const fixFileQ = 'incorrect.q.mdf';
   try {
-    fs.copyFileSync('incorrect.md', fixFileQ);
     await execa('../markdownlint.js',
-      ['--fix', '--quiet','--config', 'test-config.json', fixFileQ],
+      ['--quiet','--config', 'test-config.json', 'incorrect.md'],
       {stripFinalNewline: false});
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr, '');
+    t.is(error.stderr.match(errorPattern).length, 8);
     t.is(error.exitCode, 1)
-    fs.unlinkSync(fixFileQ);
   }
 });
