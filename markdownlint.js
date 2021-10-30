@@ -193,7 +193,9 @@ function printResult(lintResult) {
       process.exitCode = 2;
     }
   } else if (lintResultString) {
-    console.error(lintResultString);
+    if (!options.quiet) {
+      console.error(lintResultString);
+    }
   }
 }
 
@@ -213,6 +215,7 @@ program
   .option('-j, --json', 'write issues in json format')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
+  .option('-q, --quiet', 'do not write issues to STDOUT')
   .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)');
 
