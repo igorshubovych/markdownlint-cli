@@ -39,6 +39,8 @@ markdownlint --help
     -q, --quiet                                 do not write issues to STDOUT
     -r, --rules  [file|directory|glob|package]  custom rule files
     -s, --stdin                                 read from STDIN (does not work with files)
+    --enable                                    rules to enable
+    --disable                                   rules to disable
 ```
 
 ### Globbing
