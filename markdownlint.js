@@ -204,6 +204,10 @@ function concatArray(item, array) {
   return array;
 }
 
+function commaSepList(value) {
+  return value.split(',');
+}
+
 program
   .version(pkg.version)
   .description(pkg.description)
@@ -217,7 +221,9 @@ program
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
   .option('-q, --quiet', 'do not write issues to STDOUT')
   .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, [])
-  .option('-s, --stdin', 'read from STDIN (does not work with files)');
+  .option('-s, --stdin', 'read from STDIN (does not work with files)')
+  .option('--enable <rules>', 'Enable certain rules (see https://git.io/JXxlm), e.g. --enable MD013,MD041', commaSepList)
+  .option('--disable <rules>', 'Disable certain rules, e.g. --disable MD013,MD041', commaSepList);
 
 program.parse(process.argv);
 
@@ -291,6 +297,16 @@ const diff = differenceWith(files, ignores, function (a, b) {
 function lintAndPrint(stdin, files) {
   files = files || [];
   const config = readConfiguration(options.config);
+
+  for (const rule of options.disable || []) {
+    config[rule] = false;
+  }
+  for (const rule of options.enable || []) {
+    // leave default values in place if rule is an object
+    if (!config[rule]) {
+      config[rule] = true;
+    }
+  }
   const lintOptions = {
     config,
     customRules,
