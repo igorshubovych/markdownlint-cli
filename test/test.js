@@ -852,30 +852,10 @@ test('with --quiet option does not print to stdout or stderr', async t => {
   }
 });
 
-test('--disable option', async t => {
-  let result = await execa('../markdownlint.js',
-  ['--disable', 'MD002,MD014,MD022,MD041', 'incorrect.md'],
-  {stripFinalNewline: false});
-  t.is(result.stdout, '');
-  t.is(result.stderr, '');
-  t.is(result.exitCode, 0)
-
+test('--enable flag', async t => {
   try {
     await execa('../markdownlint.js',
-      ['--disable', 'MD002,MD014,MD022', 'incorrect.md'],
-      {stripFinalNewline: false});
-    t.fail();
-  } catch (error) {
-    t.is(error.stdout, '');
-    t.is(error.stderr, 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]\n');
-    t.is(error.exitCode, 1)
-  }
-});
-
-test('--enable option', async t => {
-  try {
-    await execa('../markdownlint.js',
-      ['--enable', 'MD002', '--config', 'default-false.yml', 'incorrect.md'],
+      ['--enable', 'MD002', '--config', 'default-false-config.yml', 'incorrect.md'],
       {stripFinalNewline: false});
     t.fail();
   } catch (error) {
@@ -883,4 +863,60 @@ test('--enable option', async t => {
     t.is(error.stderr, 'incorrect.md:1 MD002/first-heading-h1/first-header-h1 First heading should be a top-level heading [Expected: h1; Actual: h2]\n');
     t.is(error.exitCode, 1)
   }
+});
+
+test('--enable flag does not modify already enabled rules', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--enable', 'MD043', '--config', 'md043-config.yaml', 'correct.md'],
+      {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr, 'correct.md:1 MD043/required-headings/required-headers Required heading structure [Expected: # First; Actual: # header]\n');
+    t.is(error.exitCode, 1)
+  }
+});
+
+test('--enable flag accepts rule alias', async t => {
+  try {
+    await execa('../markdownlint.js',
+      ['--enable', 'first-header-h1', '--config', 'default-false-config.yml', 'incorrect.md'],
+      {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr, 'incorrect.md:1 MD002/first-heading-h1/first-header-h1 First heading should be a top-level heading [Expected: h1; Actual: h2]\n');
+    t.is(error.exitCode, 1)
+  }
+});
+
+test('--disable flag', async t => {
+  const result = await execa('../markdownlint.js',
+  ['--disable', 'MD002 MD014 MD022 MD041', 'incorrect.md'],
+  {stripFinalNewline: false});
+
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0)
+
+  try {
+    await execa('../markdownlint.js',
+      ['--disable', 'MD014', 'incorrect.md'],
+      {stripFinalNewline: false});
+    // t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr, 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]\n');
+    t.is(error.exitCode, 1)
+  }
+});
+
+test('--disable flag overrides --enable', async t => {
+  const result = await execa('../markdownlint.js',
+    ['--enable', 'MD002', '--disable', 'MD002', '--config', 'default-false-config.yml', 'incorrect.md'],
+    {stripFinalNewline: false});
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0)
 });
