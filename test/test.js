@@ -893,7 +893,7 @@ test('--enable flag accepts rule alias', async t => {
 
 test('--disable flag', async t => {
   const result = await execa('../markdownlint.js',
-  ['--disable', 'MD002 MD014 MD022 MD041', 'incorrect.md'],
+  ['--disable', 'MD002', 'MD014', 'MD022', 'MD041', '--', 'incorrect.md'],
   {stripFinalNewline: false});
 
   t.is(result.stdout, '');
@@ -902,9 +902,9 @@ test('--disable flag', async t => {
 
   try {
     await execa('../markdownlint.js',
-      ['--disable', 'MD014', 'incorrect.md'],
+      ['--disable', 'MD014', 'MD014', 'MD022', '--', 'incorrect.md'],
       {stripFinalNewline: false});
-    // t.fail();
+    t.fail();
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr, 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]\n');
@@ -912,9 +912,9 @@ test('--disable flag', async t => {
   }
 });
 
-test('--disable flag overrides --enable', async t => {
+test('--disable flag overrides --enable flag', async t => {
   const result = await execa('../markdownlint.js',
-    ['--enable', 'MD002', '--disable', 'MD002', '--config', 'default-false-config.yml', 'incorrect.md'],
+    ['--disable', 'MD002', '--enable', 'MD002', '--config', 'default-false-config.yml', 'incorrect.md'],
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');

@@ -216,7 +216,7 @@ program
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
   .option('-q, --quiet', 'do not write issues to STDOUT')
-  .option('-r, --rules  [file|directory|glob|package]', 'custom rule files', concatArray, [])
+  .option('-r, --rules  [file|directory|glob|package]', 'include custom rule files', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
   .option('--enable [rules...]', 'Enable certain rules, e.g. --enable MD013 MD041')
   .option('--disable [rules...]', 'Disable certain rules, e.g. --disable MD013 MD041');
