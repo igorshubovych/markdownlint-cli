@@ -3,12 +3,12 @@
 'use strict';
 
 const fs = require('fs');
-const glob = require('glob');
 const path = require('path');
 const Module = require('module');
 const os = require('os');
 const process = require('process');
 const program = require('commander');
+const glob = require('glob');
 
 const options = program.opts();
 const markdownlint = require('markdownlint');
