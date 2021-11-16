@@ -5,3 +5,10 @@
     language: node
     types: [markdown]
     minimum_pre_commit_version: 0.15.0
+-   id: markdownlint-fix
+    name: markdownlint-fix
+    description: "Fixes the style of Markdown/Commonmark files."
+    entry: markdownlint --fix
+    language: node
+    types: [markdown]
+    minimum_pre_commit_version: 0.15.0
