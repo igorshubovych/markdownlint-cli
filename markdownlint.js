@@ -5,7 +5,10 @@
 const fs = require('fs');
 const path = require('path');
 const Module = require('module');
+const os = require('os');
+const process = require('process');
 const program = require('commander');
+
 const options = program.opts();
 const differenceWith = require('lodash.differencewith');
 const flatten = require('lodash.flatten');
@@ -14,8 +17,7 @@ const rc = require('run-con');
 const glob = require('glob');
 const minimatch = require('minimatch');
 const minimist = require('minimist');
-const pkg = require('./package');
-const os = require('os');
+const pkg = require('./package.json');
 
 function jsoncParse(text) {
   return JSON.parse(require('jsonc-parser').stripComments(text));
@@ -61,11 +63,11 @@ function readConfiguration(userConfigFile) {
   // from .markdownlint.{json,yaml,yml}.
   if (userConfigFile) {
     try {
-      const userConfig = jsConfigFile ?
+      const userConfig = jsConfigFile
         // Evaluate .js configuration file as code
-        require(path.resolve(processCwd, userConfigFile)) :
+        ? require(path.resolve(processCwd, userConfigFile))
         // Load JSON/YAML configuration as data
-        markdownlint.readConfigSync(userConfigFile, configFileParsers);
+        : markdownlint.readConfigSync(userConfigFile, configFileParsers);
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
       console.error(`Cannot read or parse config file '${userConfigFile}': ${error.message}`);
@@ -132,41 +134,34 @@ function prepareFileList(files, fileExtensions, previousResults) {
 }
 
 function printResult(lintResult) {
+  const results = flatten(Object.keys(lintResult).map(file => lintResult[file].map(result => {
+    if (options.json) {
+      return {
+        fileName: file,
+        ...result
+      };
+    }
 
-  const results = flatten(Object.keys(lintResult).map(file => {
-    return lintResult[file].map(result => {
-      if (options.json) {
-        return {
-          fileName: file,
-          ...result
-        }
-      } else {
-        return {
-          file: file,
-          lineNumber: result.lineNumber,
-          column: (result.errorRange && result.errorRange[0]) || 0,
-          names: result.ruleNames.join('/'),
-          description: result.ruleDescription +
-            (result.errorDetail ? ' [' + result.errorDetail + ']' : '') +
-            (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
-        };
-      }
-    });
-  }));
+    return {
+      file: file,
+      lineNumber: result.lineNumber,
+      column: (result.errorRange && result.errorRange[0]) || 0,
+      names: result.ruleNames.join('/'),
+      description: result.ruleDescription
+            + (result.errorDetail ? ' [' + result.errorDetail + ']' : '')
+            + (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
+    };
+  })));
 
   let lintResultString = '';
   if (results.length > 0) {
     if (options.json) {
-      results.sort((a, b) => {
-        return a.fileName.localeCompare(b.fileName) || a.lineNumber - b.lineNumber ||
-          a.ruleDescription.localeCompare(b.ruleDescription);
-      });
+      results.sort((a, b) => a.fileName.localeCompare(b.fileName) || a.lineNumber - b.lineNumber
+          || a.ruleDescription.localeCompare(b.ruleDescription));
       lintResultString = JSON.stringify(results, null, 2);
     } else {
-      results.sort((a, b) => {
-        return a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber ||
-          a.names.localeCompare(b.names) || a.description.localeCompare(b.description);
-      });
+      results.sort((a, b) => a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber
+          || a.names.localeCompare(b.names) || a.description.localeCompare(b.description));
 
       lintResultString = results.map(result => {
         const {file, lineNumber, column, names, description} = result;
@@ -174,6 +169,7 @@ function printResult(lintResult) {
         return `${file}:${lineNumber}${columnText} ${names} ${description}`;
       }).join('\n');
     }
+
     // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
     // streams (e.g., when the output is being piped). Just set the exit code
     // and let the program terminate normally.
@@ -183,19 +179,17 @@ function printResult(lintResult) {
   }
 
   if (options.output) {
-    lintResultString = lintResultString.length > 0 ?
-      lintResultString + os.EOL :
-      lintResultString;
+    lintResultString = lintResultString.length > 0
+      ? lintResultString + os.EOL
+      : lintResultString;
     try {
       fs.writeFileSync(options.output, lintResultString);
     } catch (error) {
       console.warn('Cannot write to output file ' + options.output + ': ' + error.message);
       process.exitCode = 2;
     }
-  } else if (lintResultString) {
-    if (!options.quiet) {
-      console.error(lintResultString);
-    }
+  } else if (lintResultString && !options.quiet) {
+    console.error(lintResultString);
   }
 }
 
@@ -260,7 +254,7 @@ function loadCustomRules(rules) {
       return fileList;
     } catch (error) {
       console.error('Cannot load custom rule ' + rule + ': ' + error.message);
-      process.exit(3);
+      return process.exit(3);
     }
   }));
 }
@@ -295,14 +289,16 @@ function lintAndPrint(stdin, files) {
   const config = readConfiguration(options.config);
 
   for (const rule of options.enable || []) {
-    // leave default values in place if rule is an object
+    // Leave default values in place if rule is an object
     if (!config[rule]) {
       config[rule] = true;
     }
   }
+
   for (const rule of options.disable || []) {
     config[rule] = false;
   }
+
   const lintOptions = {
     config,
     customRules,
@@ -313,6 +309,7 @@ function lintAndPrint(stdin, files) {
       stdin
     };
   }
+
   if (options.json) {
     lintOptions.resultVersion = 3;
   }

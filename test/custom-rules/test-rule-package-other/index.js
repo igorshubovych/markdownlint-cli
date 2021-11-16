@@ -1,1 +1,1 @@
-module.exports = require('./rule');
+module.exports = require('./rule.js');

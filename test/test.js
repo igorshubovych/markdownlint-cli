@@ -2,9 +2,10 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
+const process = require('process');
 const test = require('ava');
 const execa = require('execa');
-const os = require('os');
 
 const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+(:\d+)? MD\d{3}/gm;
 
@@ -80,22 +81,22 @@ test('linting of incorrect Markdown file fails prints issues as json', async t =
     t.is(error.stdout, '');
     const issues = JSON.parse(error.stderr);
     t.is(issues.length, 8);
-    // ruleInformation changes with version so that field just check not null and present
+    // RuleInformation changes with version so that field just check not null and present
     const issue = issues[0];
     t.true(issue.ruleInformation.length > 0);
     issue.ruleInformation = null;
     const expected = {
-      fileName: "incorrect.md",
+      fileName: 'incorrect.md',
       lineNumber: 1,
       ruleNames: [
-        "MD002",
-        "first-heading-h1",
-        "first-header-h1",
+        'MD002',
+        'first-heading-h1',
+        'first-header-h1',
       ],
-      ruleDescription: "First heading should be a top-level heading",
+      ruleDescription: 'First heading should be a top-level heading',
       ruleInformation: null,
       errorContext: null,
-      errorDetail: "Expected: h1; Actual: h2",
+      errorDetail: 'Expected: h1; Actual: h2',
       errorRange: null,
       fixInfo: null,
     };
@@ -814,7 +815,7 @@ test('Linter text file --output must end with EOF newline', async t => {
       {stripFinalNewline: false});
     t.fail();
   } catch {
-    t.true(endOfLine.test(fs.readFileSync(output, 'utf8')));
+    t.regex(fs.readFileSync(output, 'utf8'), endOfLine);
     fs.unlinkSync(output);
   }
 });
@@ -842,13 +843,13 @@ test('without --dot option exclude folders/files with a dot', async t => {
 test('with --quiet option does not print to stdout or stderr', async t => {
   try {
     await execa('../markdownlint.js',
-      ['--quiet','--config', 'test-config.json', 'incorrect.md'],
+      ['--quiet', '--config', 'test-config.json', 'incorrect.md'],
       {stripFinalNewline: false});
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr, '');
-    t.is(error.exitCode, 1)
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -861,7 +862,7 @@ test('--enable flag', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr, 'incorrect.md:1 MD002/first-heading-h1/first-header-h1 First heading should be a top-level heading [Expected: h1; Actual: h2]\n');
-    t.is(error.exitCode, 1)
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -874,7 +875,7 @@ test('--enable flag does not modify already enabled rules', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr, 'correct.md:1 MD043/required-headings/required-headers Required heading structure [Expected: # First; Actual: # header]\n');
-    t.is(error.exitCode, 1)
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -887,18 +888,18 @@ test('--enable flag accepts rule alias', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr, 'incorrect.md:1 MD002/first-heading-h1/first-header-h1 First heading should be a top-level heading [Expected: h1; Actual: h2]\n');
-    t.is(error.exitCode, 1)
+    t.is(error.exitCode, 1);
   }
 });
 
 test('--disable flag', async t => {
   const result = await execa('../markdownlint.js',
-  ['--disable', 'MD002', 'MD014', 'MD022', 'MD041', '--', 'incorrect.md'],
-  {stripFinalNewline: false});
+    ['--disable', 'MD002', 'MD014', 'MD022', 'MD041', '--', 'incorrect.md'],
+    {stripFinalNewline: false});
 
   t.is(result.stdout, '');
   t.is(result.stderr, '');
-  t.is(result.exitCode, 0)
+  t.is(result.exitCode, 0);
 
   try {
     await execa('../markdownlint.js',
@@ -908,7 +909,7 @@ test('--disable flag', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr, 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]\n');
-    t.is(error.exitCode, 1)
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -918,5 +919,5 @@ test('--disable flag overrides --enable flag', async t => {
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
-  t.is(result.exitCode, 0)
+  t.is(result.exitCode, 0);
 });
