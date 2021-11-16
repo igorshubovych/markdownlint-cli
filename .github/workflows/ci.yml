@@ -33,5 +33,5 @@ jobs:
       - name: Install packages
         run: npm ci
 
-      - name: Run tests
-        run: npm test
+      - name: Lint and run tests
+        run: npm run precommit
