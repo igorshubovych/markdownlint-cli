@@ -48,7 +48,7 @@ function readConfiguration(userConfigFile) {
     try {
       fs.accessSync(projectConfigFile, fs.R_OK);
       const projectConfig = markdownlint.readConfigSync(projectConfigFile, configFileParsers);
-      config = require('deep-extend')(config, projectConfig);
+      config = {...config, ...projectConfig};
       break;
     } catch {
       // Ignore failure
