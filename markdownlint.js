@@ -132,7 +132,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
 }
 
 function printResult(lintResult) {
-  const results = Object.keys(lintResult).map(file => lintResult[file].map(result => {
+  const results = Object.keys(lintResult).flatMap(file => lintResult[file].map(result => {
     if (options.json) {
       return {
         fileName: file,
@@ -149,7 +149,7 @@ function printResult(lintResult) {
             + (result.errorDetail ? ' [' + result.errorDetail + ']' : '')
             + (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
     };
-  })).flat();
+  }));
 
   let lintResultString = '';
   if (results.length > 0) {
@@ -239,12 +239,12 @@ function tryResolvePath(filepath) {
 }
 
 function loadCustomRules(rules) {
-  return rules.map(function (rule) {
+  return rules.flatMap((rule) => {
     try {
       const resolvedPath = [tryResolvePath(rule)];
-      const fileList = prepareFileList(resolvedPath, ['js']).map(function (filepath) {
-        return require(filepath.absolute);
-      }).flat();
+      const fileList = prepareFileList(resolvedPath, ['js']).flatMap(
+        (filepath) => require(filepath.absolute)
+      );
       if (fileList.length === 0) {
         throw new Error('No such rule');
       }
@@ -254,7 +254,7 @@ function loadCustomRules(rules) {
       console.error('Cannot load custom rule ' + rule + ': ' + error.message);
       return process.exit(3);
     }
-  }).flat();
+  });
 }
 
 let ignorePath = '.markdownlintignore';
