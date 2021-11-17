@@ -239,11 +239,11 @@ function tryResolvePath(filepath) {
 }
 
 function loadCustomRules(rules) {
-  return rules.flatMap((rule) => {
+  return rules.flatMap(rule => {
     try {
       const resolvedPath = [tryResolvePath(rule)];
       const fileList = prepareFileList(resolvedPath, ['js']).flatMap(
-        (filepath) => require(filepath.absolute)
+        filepath => require(filepath.absolute)
       );
       if (fileList.length === 0) {
         throw new Error('No such rule');
@@ -276,11 +276,9 @@ const files = prepareFileList(program.args, ['md', 'markdown'])
   .filter(value => ignoreFilter(value));
 const ignores = prepareFileList(options.ignore, ['md', 'markdown'], files);
 const customRules = loadCustomRules(options.rules);
-const diff = files.filter((file) => {
-  return !ignores.some(ignore => ignore.absolute === file.absolute);
-}).map(function (paths) {
-  return paths.original;
-});
+const diff = files.filter(
+  file => !ignores.some(ignore => ignore.absolute === file.absolute)
+).map(paths => paths.original);
 
 function lintAndPrint(stdin, files) {
   files = files || [];
