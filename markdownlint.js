@@ -14,7 +14,6 @@ const options = program.opts();
 const markdownlint = require('markdownlint');
 const rc = require('run-con');
 const minimatch = require('minimatch');
-const minimist = require('minimist');
 const pkg = require('./package.json');
 
 function jsoncParse(text) {
@@ -36,7 +35,7 @@ const processCwd = process.cwd();
 
 function readConfiguration(userConfigFile) {
   const jsConfigFile = /\.js$/i.test(userConfigFile);
-  const rcArgv = minimist(process.argv.slice(2));
+  const rcArgv = process.argv.slice(2);
   if (jsConfigFile) {
     // Prevent rc package from parsing .js config file as INI
     delete rcArgv.config;
@@ -55,10 +54,8 @@ function readConfiguration(userConfigFile) {
     }
   }
 
-  // Normally parsing this file is not needed,
-  // because it is already parsed by rc package.
-  // However I have to do it to overwrite configuration
-  // from .markdownlint.{json,yaml,yml}.
+  // Normally parsing this file is not needed, because it is already parsed by rc package.
+  // However I have to do it to overwrite configuration from .markdownlint.{json,yaml,yml}.
   if (userConfigFile) {
     try {
       const userConfig = jsConfigFile
@@ -89,18 +86,16 @@ function prepareFileList(files, fileExtensions, previousResults) {
     extensionGlobPart += '{' + fileExtensions.join(',') + '}';
   }
 
-  files = files.map(function (file) {
+  files = files.map(file => {
     try {
       if (fs.lstatSync(file).isDirectory()) {
         // Directory (file falls through to below)
         if (previousResults) {
           const matcher = new minimatch.Minimatch(
             path.resolve(processCwd, path.join(file, '**', extensionGlobPart)), globOptions);
-          return previousResults.filter(function (fileInfo) {
-            return matcher.match(fileInfo.absolute);
-          }).map(function (fileInfo) {
-            return fileInfo.original;
-          });
+          return previousResults.filter(
+            fileInfo => matcher.match(fileInfo.absolute)
+          ).map(fileInfo => fileInfo.original);
         }
 
         return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
@@ -109,11 +104,9 @@ function prepareFileList(files, fileExtensions, previousResults) {
       // Not a directory, not a file, may be a glob
       if (previousResults) {
         const matcher = new minimatch.Minimatch(path.resolve(processCwd, file), globOptions);
-        return previousResults.filter(function (fileInfo) {
-          return matcher.match(fileInfo.absolute);
-        }).map(function (fileInfo) {
-          return fileInfo.original;
-        });
+        return previousResults.filter(
+          fileInfo => matcher.match(fileInfo.absolute)
+        ).map(fileInfo => fileInfo.original);
       }
 
       return glob.sync(file, globOptions);
@@ -122,13 +115,11 @@ function prepareFileList(files, fileExtensions, previousResults) {
     // File
     return file;
   });
-  return files.flat().map(function (file) {
-    return {
-      original: file,
-      relative: path.relative(processCwd, file),
-      absolute: path.resolve(file)
-    };
-  });
+  return files.flat().map(file => ({
+    original: file,
+    relative: path.relative(processCwd, file),
+    absolute: path.resolve(file)
+  }));
 }
 
 function printResult(lintResult) {
