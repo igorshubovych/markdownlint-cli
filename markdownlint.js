@@ -8,9 +8,9 @@ const Module = require('module');
 const os = require('os');
 const process = require('process');
 const program = require('commander');
-const glob = require('glob');
 
 const options = program.opts();
+const glob = require('glob');
 const markdownlint = require('markdownlint');
 const rc = require('run-con');
 const minimatch = require('minimatch');
@@ -42,7 +42,7 @@ function readConfiguration(userConfigFile) {
   }
 
   // Load from well-known config files
-  let config = rc('markdownlint', {}, rcArgv);
+  let config = rc('markdownlint', {});
   for (const projectConfigFile of projectConfigFiles) {
     try {
       fs.accessSync(projectConfigFile, fs.R_OK);
@@ -92,7 +92,8 @@ function prepareFileList(files, fileExtensions, previousResults) {
         // Directory (file falls through to below)
         if (previousResults) {
           const matcher = new minimatch.Minimatch(
-            path.resolve(processCwd, path.join(file, '**', extensionGlobPart)), globOptions);
+            path.resolve(processCwd, path.join(file, '**', extensionGlobPart)), globOptions
+          );
           return previousResults.filter(
             fileInfo => matcher.match(fileInfo.absolute)
           ).map(fileInfo => fileInfo.original);
