@@ -35,11 +35,6 @@ const processCwd = process.cwd();
 
 function readConfiguration(userConfigFile) {
   const jsConfigFile = /\.js$/i.test(userConfigFile);
-  const rcArgv = process.argv.slice(2);
-  if (jsConfigFile) {
-    // Prevent rc package from parsing .js config file as INI
-    delete rcArgv.config;
-  }
 
   // Load from well-known config files
   let config = rc('markdownlint', {});
