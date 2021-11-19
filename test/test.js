@@ -15,6 +15,7 @@ test('--version option', async t => {
   const result = await execa('../markdownlint.js', ['--version'], {stripFinalNewline: false});
   t.regex(result.stdout, /^\d+\.\d+\.\d+\n$/);
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('--help option', async t => {
@@ -23,24 +24,28 @@ test('--help option', async t => {
   t.true(result.stdout.includes('--version'));
   t.true(result.stdout.includes('--help'));
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('no files shows help', async t => {
   const result = await execa('../markdownlint.js', [], {stripFinalNewline: false});
   t.true(result.stdout.includes('--help'));
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('files and --stdin shows help', async t => {
   const result = await execa('../markdownlint.js', ['--stdin', 'correct.md'], {stripFinalNewline: false});
   t.true(result.stdout.includes('--help'));
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('--fix and --stdin shows help', async t => {
   const result = await execa('../markdownlint.js', ['--fix', '--stdin', 'correct.md'], {stripFinalNewline: false});
   t.true(result.stdout.includes('--help'));
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('linting of correct Markdown file yields no output', async t => {
@@ -49,6 +54,7 @@ test('linting of correct Markdown file yields no output', async t => {
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('linting of correct Markdown file yields no output with absolute path', async t => {
@@ -57,6 +63,7 @@ test('linting of correct Markdown file yields no output with absolute path', asy
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('linting of incorrect Markdown file fails', async t => {
@@ -68,6 +75,7 @@ test('linting of incorrect Markdown file fails', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 8);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -101,6 +109,7 @@ test('linting of incorrect Markdown file fails prints issues as json', async t =
       fixInfo: null,
     };
     t.deepEqual(issues[0], expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -113,6 +122,7 @@ test('linting of incorrect Markdown file fails with absolute path', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 8);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -131,6 +141,7 @@ test('glob linting works with passing files', async t => {
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('glob linting works with failing files', async t => {
@@ -142,6 +153,7 @@ test('glob linting works with failing files', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 17);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -151,6 +163,7 @@ test('dir linting works with passing .markdown files', async t => {
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('dir linting works with failing .markdown files', async t => {
@@ -162,6 +175,7 @@ test('dir linting works with failing .markdown files', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 10);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -174,6 +188,7 @@ test('dir linting works with failing .markdown files and absolute path', async t
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 10);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -183,6 +198,7 @@ test('glob linting with failing files passes when failures ignored by glob', asy
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('glob linting with failing files passes when everything ignored by glob', async t => {
@@ -191,6 +207,7 @@ test('glob linting with failing files passes when everything ignored by glob', a
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('glob linting with failing files has fewer errors when ignored by dir', async t => {
@@ -202,6 +219,7 @@ test('glob linting with failing files has fewer errors when ignored by dir', asy
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 9);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -214,6 +232,7 @@ test('glob linting with failing files has fewer errors when ignored by dir and a
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 9);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -226,6 +245,7 @@ test('dir linting with failing files has fewer errors when ignored by file', asy
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 2);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -238,6 +258,7 @@ test('dir linting with failing files has fewer errors when ignored by file and a
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 2);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -247,6 +268,7 @@ test('glob linting with failing files passes when ignored by multiple globs', as
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('linting results are sorted by file/line/names/description', async t => {
@@ -269,6 +291,7 @@ test('linting results are sorted by file/line/names/description', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -281,6 +304,7 @@ test('glob linting does not try to lint directories as files', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.true(error.stderr.match(errorPattern).length > 0);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -289,6 +313,7 @@ test('--stdin with empty input has no output', async t => {
   const result = await execa('../markdownlint.js', ['--stdin'], {input, stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('--stdin with valid input has no output', async t => {
@@ -301,6 +326,7 @@ test('--stdin with valid input has no output', async t => {
   const result = await execa('../markdownlint.js', ['--stdin'], {input, stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('--stdin with invalid input reports violations', async t => {
@@ -316,6 +342,7 @@ test('--stdin with invalid input reports violations', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 2);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -325,6 +352,7 @@ test('stdin support does not interfere with file linting', async t => {
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('--output with empty input has empty output', async t => {
@@ -335,6 +363,7 @@ test('--output with empty input has empty output', async t => {
     {input, stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
   t.is(fs.readFileSync(output, 'utf8'), '');
   fs.unlinkSync(output);
 });
@@ -352,6 +381,7 @@ test('--output with valid input has empty output', async t => {
     {input, stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
   t.is(fs.readFileSync(output, 'utf8'), '');
   fs.unlinkSync(output);
 });
@@ -372,6 +402,7 @@ test('--output with invalid input outputs violations', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr, '');
+    t.is(error.exitCode, 1);
     t.is(fs.readFileSync(output, 'utf8').match(errorPattern).length, 2);
     fs.unlinkSync(output);
   }
@@ -393,6 +424,7 @@ test('--output with invalid input and --json outputs issues as json', async t =>
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr, '');
+    t.is(error.exitCode, 1);
     t.is(JSON.parse(fs.readFileSync(output, 'utf8')).length, 2);
     fs.unlinkSync(output);
   }
@@ -409,6 +441,7 @@ test('--output with invalid path fails', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.replace(/: ENOENT[^]*$/, ''), 'Cannot write to output file ' + output);
+    t.is(error.exitCode, 2);
     t.throws(() => fs.accessSync(output, 'utf8'));
   }
 });
@@ -419,6 +452,7 @@ test('configuration file can be YAML', async t => {
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('configuration file can be JavaScript', async t => {
@@ -427,6 +461,7 @@ test('configuration file can be JavaScript', async t => {
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('error on configuration file not found', async t => {
@@ -435,9 +470,9 @@ test('error on configuration file not found', async t => {
       ['--config', 'non-existent-file-path.yaml', 'correct.md'],
       {stripFinalNewline: false});
   } catch (error) {
-    t.is(error.exitCode, 1);
     t.is(error.stdout, '');
     t.regex(error.stderr, /Cannot read or parse config file 'non-existent-file-path.yaml': ENOENT: no such file or directory, open 'non-existent-file-path.yaml'/);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -447,9 +482,9 @@ test('error on malformed YAML configuration file', async t => {
       ['--config', 'malformed-config.yaml', 'correct.md'],
       {stripFinalNewline: false});
   } catch (error) {
-    t.is(error.exitCode, 1);
     t.is(error.stdout, '');
     t.regex(error.stderr, /Cannot read or parse config file 'malformed-config.yaml': Unable to parse 'malformed-config.yaml'; Unexpected token/);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -469,6 +504,7 @@ function getCwdConfigFileTest(extension) {
       ].join('\n');
       t.is(error.stdout, '');
       t.is(error.stderr, expected);
+      t.is(error.exitCode, 1);
     }
   };
 }
@@ -499,6 +535,7 @@ test('Custom rule from single file loaded', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -517,6 +554,7 @@ test('Multiple custom rules from single file loaded', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -537,6 +575,7 @@ test('Custom rules from directory loaded', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -557,6 +596,7 @@ test('Custom rules from glob loaded', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -574,6 +614,7 @@ test('Custom rule from node_modules package loaded', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -594,6 +635,7 @@ test('Custom rule from node_modules package loaded relative to cwd', async t => 
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -611,6 +653,7 @@ test('Custom rule from package loaded', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -635,6 +678,7 @@ test('Custom rule from several packages loaded', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -658,6 +702,7 @@ test('Invalid custom rule name reports error', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 3);
   }
 });
 
@@ -677,6 +722,7 @@ test('fixing errors in a file yields fewer errors', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
     fs.unlinkSync(fixFileA);
   }
 });
@@ -692,6 +738,7 @@ test('fixing errors in a file with absolute path yields fewer errors', async t =
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 2);
+    t.is(error.exitCode, 1);
     fs.unlinkSync(fixFileB);
   }
 });
@@ -710,6 +757,7 @@ test('fixing errors with a glob yields fewer errors', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 4);
+    t.is(error.exitCode, 1);
     fs.unlinkSync(fixFileC);
     fs.unlinkSync(fixSubFileC);
   }
@@ -731,6 +779,7 @@ test('.markdownlintignore is applied correctly', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -749,6 +798,7 @@ test('.markdownlintignore works with semi-absolute paths', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -768,6 +818,7 @@ test('--ignore-path works with .markdownlintignore', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -786,6 +837,7 @@ test('--ignore-path works with .ignorefile', async t => {
     ].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -803,6 +855,7 @@ test('--ignore-path fails for missing file', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.regex(error.stderr, /enoent.*no such file or directory/i);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -829,6 +882,7 @@ test('--dot option to include folders/files with a dot', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.is(error.stderr.match(errorPattern).length, 13);
+    t.is(error.exitCode, 1);
   }
 });
 
@@ -838,6 +892,7 @@ test('without --dot option exclude folders/files with a dot', async t => {
     {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
 });
 
 test('with --quiet option does not print to stdout or stderr', async t => {
