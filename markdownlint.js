@@ -10,13 +10,10 @@ const process = require('process');
 const program = require('commander');
 
 const options = program.opts();
-const differenceWith = require('lodash.differencewith');
-const flatten = require('lodash.flatten');
+const glob = require('glob');
 const markdownlint = require('markdownlint');
 const rc = require('run-con');
-const glob = require('glob');
 const minimatch = require('minimatch');
-const minimist = require('minimist');
 const pkg = require('./package.json');
 
 function jsoncParse(text) {
@@ -38,29 +35,22 @@ const processCwd = process.cwd();
 
 function readConfiguration(userConfigFile) {
   const jsConfigFile = /\.js$/i.test(userConfigFile);
-  const rcArgv = minimist(process.argv.slice(2));
-  if (jsConfigFile) {
-    // Prevent rc package from parsing .js config file as INI
-    delete rcArgv.config;
-  }
 
   // Load from well-known config files
-  let config = rc('markdownlint', {}, rcArgv);
+  let config = rc('markdownlint', {});
   for (const projectConfigFile of projectConfigFiles) {
     try {
       fs.accessSync(projectConfigFile, fs.R_OK);
       const projectConfig = markdownlint.readConfigSync(projectConfigFile, configFileParsers);
-      config = require('deep-extend')(config, projectConfig);
+      config = {...config, ...projectConfig};
       break;
     } catch {
       // Ignore failure
     }
   }
 
-  // Normally parsing this file is not needed,
-  // because it is already parsed by rc package.
-  // However I have to do it to overwrite configuration
-  // from .markdownlint.{json,yaml,yml}.
+  // Normally parsing this file is not needed, because it is already parsed by rc package.
+  // However I have to do it to overwrite configuration from .markdownlint.{json,yaml,yml}.
   if (userConfigFile) {
     try {
       const userConfig = jsConfigFile
@@ -91,18 +81,17 @@ function prepareFileList(files, fileExtensions, previousResults) {
     extensionGlobPart += '{' + fileExtensions.join(',') + '}';
   }
 
-  files = files.map(function (file) {
+  files = files.map(file => {
     try {
       if (fs.lstatSync(file).isDirectory()) {
         // Directory (file falls through to below)
         if (previousResults) {
           const matcher = new minimatch.Minimatch(
-            path.resolve(processCwd, path.join(file, '**', extensionGlobPart)), globOptions);
-          return previousResults.filter(function (fileInfo) {
-            return matcher.match(fileInfo.absolute);
-          }).map(function (fileInfo) {
-            return fileInfo.original;
-          });
+            path.resolve(processCwd, path.join(file, '**', extensionGlobPart)), globOptions
+          );
+          return previousResults.filter(
+            fileInfo => matcher.match(fileInfo.absolute)
+          ).map(fileInfo => fileInfo.original);
         }
 
         return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
@@ -111,11 +100,9 @@ function prepareFileList(files, fileExtensions, previousResults) {
       // Not a directory, not a file, may be a glob
       if (previousResults) {
         const matcher = new minimatch.Minimatch(path.resolve(processCwd, file), globOptions);
-        return previousResults.filter(function (fileInfo) {
-          return matcher.match(fileInfo.absolute);
-        }).map(function (fileInfo) {
-          return fileInfo.original;
-        });
+        return previousResults.filter(
+          fileInfo => matcher.match(fileInfo.absolute)
+        ).map(fileInfo => fileInfo.original);
       }
 
       return glob.sync(file, globOptions);
@@ -124,17 +111,15 @@ function prepareFileList(files, fileExtensions, previousResults) {
     // File
     return file;
   });
-  return flatten(files).map(function (file) {
-    return {
-      original: file,
-      relative: path.relative(processCwd, file),
-      absolute: path.resolve(file)
-    };
-  });
+  return files.flat().map(file => ({
+    original: file,
+    relative: path.relative(processCwd, file),
+    absolute: path.resolve(file)
+  }));
 }
 
 function printResult(lintResult) {
-  const results = flatten(Object.keys(lintResult).map(file => lintResult[file].map(result => {
+  const results = Object.keys(lintResult).flatMap(file => lintResult[file].map(result => {
     if (options.json) {
       return {
         fileName: file,
@@ -151,7 +136,7 @@ function printResult(lintResult) {
             + (result.errorDetail ? ' [' + result.errorDetail + ']' : '')
             + (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
     };
-  })));
+  }));
 
   let lintResultString = '';
   if (results.length > 0) {
@@ -241,12 +226,12 @@ function tryResolvePath(filepath) {
 }
 
 function loadCustomRules(rules) {
-  return flatten(rules.map(function (rule) {
+  return rules.flatMap(rule => {
     try {
       const resolvedPath = [tryResolvePath(rule)];
-      const fileList = flatten(prepareFileList(resolvedPath, ['js']).map(function (filepath) {
-        return require(filepath.absolute);
-      }));
+      const fileList = prepareFileList(resolvedPath, ['js']).flatMap(
+        filepath => require(filepath.absolute)
+      );
       if (fileList.length === 0) {
         throw new Error('No such rule');
       }
@@ -256,7 +241,7 @@ function loadCustomRules(rules) {
       console.error('Cannot load custom rule ' + rule + ': ' + error.message);
       return process.exit(3);
     }
-  }));
+  });
 }
 
 let ignorePath = '.markdownlintignore';
@@ -278,11 +263,9 @@ const files = prepareFileList(program.args, ['md', 'markdown'])
   .filter(value => ignoreFilter(value));
 const ignores = prepareFileList(options.ignore, ['md', 'markdown'], files);
 const customRules = loadCustomRules(options.rules);
-const diff = differenceWith(files, ignores, function (a, b) {
-  return a.absolute === b.absolute;
-}).map(function (paths) {
-  return paths.original;
-});
+const diff = files.filter(
+  file => !ignores.some(ignore => ignore.absolute === file.absolute)
+).map(paths => paths.original);
 
 function lintAndPrint(stdin, files) {
   files = files || [];

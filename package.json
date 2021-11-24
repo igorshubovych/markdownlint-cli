@@ -13,7 +13,7 @@
     "invalid": "node ./markdownlint.js --config test/test-config.json -- test/incorrect.md",
     "fix": "cp test/incorrect.md test/incorrect.copy.md && node ./markdownlint.js --fix test/incorrect.copy.md ; cat test/incorrect.copy.md && rm test/incorrect.copy.md",
     "test": "ava",
-    "watch": "npm test -- --watch --tap | tap-growl",
+    "watch": "npm test --watch",
     "start": "node ./markdownlint.js",
     "precommit": "xo && npm test"
   },
@@ -38,25 +38,19 @@
   "homepage": "https://github.com/igorshubovych/markdownlint-cli#readme",
   "dependencies": {
     "commander": "~8.3.0",
-    "deep-extend": "~0.6.0",
     "get-stdin": "~8.0.0",
     "glob": "~7.2.0",
     "ignore": "~5.1.9",
     "js-yaml": "^4.1.0",
     "jsonc-parser": "~3.0.0",
-    "lodash.differencewith": "~4.5.0",
-    "lodash.flatten": "~4.4.0",
     "markdownlint": "~0.24.0",
     "markdownlint-rule-helpers": "~0.15.0",
     "minimatch": "~3.0.4",
-    "minimist": "~1.2.5",
     "run-con": "~1.2.10"
   },
   "devDependencies": {
     "ava": "^3.15.0",
     "execa": "^5.1.1",
-    "husky": "^7.0.4",
-    "tap-growl": "^3.0.0",
     "test-rule-package": "./test/custom-rules/test-rule-package",
     "xo": "^0.46.4"
   },
