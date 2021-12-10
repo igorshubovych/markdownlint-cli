@@ -136,7 +136,7 @@ test('linting of unreadable Markdown file fails', async t => {
       {stripFinalNewline: false});
     t.fail();
   } catch (error) {
-    t.is(error.exitCode, 2);
+    t.is(error.exitCode, 4);
   }
 
   fs.rmSync(unreadablePath, {force: true});
@@ -488,7 +488,7 @@ test('error on configuration file not found', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.regex(error.stderr, /Cannot read or parse config file 'non-existent-file-path.yaml': ENOENT: no such file or directory, open 'non-existent-file-path.yaml'/);
-    t.is(error.exitCode, 2);
+    t.is(error.exitCode, 4);
   }
 });
 
@@ -500,7 +500,7 @@ test('error on malformed YAML configuration file', async t => {
   } catch (error) {
     t.is(error.stdout, '');
     t.regex(error.stderr, /Cannot read or parse config file 'malformed-config.yaml': Unable to parse 'malformed-config.yaml'; Unexpected token/);
-    t.is(error.exitCode, 2);
+    t.is(error.exitCode, 4);
   }
 });
 

@@ -26,7 +26,7 @@ function jsYamlSafeLoad(text) {
 
 const exitCodes = {
   lintFindings: 1,
-  failedToWriteOutput: 2,
+  failedToWriteOutputFile: 2,
   failedToLoadCustomRules: 3,
   unexpectedError: 4
 };
@@ -178,7 +178,7 @@ function printResult(lintResult) {
       fs.writeFileSync(options.output, lintResultString);
     } catch (error) {
       console.warn('Cannot write to output file ' + options.output + ': ' + error.message);
-      process.exitCode = exitCodes.unexpectedError;
+      process.exitCode = exitCodes.failedToWriteOutputFile;
     }
   } else if (lintResultString && !options.quiet) {
     console.error(lintResultString);
@@ -343,7 +343,7 @@ if (require.main === module) {
   try {
     main();
   } catch (error) {
-    process.exitCode = exitCodes.unexpectedError;
-    throw error;
+    console.error(error);
+    process.exit(exitCodes.unexpectedError);
   }
 }
