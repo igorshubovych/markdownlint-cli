@@ -24,6 +24,8 @@ function jsYamlSafeLoad(text) {
   return require('js-yaml').load(text);
 }
 
+const exitCodes = { lintFindings: 1, unexpectedError: 2 };
+
 const projectConfigFiles = [
   '.markdownlint.json',
   '.markdownlint.yaml',
@@ -61,7 +63,7 @@ function readConfiguration(userConfigFile) {
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
       console.error(`Cannot read or parse config file '${userConfigFile}': ${error.message}`);
-      process.exitCode = 1;
+      process.exitCode = exitCodes.unexpectedError;
     }
   }
 
@@ -160,7 +162,7 @@ function printResult(lintResult) {
     // and let the program terminate normally.
     // @see {@link https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_exit_code}
     // @see {@link https://github.com/igorshubovych/markdownlint-cli/pull/29#issuecomment-343535291}
-    process.exitCode = 1;
+    process.exitCode = exitCodes.lintFindings;
   }
 
   if (options.output) {
@@ -171,7 +173,7 @@ function printResult(lintResult) {
       fs.writeFileSync(options.output, lintResultString);
     } catch (error) {
       console.warn('Cannot write to output file ' + options.output + ': ' + error.message);
-      process.exitCode = 2;
+      process.exitCode = exitCodes.unexpectedError;
     }
   } else if (lintResultString && !options.quiet) {
     console.error(lintResultString);
@@ -321,11 +323,21 @@ function lintAndPrint(stdin, files) {
   printResult(lintResult);
 }
 
-if ((files.length > 0) && !options.stdin) {
-  lintAndPrint(null, diff);
-} else if ((files.length === 0) && options.stdin && !options.fix) {
-  const getStdin = require('get-stdin');
-  getStdin().then(lintAndPrint);
-} else {
-  program.help();
+function main() {
+  if ((files.length > 0) && !options.stdin) {
+    lintAndPrint(null, diff);
+  } else if ((files.length === 0) && options.stdin && !options.fix) {
+    const getStdin = require('get-stdin');
+    getStdin().then(lintAndPrint);
+  } else {
+    program.help();
+  }
+}
+
+if (require.main === module) {
+  try {
+    main();
+  } catch (error) {
+    process.exitCode = exitCodes.unexpectedError;
+  }
 }
