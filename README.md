@@ -112,9 +112,10 @@ If a rule is passed to both `--enable` and `--disable`, it will be disabled.
 `markdownlint-cli` returns one of the following exit codes:
 
 - `0`: Program ran successfully
-- `1`: Linting errors / bad parameter
+- `1`: Linting errors
 - `2`: Unable to write `-o`/`--output` output file
 - `3`: Unable to load `-r`/`--rules` custom rule
+- `4`: Unexpected error (e.g. malformed config)
 
 ## Use with pre-commit
 
