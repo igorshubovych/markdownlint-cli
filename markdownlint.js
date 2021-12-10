@@ -24,7 +24,12 @@ function jsYamlSafeLoad(text) {
   return require('js-yaml').load(text);
 }
 
-const exitCodes = { lintFindings: 1, unexpectedError: 2 };
+const exitCodes = {
+  lintFindings: 1,
+  failedToWriteOutput: 2,
+  failedToLoadCustomRules: 3,
+  unexpectedError: 4
+};
 
 const projectConfigFiles = [
   '.markdownlint.json',
@@ -241,7 +246,7 @@ function loadCustomRules(rules) {
       return fileList;
     } catch (error) {
       console.error('Cannot load custom rule ' + rule + ': ' + error.message);
-      return process.exit(3);
+      return process.exit(exitCodes.failedToLoadCustomRules);
     }
   });
 }
@@ -339,5 +344,6 @@ if (require.main === module) {
     main();
   } catch (error) {
     process.exitCode = exitCodes.unexpectedError;
+    throw error;
   }
 }
