@@ -339,11 +339,9 @@ function main() {
   }
 }
 
-if (require.main === module) {
-  try {
-    main();
-  } catch (error) {
-    console.error(error);
-    process.exit(exitCodes.unexpectedError);
-  }
+try {
+  main();
+} catch (error) {
+  console.error(error);
+  process.exit(exitCodes.unexpectedError);
 }
