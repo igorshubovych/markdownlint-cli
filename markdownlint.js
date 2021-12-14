@@ -328,7 +328,7 @@ function lintAndPrint(stdin, files) {
   printResult(lintResult);
 }
 
-function main() {
+try {
   if ((files.length > 0) && !options.stdin) {
     lintAndPrint(null, diff);
   } else if ((files.length === 0) && options.stdin && !options.fix) {
@@ -337,10 +337,6 @@ function main() {
   } else {
     program.help();
   }
-}
-
-try {
-  main();
 } catch (error) {
   console.error(error);
   process.exit(exitCodes.unexpectedError);
