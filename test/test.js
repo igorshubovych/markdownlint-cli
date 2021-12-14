@@ -128,7 +128,7 @@ test('linting of incorrect Markdown file fails with absolute path', async t => {
 
 test('linting of unreadable Markdown file fails', async t => {
   const unreadablePath = '../unreadable.test.md';
-  fs.writeFileSync(unreadablePath, '', {mode: 0o222});
+  fs.symlinkSync('nonexistent.dest.md', unreadablePath, 'file');
 
   try {
     await execa('../markdownlint.js',
@@ -138,7 +138,7 @@ test('linting of unreadable Markdown file fails', async t => {
   } catch (error) {
     t.is(error.exitCode, 4);
   } finally {
-    fs.rmSync(unreadablePath, {force: true});
+    fs.unlinkSync(unreadablePath, {force: true});
   }
 });
 
