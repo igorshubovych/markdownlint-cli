@@ -24,6 +24,13 @@ function jsYamlSafeLoad(text) {
   return require('js-yaml').load(text);
 }
 
+const exitCodes = {
+  lintFindings: 1,
+  failedToWriteOutputFile: 2,
+  failedToLoadCustomRules: 3,
+  unexpectedError: 4
+};
+
 const projectConfigFiles = [
   '.markdownlint.json',
   '.markdownlint.yaml',
@@ -64,7 +71,7 @@ function readConfiguration(userConfigFile) {
       console.error(
         `Cannot read or parse config file '${userConfigFile}': ${error.message}`
       );
-      process.exitCode = 1;
+      process.exitCode = exitCodes.unexpectedError;
     }
   }
 
@@ -181,7 +188,7 @@ function printResult(lintResult) {
     // and let the program terminate normally.
     // @see {@link https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_exit_code}
     // @see {@link https://github.com/igorshubovych/markdownlint-cli/pull/29#issuecomment-343535291}
-    process.exitCode = 1;
+    process.exitCode = exitCodes.lintFindings;
   }
 
   if (options.output) {
@@ -193,7 +200,7 @@ function printResult(lintResult) {
       console.warn(
         'Cannot write to output file ' + options.output + ': ' + error.message
       );
-      process.exitCode = 2;
+      process.exitCode = exitCodes.failedToWriteOutputFile;
     }
   } else if (lintResultString && !options.quiet) {
     console.error(lintResultString);
@@ -271,7 +278,7 @@ function loadCustomRules(rules) {
       return fileList;
     } catch (error) {
       console.error('Cannot load custom rule ' + rule + ': ' + error.message);
-      return process.exit(3);
+      return process.exit(exitCodes.failedToLoadCustomRules);
     }
   });
 }
@@ -354,11 +361,16 @@ function lintAndPrint(stdin, files) {
   printResult(lintResult);
 }
 
-if (files.length > 0 && !options.stdin) {
-  lintAndPrint(null, diff);
-} else if (files.length === 0 && options.stdin && !options.fix) {
-  const getStdin = require('get-stdin');
-  getStdin().then(lintAndPrint);
-} else {
-  program.help();
+try {
+  if (files.length > 0 && !options.stdin) {
+    lintAndPrint(null, diff);
+  } else if (files.length === 0 && options.stdin && !options.fix) {
+    const getStdin = require('get-stdin');
+    getStdin().then(lintAndPrint);
+  } else {
+    program.help();
+  }
+} catch (error) {
+  console.error(error);
+  process.exit(exitCodes.unexpectedError);
 }

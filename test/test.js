@@ -142,6 +142,24 @@ test('linting of incorrect Markdown file fails with absolute path', async t => {
   }
 });
 
+test('linting of unreadable Markdown file fails', async t => {
+  const unreadablePath = '../unreadable.test.md';
+  fs.symlinkSync('nonexistent.dest.md', unreadablePath, 'file');
+
+  try {
+    await execa(
+      '../markdownlint.js',
+      ['--config', 'test-config.json', unreadablePath],
+      {stripFinalNewline: false}
+    );
+    t.fail();
+  } catch (error) {
+    t.is(error.exitCode, 4);
+  } finally {
+    fs.unlinkSync(unreadablePath, {force: true});
+  }
+});
+
 test('linting of incorrect Markdown via npm run file fails with eol', async t => {
   try {
     await execa('npm', ['run', 'invalid'], {stripFinalNewline: false});
@@ -543,7 +561,7 @@ test('error on configuration file not found', async t => {
       error.stderr,
       /Cannot read or parse config file 'non-existent-file-path.yaml': ENOENT: no such file or directory, open 'non-existent-file-path.yaml'/
     );
-    t.is(error.exitCode, 1);
+    t.is(error.exitCode, 4);
   }
 });
 
@@ -560,7 +578,7 @@ test('error on malformed YAML configuration file', async t => {
       error.stderr,
       /Cannot read or parse config file 'malformed-config.yaml': Unable to parse 'malformed-config.yaml'; Unexpected token/
     );
-    t.is(error.exitCode, 1);
+    t.is(error.exitCode, 4);
   }
 });
 
