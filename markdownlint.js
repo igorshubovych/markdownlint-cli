@@ -27,7 +27,7 @@ function jsYamlSafeLoad(text) {
 const projectConfigFiles = [
   '.markdownlint.json',
   '.markdownlint.yaml',
-  '.markdownlint.yml'
+  '.markdownlint.yml',
 ];
 const configFileParsers = [jsoncParse, jsYamlSafeLoad];
 const fsOptions = {encoding: 'utf8'};
@@ -41,7 +41,10 @@ function readConfiguration(userConfigFile) {
   for (const projectConfigFile of projectConfigFiles) {
     try {
       fs.accessSync(projectConfigFile, fs.R_OK);
-      const projectConfig = markdownlint.readConfigSync(projectConfigFile, configFileParsers);
+      const projectConfig = markdownlint.readConfigSync(
+        projectConfigFile,
+        configFileParsers,
+      );
       config = {...config, ...projectConfig};
       break;
     } catch {
@@ -54,13 +57,15 @@ function readConfiguration(userConfigFile) {
   if (userConfigFile) {
     try {
       const userConfig = jsConfigFile
-        // Evaluate .js configuration file as code
-        ? require(path.resolve(processCwd, userConfigFile))
-        // Load JSON/YAML configuration as data
-        : markdownlint.readConfigSync(userConfigFile, configFileParsers);
+        ? // Evaluate .js configuration file as code
+          require(path.resolve(processCwd, userConfigFile))
+        : // Load JSON/YAML configuration as data
+          markdownlint.readConfigSync(userConfigFile, configFileParsers);
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
-      console.error(`Cannot read or parse config file '${userConfigFile}': ${error.message}`);
+      console.error(
+        `Cannot read or parse config file '${userConfigFile}': ${error.message}`,
+      );
       process.exitCode = 1;
     }
   }
@@ -71,7 +76,7 @@ function readConfiguration(userConfigFile) {
 function prepareFileList(files, fileExtensions, previousResults) {
   const globOptions = {
     dot: Boolean(options.dot),
-    nodir: true
+    nodir: true,
   };
   let extensionGlobPart = '*.';
   if (fileExtensions.length === 1) {
@@ -81,17 +86,18 @@ function prepareFileList(files, fileExtensions, previousResults) {
     extensionGlobPart += '{' + fileExtensions.join(',') + '}';
   }
 
-  files = files.map(file => {
+  files = files.map((file) => {
     try {
       if (fs.lstatSync(file).isDirectory()) {
         // Directory (file falls through to below)
         if (previousResults) {
           const matcher = new minimatch.Minimatch(
-            path.resolve(processCwd, path.join(file, '**', extensionGlobPart)), globOptions
+            path.resolve(processCwd, path.join(file, '**', extensionGlobPart)),
+            globOptions,
           );
-          return previousResults.filter(
-            fileInfo => matcher.match(fileInfo.absolute)
-          ).map(fileInfo => fileInfo.original);
+          return previousResults
+            .filter((fileInfo) => matcher.match(fileInfo.absolute))
+            .map((fileInfo) => fileInfo.original);
         }
 
         return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
@@ -99,10 +105,13 @@ function prepareFileList(files, fileExtensions, previousResults) {
     } catch {
       // Not a directory, not a file, may be a glob
       if (previousResults) {
-        const matcher = new minimatch.Minimatch(path.resolve(processCwd, file), globOptions);
-        return previousResults.filter(
-          fileInfo => matcher.match(fileInfo.absolute)
-        ).map(fileInfo => fileInfo.original);
+        const matcher = new minimatch.Minimatch(
+          path.resolve(processCwd, file),
+          globOptions,
+        );
+        return previousResults
+          .filter((fileInfo) => matcher.match(fileInfo.absolute))
+          .map((fileInfo) => fileInfo.original);
       }
 
       return glob.sync(file, globOptions);
@@ -111,48 +120,64 @@ function prepareFileList(files, fileExtensions, previousResults) {
     // File
     return file;
   });
-  return files.flat().map(file => ({
+  return files.flat().map((file) => ({
     original: file,
     relative: path.relative(processCwd, file),
-    absolute: path.resolve(file)
+    absolute: path.resolve(file),
   }));
 }
 
 function printResult(lintResult) {
-  const results = Object.keys(lintResult).flatMap(file => lintResult[file].map(result => {
-    if (options.json) {
-      return {
-        fileName: file,
-        ...result
-      };
-    }
+  const results = Object.keys(lintResult).flatMap((file) =>
+    lintResult[file].map((result) => {
+      if (options.json) {
+        return {
+          fileName: file,
+          ...result,
+        };
+      }
 
-    return {
-      file: file,
-      lineNumber: result.lineNumber,
-      column: (result.errorRange && result.errorRange[0]) || 0,
-      names: result.ruleNames.join('/'),
-      description: result.ruleDescription
-            + (result.errorDetail ? ' [' + result.errorDetail + ']' : '')
-            + (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
-    };
-  }));
+      return {
+        file: file,
+        lineNumber: result.lineNumber,
+        column: (result.errorRange && result.errorRange[0]) || 0,
+        names: result.ruleNames.join('/'),
+        description:
+          result.ruleDescription +
+          (result.errorDetail ? ' [' + result.errorDetail + ']' : '') +
+          (result.errorContext
+            ? ' [Context: "' + result.errorContext + '"]'
+            : ''),
+      };
+    }),
+  );
 
   let lintResultString = '';
   if (results.length > 0) {
     if (options.json) {
-      results.sort((a, b) => a.fileName.localeCompare(b.fileName) || a.lineNumber - b.lineNumber
-          || a.ruleDescription.localeCompare(b.ruleDescription));
+      results.sort(
+        (a, b) =>
+          a.fileName.localeCompare(b.fileName) ||
+          a.lineNumber - b.lineNumber ||
+          a.ruleDescription.localeCompare(b.ruleDescription),
+      );
       lintResultString = JSON.stringify(results, null, 2);
     } else {
-      results.sort((a, b) => a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber
-          || a.names.localeCompare(b.names) || a.description.localeCompare(b.description));
+      results.sort(
+        (a, b) =>
+          a.file.localeCompare(b.file) ||
+          a.lineNumber - b.lineNumber ||
+          a.names.localeCompare(b.names) ||
+          a.description.localeCompare(b.description),
+      );
 
-      lintResultString = results.map(result => {
-        const {file, lineNumber, column, names, description} = result;
-        const columnText = column ? `:${column}` : '';
-        return `${file}:${lineNumber}${columnText} ${names} ${description}`;
-      }).join('\n');
+      lintResultString = results
+        .map((result) => {
+          const {file, lineNumber, column, names, description} = result;
+          const columnText = column ? `:${column}` : '';
+          return `${file}:${lineNumber}${columnText} ${names} ${description}`;
+        })
+        .join('\n');
     }
 
     // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
@@ -164,13 +189,16 @@ function printResult(lintResult) {
   }
 
   if (options.output) {
-    lintResultString = lintResultString.length > 0
-      ? lintResultString + os.EOL
-      : lintResultString;
+    lintResultString =
+      lintResultString.length > 0
+        ? lintResultString + os.EOL
+        : lintResultString;
     try {
       fs.writeFileSync(options.output, lintResultString);
     } catch (error) {
-      console.warn('Cannot write to output file ' + options.output + ': ' + error.message);
+      console.warn(
+        'Cannot write to output file ' + options.output + ': ' + error.message,
+      );
       process.exitCode = 2;
     }
   } else if (lintResultString && !options.quiet) {
@@ -187,18 +215,40 @@ program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
-  .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
-  .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
+  .option(
+    '-c, --config [configFile]',
+    'configuration file (JSON, JSONC, JS, or YAML)',
+  )
+  .option(
+    '-d, --dot',
+    'include files/folders with a dot (for example `.github`)',
+  )
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
-  .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
+  .option(
+    '-i, --ignore [file|directory|glob]',
+    'file(s) to ignore/exclude',
+    concatArray,
+    [],
+  )
   .option('-j, --json', 'write issues in json format')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
   .option('-q, --quiet', 'do not write issues to STDOUT')
-  .option('-r, --rules  [file|directory|glob|package]', 'include custom rule files', concatArray, [])
+  .option(
+    '-r, --rules  [file|directory|glob|package]',
+    'include custom rule files',
+    concatArray,
+    [],
+  )
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
-  .option('--enable [rules...]', 'Enable certain rules, e.g. --enable MD013 MD041')
-  .option('--disable [rules...]', 'Disable certain rules, e.g. --disable MD013 MD041');
+  .option(
+    '--enable [rules...]',
+    'Enable certain rules, e.g. --enable MD013 MD041',
+  )
+  .option(
+    '--disable [rules...]',
+    'Disable certain rules, e.g. --disable MD013 MD041',
+  );
 
 program.parse(process.argv);
 
@@ -226,11 +276,11 @@ function tryResolvePath(filepath) {
 }
 
 function loadCustomRules(rules) {
-  return rules.flatMap(rule => {
+  return rules.flatMap((rule) => {
     try {
       const resolvedPath = [tryResolvePath(rule)];
       const fileList = prepareFileList(resolvedPath, ['js']).flatMap(
-        filepath => require(filepath.absolute)
+        (filepath) => require(filepath.absolute),
       );
       if (fileList.length === 0) {
         throw new Error('No such rule');
@@ -256,16 +306,19 @@ if (existsSync(ignorePath)) {
   const ignoreText = fs.readFileSync(ignorePath, fsOptions);
   const ignore = require('ignore');
   const ignoreInstance = ignore().add(ignoreText);
-  ignoreFilter = fileInfo => !ignoreInstance.ignores(fileInfo.relative);
+  ignoreFilter = (fileInfo) => !ignoreInstance.ignores(fileInfo.relative);
 }
 
-const files = prepareFileList(program.args, ['md', 'markdown'])
-  .filter(value => ignoreFilter(value));
+const files = prepareFileList(program.args, ['md', 'markdown']).filter(
+  (value) => ignoreFilter(value),
+);
 const ignores = prepareFileList(options.ignore, ['md', 'markdown'], files);
 const customRules = loadCustomRules(options.rules);
-const diff = files.filter(
-  file => !ignores.some(ignore => ignore.absolute === file.absolute)
-).map(paths => paths.original);
+const diff = files
+  .filter(
+    (file) => !ignores.some((ignore) => ignore.absolute === file.absolute),
+  )
+  .map((paths) => paths.original);
 
 function lintAndPrint(stdin, files) {
   files = files || [];
@@ -285,11 +338,11 @@ function lintAndPrint(stdin, files) {
   const lintOptions = {
     config,
     customRules,
-    files
+    files,
   };
   if (stdin) {
     lintOptions.strings = {
-      stdin
+      stdin,
     };
   }
 
@@ -300,16 +353,19 @@ function lintAndPrint(stdin, files) {
   if (options.fix) {
     const fixOptions = {
       ...lintOptions,
-      resultVersion: 3
+      resultVersion: 3,
     };
     const markdownlintRuleHelpers = require('markdownlint-rule-helpers');
     for (const file of files) {
       fixOptions.files = [file];
       const fixResult = markdownlint.sync(fixOptions);
-      const fixes = fixResult[file].filter(error => error.fixInfo);
+      const fixes = fixResult[file].filter((error) => error.fixInfo);
       if (fixes.length > 0) {
         const originalText = fs.readFileSync(file, fsOptions);
-        const fixedText = markdownlintRuleHelpers.applyFixes(originalText, fixes);
+        const fixedText = markdownlintRuleHelpers.applyFixes(
+          originalText,
+          fixes,
+        );
         if (originalText !== fixedText) {
           fs.writeFileSync(file, fixedText, fsOptions);
         }
@@ -321,9 +377,9 @@ function lintAndPrint(stdin, files) {
   printResult(lintResult);
 }
 
-if ((files.length > 0) && !options.stdin) {
+if (files.length > 0 && !options.stdin) {
   lintAndPrint(null, diff);
-} else if ((files.length === 0) && options.stdin && !options.fix) {
+} else if (files.length === 0 && options.stdin && !options.fix) {
   const getStdin = require('get-stdin');
   getStdin().then(lintAndPrint);
 } else {
