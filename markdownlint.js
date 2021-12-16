@@ -57,10 +57,8 @@ function readConfiguration(userConfigFile) {
   if (userConfigFile) {
     try {
       const userConfig = jsConfigFile
-        ? // Evaluate .js configuration file as code
-          require(path.resolve(processCwd, userConfigFile))
-        : // Load JSON/YAML configuration as data
-          markdownlint.readConfigSync(userConfigFile, configFileParsers);
+        ? require(path.resolve(processCwd, userConfigFile)) // Evaluate .js configuration file as code
+        : markdownlint.readConfigSync(userConfigFile, configFileParsers); // Load JSON/YAML configuration as data
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
       console.error(
@@ -145,9 +143,7 @@ function printResult(lintResult) {
         description:
           result.ruleDescription +
           (result.errorDetail ? ' [' + result.errorDetail + ']' : '') +
-          (result.errorContext
-            ? ' [Context: "' + result.errorContext + '"]'
-            : ''),
+          (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : ''),
       };
     }),
   );
@@ -190,9 +186,7 @@ function printResult(lintResult) {
 
   if (options.output) {
     lintResultString =
-      lintResultString.length > 0
-        ? lintResultString + os.EOL
-        : lintResultString;
+      lintResultString.length > 0 ? lintResultString + os.EOL : lintResultString;
     try {
       fs.writeFileSync(options.output, lintResultString);
     } catch (error) {
@@ -215,14 +209,8 @@ program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
-  .option(
-    '-c, --config [configFile]',
-    'configuration file (JSON, JSONC, JS, or YAML)',
-  )
-  .option(
-    '-d, --dot',
-    'include files/folders with a dot (for example `.github`)',
-  )
+  .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
+  .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
   .option(
     '-i, --ignore [file|directory|glob]',
@@ -241,14 +229,8 @@ program
     [],
   )
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
-  .option(
-    '--enable [rules...]',
-    'Enable certain rules, e.g. --enable MD013 MD041',
-  )
-  .option(
-    '--disable [rules...]',
-    'Disable certain rules, e.g. --disable MD013 MD041',
-  );
+  .option('--enable [rules...]', 'Enable certain rules, e.g. --enable MD013 MD041')
+  .option('--disable [rules...]', 'Disable certain rules, e.g. --disable MD013 MD041');
 
 program.parse(process.argv);
 
@@ -360,10 +342,7 @@ function lintAndPrint(stdin, files) {
       const fixes = fixResult[file].filter(error => error.fixInfo);
       if (fixes.length > 0) {
         const originalText = fs.readFileSync(file, fsOptions);
-        const fixedText = markdownlintRuleHelpers.applyFixes(
-          originalText,
-          fixes,
-        );
+        const fixedText = markdownlintRuleHelpers.applyFixes(originalText, fixes);
         if (originalText !== fixedText) {
           fs.writeFileSync(file, fixedText, fsOptions);
         }

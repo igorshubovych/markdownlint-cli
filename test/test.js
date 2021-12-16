@@ -50,11 +50,9 @@ test('files and --stdin shows help', async t => {
 });
 
 test('--fix and --stdin shows help', async t => {
-  const result = await execa(
-    '../markdownlint.js',
-    ['--fix', '--stdin', 'correct.md'],
-    {stripFinalNewline: false},
-  );
+  const result = await execa('../markdownlint.js', ['--fix', '--stdin', 'correct.md'], {
+    stripFinalNewline: false,
+  });
   t.true(result.stdout.includes('--help'));
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
@@ -166,11 +164,9 @@ test('glob linting works with passing files', async t => {
 
 test('glob linting works with failing files', async t => {
   try {
-    await execa(
-      '../markdownlint.js',
-      ['--config', 'test-config.json', '**/*.md'],
-      {stripFinalNewline: false},
-    );
+    await execa('../markdownlint.js', ['--config', 'test-config.json', '**/*.md'], {
+      stripFinalNewline: false,
+    });
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
@@ -246,13 +242,7 @@ test('glob linting with failing files has fewer errors when ignored by dir', asy
   try {
     await execa(
       '../markdownlint.js',
-      [
-        '--config',
-        'test-config.json',
-        '**/*.md',
-        '--ignore',
-        'subdir-incorrect',
-      ],
+      ['--config', 'test-config.json', '**/*.md', '--ignore', 'subdir-incorrect'],
       {stripFinalNewline: false},
     );
     t.fail();
@@ -437,11 +427,10 @@ test('stdin support does not interfere with file linting', async t => {
 test('--output with empty input has empty output', async t => {
   const input = '';
   const output = '../outputA.txt';
-  const result = await execa(
-    '../markdownlint.js',
-    ['--stdin', '--output', output],
-    {input, stripFinalNewline: false},
-  );
+  const result = await execa('../markdownlint.js', ['--stdin', '--output', output], {
+    input,
+    stripFinalNewline: false,
+  });
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
@@ -452,11 +441,10 @@ test('--output with empty input has empty output', async t => {
 test('--output with valid input has empty output', async t => {
   const input = ['# Heading', '', 'Text', ''].join('\n');
   const output = '../outputB.txt';
-  const result = await execa(
-    '../markdownlint.js',
-    ['--stdin', '--output', output],
-    {input, stripFinalNewline: false},
-  );
+  const result = await execa('../markdownlint.js', ['--stdin', '--output', output], {
+    input,
+    stripFinalNewline: false,
+  });
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
@@ -486,11 +474,10 @@ test('--output with invalid input and --json outputs issues as json', async t =>
   const input = ['Heading', '', 'Text ', ''].join('\n');
   const output = '../outputF.json';
   try {
-    await execa(
-      '../markdownlint.js',
-      ['--stdin', '--output', output, '--json'],
-      {input, stripFinalNewline: false},
-    );
+    await execa('../markdownlint.js', ['--stdin', '--output', output, '--json'], {
+      input,
+      stripFinalNewline: false,
+    });
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
@@ -597,20 +584,11 @@ function getCwdConfigFileTest(extension) {
   };
 }
 
-test(
-  '.markdownlint.json in cwd is used automatically',
-  getCwdConfigFileTest('json'),
-);
+test('.markdownlint.json in cwd is used automatically', getCwdConfigFileTest('json'));
 
-test(
-  '.markdownlint.yaml in cwd is used automatically',
-  getCwdConfigFileTest('yaml'),
-);
+test('.markdownlint.yaml in cwd is used automatically', getCwdConfigFileTest('yaml'));
 
-test(
-  '.markdownlint.yml in cwd is used automatically',
-  getCwdConfigFileTest('yml'),
-);
+test('.markdownlint.yml in cwd is used automatically', getCwdConfigFileTest('yml'));
 
 test(
   '.markdownlint.json in cwd is used instead of .markdownlint.yaml or .markdownlint.yml',
@@ -668,11 +646,10 @@ test('Multiple custom rules from single file loaded', async t => {
 test('Custom rules from directory loaded', async t => {
   try {
     const input = '# Input\n';
-    await execa(
-      '../markdownlint.js',
-      ['--rules', 'custom-rules/files', '--stdin'],
-      {input, stripFinalNewline: false},
-    );
+    await execa('../markdownlint.js', ['--rules', 'custom-rules/files', '--stdin'], {
+      input,
+      stripFinalNewline: false,
+    });
     t.fail();
   } catch (error) {
     const expected = [
@@ -714,17 +691,15 @@ test('Custom rules from glob loaded', async t => {
 test('Custom rule from node_modules package loaded', async t => {
   try {
     const input = '# Input\n';
-    await execa(
-      '../markdownlint.js',
-      ['--rules', 'test-rule-package', '--stdin'],
-      {input, stripFinalNewline: false},
-    );
+    await execa('../markdownlint.js', ['--rules', 'test-rule-package', '--stdin'], {
+      input,
+      stripFinalNewline: false,
+    });
     t.fail();
   } catch (error) {
-    const expected = [
-      'stdin:1 test-rule-package Test rule package broken',
-      '',
-    ].join('\n');
+    const expected = ['stdin:1 test-rule-package Test rule package broken', ''].join(
+      '\n',
+    );
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -765,10 +740,9 @@ test('Custom rule from package loaded', async t => {
     );
     t.fail();
   } catch (error) {
-    const expected = [
-      'stdin:1 test-rule-package Test rule package broken',
-      '',
-    ].join('\n');
+    const expected = ['stdin:1 test-rule-package Test rule package broken', ''].join(
+      '\n',
+    );
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -812,10 +786,9 @@ test('Invalid custom rule name reports error', async t => {
     );
     t.fail();
   } catch (error) {
-    const expected = [
-      'Cannot load custom rule invalid-package: No such rule',
-      '',
-    ].join('\n');
+    const expected = ['Cannot load custom rule invalid-package: No such rule', ''].join(
+      '\n',
+    );
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 3);
@@ -1062,13 +1035,7 @@ test('--enable flag', async t => {
   try {
     await execa(
       '../markdownlint.js',
-      [
-        '--enable',
-        'MD002',
-        '--config',
-        'default-false-config.yml',
-        'incorrect.md',
-      ],
+      ['--enable', 'MD002', '--config', 'default-false-config.yml', 'incorrect.md'],
       {stripFinalNewline: false},
     );
     t.fail();
