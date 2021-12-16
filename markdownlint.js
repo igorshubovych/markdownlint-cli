@@ -27,7 +27,7 @@ function jsYamlSafeLoad(text) {
 const projectConfigFiles = [
   '.markdownlint.json',
   '.markdownlint.yaml',
-  '.markdownlint.yml',
+  '.markdownlint.yml'
 ];
 const configFileParsers = [jsoncParse, jsYamlSafeLoad];
 const fsOptions = {encoding: 'utf8'};
@@ -43,7 +43,7 @@ function readConfiguration(userConfigFile) {
       fs.accessSync(projectConfigFile, fs.R_OK);
       const projectConfig = markdownlint.readConfigSync(
         projectConfigFile,
-        configFileParsers,
+        configFileParsers
       );
       config = {...config, ...projectConfig};
       break;
@@ -62,7 +62,7 @@ function readConfiguration(userConfigFile) {
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
       console.error(
-        `Cannot read or parse config file '${userConfigFile}': ${error.message}`,
+        `Cannot read or parse config file '${userConfigFile}': ${error.message}`
       );
       process.exitCode = 1;
     }
@@ -74,7 +74,7 @@ function readConfiguration(userConfigFile) {
 function prepareFileList(files, fileExtensions, previousResults) {
   const globOptions = {
     dot: Boolean(options.dot),
-    nodir: true,
+    nodir: true
   };
   let extensionGlobPart = '*.';
   if (fileExtensions.length === 1) {
@@ -91,7 +91,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
         if (previousResults) {
           const matcher = new minimatch.Minimatch(
             path.resolve(processCwd, path.join(file, '**', extensionGlobPart)),
-            globOptions,
+            globOptions
           );
           return previousResults
             .filter(fileInfo => matcher.match(fileInfo.absolute))
@@ -105,7 +105,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
       if (previousResults) {
         const matcher = new minimatch.Minimatch(
           path.resolve(processCwd, file),
-          globOptions,
+          globOptions
         );
         return previousResults
           .filter(fileInfo => matcher.match(fileInfo.absolute))
@@ -121,7 +121,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
   return files.flat().map(file => ({
     original: file,
     relative: path.relative(processCwd, file),
-    absolute: path.resolve(file),
+    absolute: path.resolve(file)
   }));
 }
 
@@ -131,7 +131,7 @@ function printResult(lintResult) {
       if (options.json) {
         return {
           fileName: file,
-          ...result,
+          ...result
         };
       }
 
@@ -143,9 +143,9 @@ function printResult(lintResult) {
         description:
           result.ruleDescription +
           (result.errorDetail ? ' [' + result.errorDetail + ']' : '') +
-          (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : ''),
+          (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
       };
-    }),
+    })
   );
 
   let lintResultString = '';
@@ -155,7 +155,7 @@ function printResult(lintResult) {
         (a, b) =>
           a.fileName.localeCompare(b.fileName) ||
           a.lineNumber - b.lineNumber ||
-          a.ruleDescription.localeCompare(b.ruleDescription),
+          a.ruleDescription.localeCompare(b.ruleDescription)
       );
       lintResultString = JSON.stringify(results, null, 2);
     } else {
@@ -164,7 +164,7 @@ function printResult(lintResult) {
           a.file.localeCompare(b.file) ||
           a.lineNumber - b.lineNumber ||
           a.names.localeCompare(b.names) ||
-          a.description.localeCompare(b.description),
+          a.description.localeCompare(b.description)
       );
 
       lintResultString = results
@@ -191,7 +191,7 @@ function printResult(lintResult) {
       fs.writeFileSync(options.output, lintResultString);
     } catch (error) {
       console.warn(
-        'Cannot write to output file ' + options.output + ': ' + error.message,
+        'Cannot write to output file ' + options.output + ': ' + error.message
       );
       process.exitCode = 2;
     }
@@ -216,7 +216,7 @@ program
     '-i, --ignore [file|directory|glob]',
     'file(s) to ignore/exclude',
     concatArray,
-    [],
+    []
   )
   .option('-j, --json', 'write issues in json format')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')
@@ -226,7 +226,7 @@ program
     '-r, --rules  [file|directory|glob|package]',
     'include custom rule files',
     concatArray,
-    [],
+    []
   )
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
   .option('--enable [rules...]', 'Enable certain rules, e.g. --enable MD013 MD041')
@@ -262,7 +262,7 @@ function loadCustomRules(rules) {
     try {
       const resolvedPath = [tryResolvePath(rule)];
       const fileList = prepareFileList(resolvedPath, ['js']).flatMap(filepath =>
-        require(filepath.absolute),
+        require(filepath.absolute)
       );
       if (fileList.length === 0) {
         throw new Error('No such rule');
@@ -292,7 +292,7 @@ if (existsSync(ignorePath)) {
 }
 
 const files = prepareFileList(program.args, ['md', 'markdown']).filter(value =>
-  ignoreFilter(value),
+  ignoreFilter(value)
 );
 const ignores = prepareFileList(options.ignore, ['md', 'markdown'], files);
 const customRules = loadCustomRules(options.rules);
@@ -318,11 +318,11 @@ function lintAndPrint(stdin, files) {
   const lintOptions = {
     config,
     customRules,
-    files,
+    files
   };
   if (stdin) {
     lintOptions.strings = {
-      stdin,
+      stdin
     };
   }
 
@@ -333,7 +333,7 @@ function lintAndPrint(stdin, files) {
   if (options.fix) {
     const fixOptions = {
       ...lintOptions,
-      resultVersion: 3,
+      resultVersion: 3
     };
     const markdownlintRuleHelpers = require('markdownlint-rule-helpers');
     for (const file of files) {

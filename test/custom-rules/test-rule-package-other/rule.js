@@ -4,7 +4,7 @@ module.exports = {
   tags: ['test'],
   function: (parameters, onError) => {
     onError({
-      lineNumber: 1,
+      lineNumber: 1
     });
-  },
+  }
 };
