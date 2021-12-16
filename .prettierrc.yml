@@ -2,3 +2,4 @@ semi: true
 singleQuote: true
 bracketSpacing: false
 endOfLine: auto
+arrowParens: avoid

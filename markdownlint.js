@@ -86,7 +86,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
     extensionGlobPart += '{' + fileExtensions.join(',') + '}';
   }
 
-  files = files.map((file) => {
+  files = files.map(file => {
     try {
       if (fs.lstatSync(file).isDirectory()) {
         // Directory (file falls through to below)
@@ -96,8 +96,8 @@ function prepareFileList(files, fileExtensions, previousResults) {
             globOptions,
           );
           return previousResults
-            .filter((fileInfo) => matcher.match(fileInfo.absolute))
-            .map((fileInfo) => fileInfo.original);
+            .filter(fileInfo => matcher.match(fileInfo.absolute))
+            .map(fileInfo => fileInfo.original);
         }
 
         return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
@@ -110,8 +110,8 @@ function prepareFileList(files, fileExtensions, previousResults) {
           globOptions,
         );
         return previousResults
-          .filter((fileInfo) => matcher.match(fileInfo.absolute))
-          .map((fileInfo) => fileInfo.original);
+          .filter(fileInfo => matcher.match(fileInfo.absolute))
+          .map(fileInfo => fileInfo.original);
       }
 
       return glob.sync(file, globOptions);
@@ -120,7 +120,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
     // File
     return file;
   });
-  return files.flat().map((file) => ({
+  return files.flat().map(file => ({
     original: file,
     relative: path.relative(processCwd, file),
     absolute: path.resolve(file),
@@ -128,8 +128,8 @@ function prepareFileList(files, fileExtensions, previousResults) {
 }
 
 function printResult(lintResult) {
-  const results = Object.keys(lintResult).flatMap((file) =>
-    lintResult[file].map((result) => {
+  const results = Object.keys(lintResult).flatMap(file =>
+    lintResult[file].map(result => {
       if (options.json) {
         return {
           fileName: file,
@@ -172,7 +172,7 @@ function printResult(lintResult) {
       );
 
       lintResultString = results
-        .map((result) => {
+        .map(result => {
           const {file, lineNumber, column, names, description} = result;
           const columnText = column ? `:${column}` : '';
           return `${file}:${lineNumber}${columnText} ${names} ${description}`;
@@ -276,11 +276,11 @@ function tryResolvePath(filepath) {
 }
 
 function loadCustomRules(rules) {
-  return rules.flatMap((rule) => {
+  return rules.flatMap(rule => {
     try {
       const resolvedPath = [tryResolvePath(rule)];
-      const fileList = prepareFileList(resolvedPath, ['js']).flatMap(
-        (filepath) => require(filepath.absolute),
+      const fileList = prepareFileList(resolvedPath, ['js']).flatMap(filepath =>
+        require(filepath.absolute),
       );
       if (fileList.length === 0) {
         throw new Error('No such rule');
@@ -306,19 +306,17 @@ if (existsSync(ignorePath)) {
   const ignoreText = fs.readFileSync(ignorePath, fsOptions);
   const ignore = require('ignore');
   const ignoreInstance = ignore().add(ignoreText);
-  ignoreFilter = (fileInfo) => !ignoreInstance.ignores(fileInfo.relative);
+  ignoreFilter = fileInfo => !ignoreInstance.ignores(fileInfo.relative);
 }
 
-const files = prepareFileList(program.args, ['md', 'markdown']).filter(
-  (value) => ignoreFilter(value),
+const files = prepareFileList(program.args, ['md', 'markdown']).filter(value =>
+  ignoreFilter(value),
 );
 const ignores = prepareFileList(options.ignore, ['md', 'markdown'], files);
 const customRules = loadCustomRules(options.rules);
 const diff = files
-  .filter(
-    (file) => !ignores.some((ignore) => ignore.absolute === file.absolute),
-  )
-  .map((paths) => paths.original);
+  .filter(file => !ignores.some(ignore => ignore.absolute === file.absolute))
+  .map(paths => paths.original);
 
 function lintAndPrint(stdin, files) {
   files = files || [];
@@ -359,7 +357,7 @@ function lintAndPrint(stdin, files) {
     for (const file of files) {
       fixOptions.files = [file];
       const fixResult = markdownlint.sync(fixOptions);
-      const fixes = fixResult[file].filter((error) => error.fixInfo);
+      const fixes = fixResult[file].filter(error => error.fixInfo);
       if (fixes.length > 0) {
         const originalText = fs.readFileSync(file, fsOptions);
         const fixedText = markdownlintRuleHelpers.applyFixes(

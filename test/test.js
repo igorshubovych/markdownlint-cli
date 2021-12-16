@@ -11,7 +11,7 @@ const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+(:\d+)? MD\d{3}/gm;
 
 process.chdir('./test');
 
-test('--version option', async (t) => {
+test('--version option', async t => {
   const result = await execa('../markdownlint.js', ['--version'], {
     stripFinalNewline: false,
   });
@@ -20,7 +20,7 @@ test('--version option', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('--help option', async (t) => {
+test('--help option', async t => {
   const result = await execa('../markdownlint.js', ['--help'], {
     stripFinalNewline: false,
   });
@@ -31,7 +31,7 @@ test('--help option', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('no files shows help', async (t) => {
+test('no files shows help', async t => {
   const result = await execa('../markdownlint.js', [], {
     stripFinalNewline: false,
   });
@@ -40,7 +40,7 @@ test('no files shows help', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('files and --stdin shows help', async (t) => {
+test('files and --stdin shows help', async t => {
   const result = await execa('../markdownlint.js', ['--stdin', 'correct.md'], {
     stripFinalNewline: false,
   });
@@ -49,7 +49,7 @@ test('files and --stdin shows help', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('--fix and --stdin shows help', async (t) => {
+test('--fix and --stdin shows help', async t => {
   const result = await execa(
     '../markdownlint.js',
     ['--fix', '--stdin', 'correct.md'],
@@ -60,7 +60,7 @@ test('--fix and --stdin shows help', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('linting of correct Markdown file yields no output', async (t) => {
+test('linting of correct Markdown file yields no output', async t => {
   const result = await execa(
     '../markdownlint.js',
     ['--config', 'test-config.json', 'correct.md'],
@@ -71,7 +71,7 @@ test('linting of correct Markdown file yields no output', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('linting of correct Markdown file yields no output with absolute path', async (t) => {
+test('linting of correct Markdown file yields no output with absolute path', async t => {
   const result = await execa(
     '../markdownlint.js',
     ['--config', path.resolve('test-config.json'), 'correct.md'],
@@ -82,7 +82,7 @@ test('linting of correct Markdown file yields no output with absolute path', asy
   t.is(result.exitCode, 0);
 });
 
-test('linting of incorrect Markdown file fails', async (t) => {
+test('linting of incorrect Markdown file fails', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -97,7 +97,7 @@ test('linting of incorrect Markdown file fails', async (t) => {
   }
 });
 
-test('linting of incorrect Markdown file fails prints issues as json', async (t) => {
+test('linting of incorrect Markdown file fails prints issues as json', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -129,7 +129,7 @@ test('linting of incorrect Markdown file fails prints issues as json', async (t)
   }
 });
 
-test('linting of incorrect Markdown file fails with absolute path', async (t) => {
+test('linting of incorrect Markdown file fails with absolute path', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -144,7 +144,7 @@ test('linting of incorrect Markdown file fails with absolute path', async (t) =>
   }
 });
 
-test('linting of incorrect Markdown via npm run file fails with eol', async (t) => {
+test('linting of incorrect Markdown via npm run file fails with eol', async t => {
   try {
     await execa('npm', ['run', 'invalid'], {stripFinalNewline: false});
     t.fail();
@@ -153,7 +153,7 @@ test('linting of incorrect Markdown via npm run file fails with eol', async (t) 
   }
 });
 
-test('glob linting works with passing files', async (t) => {
+test('glob linting works with passing files', async t => {
   const result = await execa(
     '../markdownlint.js',
     ['--config', 'test-config.json', '**/correct.md'],
@@ -164,7 +164,7 @@ test('glob linting works with passing files', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('glob linting works with failing files', async (t) => {
+test('glob linting works with failing files', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -179,7 +179,7 @@ test('glob linting works with failing files', async (t) => {
   }
 });
 
-test('dir linting works with passing .markdown files', async (t) => {
+test('dir linting works with passing .markdown files', async t => {
   const result = await execa(
     '../markdownlint.js',
     ['--config', 'test-config.json', 'subdir-correct'],
@@ -190,7 +190,7 @@ test('dir linting works with passing .markdown files', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('dir linting works with failing .markdown files', async (t) => {
+test('dir linting works with failing .markdown files', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -205,7 +205,7 @@ test('dir linting works with failing .markdown files', async (t) => {
   }
 });
 
-test('dir linting works with failing .markdown files and absolute path', async (t) => {
+test('dir linting works with failing .markdown files and absolute path', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -220,7 +220,7 @@ test('dir linting works with failing .markdown files and absolute path', async (
   }
 });
 
-test('glob linting with failing files passes when failures ignored by glob', async (t) => {
+test('glob linting with failing files passes when failures ignored by glob', async t => {
   const result = await execa(
     '../markdownlint.js',
     ['--config', 'test-config.json', '**/*.md', '--ignore', '**/incorrect.md'],
@@ -231,7 +231,7 @@ test('glob linting with failing files passes when failures ignored by glob', asy
   t.is(result.exitCode, 0);
 });
 
-test('glob linting with failing files passes when everything ignored by glob', async (t) => {
+test('glob linting with failing files passes when everything ignored by glob', async t => {
   const result = await execa(
     '../markdownlint.js',
     ['--config', 'test-config.json', '**/*.md', '--ignore', '**/*'],
@@ -242,7 +242,7 @@ test('glob linting with failing files passes when everything ignored by glob', a
   t.is(result.exitCode, 0);
 });
 
-test('glob linting with failing files has fewer errors when ignored by dir', async (t) => {
+test('glob linting with failing files has fewer errors when ignored by dir', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -263,7 +263,7 @@ test('glob linting with failing files has fewer errors when ignored by dir', asy
   }
 });
 
-test('glob linting with failing files has fewer errors when ignored by dir and absolute path', async (t) => {
+test('glob linting with failing files has fewer errors when ignored by dir and absolute path', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -284,7 +284,7 @@ test('glob linting with failing files has fewer errors when ignored by dir and a
   }
 });
 
-test('dir linting with failing files has fewer errors when ignored by file', async (t) => {
+test('dir linting with failing files has fewer errors when ignored by file', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -305,7 +305,7 @@ test('dir linting with failing files has fewer errors when ignored by file', asy
   }
 });
 
-test('dir linting with failing files has fewer errors when ignored by file and absolute path', async (t) => {
+test('dir linting with failing files has fewer errors when ignored by file and absolute path', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -326,7 +326,7 @@ test('dir linting with failing files has fewer errors when ignored by file and a
   }
 });
 
-test('glob linting with failing files passes when ignored by multiple globs', async (t) => {
+test('glob linting with failing files passes when ignored by multiple globs', async t => {
   const result = await execa(
     '../markdownlint.js',
     [
@@ -345,7 +345,7 @@ test('glob linting with failing files passes when ignored by multiple globs', as
   t.is(result.exitCode, 0);
 });
 
-test('linting results are sorted by file/line/names/description', async (t) => {
+test('linting results are sorted by file/line/names/description', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -371,7 +371,7 @@ test('linting results are sorted by file/line/names/description', async (t) => {
   }
 });
 
-test('glob linting does not try to lint directories as files', async (t) => {
+test('glob linting does not try to lint directories as files', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -386,7 +386,7 @@ test('glob linting does not try to lint directories as files', async (t) => {
   }
 });
 
-test('--stdin with empty input has no output', async (t) => {
+test('--stdin with empty input has no output', async t => {
   const input = '';
   const result = await execa('../markdownlint.js', ['--stdin'], {
     input,
@@ -397,7 +397,7 @@ test('--stdin with empty input has no output', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('--stdin with valid input has no output', async (t) => {
+test('--stdin with valid input has no output', async t => {
   const input = ['# Heading', '', 'Text', ''].join('\n');
   const result = await execa('../markdownlint.js', ['--stdin'], {
     input,
@@ -408,7 +408,7 @@ test('--stdin with valid input has no output', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('--stdin with invalid input reports violations', async (t) => {
+test('--stdin with invalid input reports violations', async t => {
   const input = ['Heading', '', 'Text ', ''].join('\n');
   try {
     await execa('../markdownlint.js', ['--stdin'], {
@@ -423,7 +423,7 @@ test('--stdin with invalid input reports violations', async (t) => {
   }
 });
 
-test('stdin support does not interfere with file linting', async (t) => {
+test('stdin support does not interfere with file linting', async t => {
   const result = await execa(
     '../markdownlint.js',
     ['--config', 'md043-config.json', 'md043-config.md'],
@@ -434,7 +434,7 @@ test('stdin support does not interfere with file linting', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('--output with empty input has empty output', async (t) => {
+test('--output with empty input has empty output', async t => {
   const input = '';
   const output = '../outputA.txt';
   const result = await execa(
@@ -449,7 +449,7 @@ test('--output with empty input has empty output', async (t) => {
   fs.unlinkSync(output);
 });
 
-test('--output with valid input has empty output', async (t) => {
+test('--output with valid input has empty output', async t => {
   const input = ['# Heading', '', 'Text', ''].join('\n');
   const output = '../outputB.txt';
   const result = await execa(
@@ -464,7 +464,7 @@ test('--output with valid input has empty output', async (t) => {
   fs.unlinkSync(output);
 });
 
-test('--output with invalid input outputs violations', async (t) => {
+test('--output with invalid input outputs violations', async t => {
   const input = ['Heading', '', 'Text ', ''].join('\n');
   const output = '../outputC.txt';
   try {
@@ -482,7 +482,7 @@ test('--output with invalid input outputs violations', async (t) => {
   }
 });
 
-test('--output with invalid input and --json outputs issues as json', async (t) => {
+test('--output with invalid input and --json outputs issues as json', async t => {
   const input = ['Heading', '', 'Text ', ''].join('\n');
   const output = '../outputF.json';
   try {
@@ -501,7 +501,7 @@ test('--output with invalid input and --json outputs issues as json', async (t) 
   }
 });
 
-test('--output with invalid path fails', async (t) => {
+test('--output with invalid path fails', async t => {
   const input = '';
   const output = 'invalid/outputD.txt';
   try {
@@ -521,7 +521,7 @@ test('--output with invalid path fails', async (t) => {
   }
 });
 
-test('configuration file can be YAML', async (t) => {
+test('configuration file can be YAML', async t => {
   const result = await execa(
     '../markdownlint.js',
     ['--config', 'md043-config.yaml', 'md043-config.md'],
@@ -532,7 +532,7 @@ test('configuration file can be YAML', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('configuration file can be JavaScript', async (t) => {
+test('configuration file can be JavaScript', async t => {
   const result = await execa(
     '../markdownlint.js',
     ['--config', 'md043-config.js', 'md043-config.md'],
@@ -543,7 +543,7 @@ test('configuration file can be JavaScript', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('error on configuration file not found', async (t) => {
+test('error on configuration file not found', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -560,7 +560,7 @@ test('error on configuration file not found', async (t) => {
   }
 });
 
-test('error on malformed YAML configuration file', async (t) => {
+test('error on malformed YAML configuration file', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -578,7 +578,7 @@ test('error on malformed YAML configuration file', async (t) => {
 });
 
 function getCwdConfigFileTest(extension) {
-  return async (t) => {
+  return async t => {
     try {
       await execa(path.resolve('..', 'markdownlint.js'), ['.'], {
         cwd: path.join(__dirname, 'config-files', extension),
@@ -627,7 +627,7 @@ test(
   getCwdConfigFileTest('jsonc'),
 );
 
-test('Custom rule from single file loaded', async (t) => {
+test('Custom rule from single file loaded', async t => {
   try {
     const input = '# Input\n';
     await execa(
@@ -644,7 +644,7 @@ test('Custom rule from single file loaded', async (t) => {
   }
 });
 
-test('Multiple custom rules from single file loaded', async (t) => {
+test('Multiple custom rules from single file loaded', async t => {
   try {
     const input = '# Input\n';
     await execa(
@@ -665,7 +665,7 @@ test('Multiple custom rules from single file loaded', async (t) => {
   }
 });
 
-test('Custom rules from directory loaded', async (t) => {
+test('Custom rules from directory loaded', async t => {
   try {
     const input = '# Input\n';
     await execa(
@@ -688,7 +688,7 @@ test('Custom rules from directory loaded', async (t) => {
   }
 });
 
-test('Custom rules from glob loaded', async (t) => {
+test('Custom rules from glob loaded', async t => {
   try {
     const input = '# Input\n';
     await execa(
@@ -711,7 +711,7 @@ test('Custom rules from glob loaded', async (t) => {
   }
 });
 
-test('Custom rule from node_modules package loaded', async (t) => {
+test('Custom rule from node_modules package loaded', async t => {
   try {
     const input = '# Input\n';
     await execa(
@@ -731,7 +731,7 @@ test('Custom rule from node_modules package loaded', async (t) => {
   }
 });
 
-test('Custom rule from node_modules package loaded relative to cwd', async (t) => {
+test('Custom rule from node_modules package loaded relative to cwd', async t => {
   try {
     const input = '# Input\n';
     await execa(
@@ -755,7 +755,7 @@ test('Custom rule from node_modules package loaded relative to cwd', async (t) =
   }
 });
 
-test('Custom rule from package loaded', async (t) => {
+test('Custom rule from package loaded', async t => {
   try {
     const input = '# Input\n';
     await execa(
@@ -775,7 +775,7 @@ test('Custom rule from package loaded', async (t) => {
   }
 });
 
-test('Custom rule from several packages loaded', async (t) => {
+test('Custom rule from several packages loaded', async t => {
   try {
     const input = '# Input\n';
     await execa(
@@ -802,7 +802,7 @@ test('Custom rule from several packages loaded', async (t) => {
   }
 });
 
-test('Invalid custom rule name reports error', async (t) => {
+test('Invalid custom rule name reports error', async t => {
   try {
     const input = '# Input\n';
     await execa(
@@ -822,7 +822,7 @@ test('Invalid custom rule name reports error', async (t) => {
   }
 });
 
-test('fixing errors in a file yields fewer errors', async (t) => {
+test('fixing errors in a file yields fewer errors', async t => {
   const fixFileA = 'incorrect.a.mdf';
   try {
     fs.copyFileSync('incorrect.md', fixFileA);
@@ -847,7 +847,7 @@ test('fixing errors in a file yields fewer errors', async (t) => {
   }
 });
 
-test('fixing errors in a file with absolute path yields fewer errors', async (t) => {
+test('fixing errors in a file with absolute path yields fewer errors', async t => {
   const fixFileB = 'incorrect.b.mdf';
   try {
     fs.copyFileSync('incorrect.md', fixFileB);
@@ -865,7 +865,7 @@ test('fixing errors in a file with absolute path yields fewer errors', async (t)
   }
 });
 
-test('fixing errors with a glob yields fewer errors', async (t) => {
+test('fixing errors with a glob yields fewer errors', async t => {
   const fixFileC = 'incorrect.c.mdf';
   const fixSubFileC = 'subdir-incorrect/incorrect.c.mdf';
   const fixFileGlob = '**/*.c.mdf';
@@ -887,7 +887,7 @@ test('fixing errors with a glob yields fewer errors', async (t) => {
   }
 });
 
-test('.markdownlintignore is applied correctly', async (t) => {
+test('.markdownlintignore is applied correctly', async t => {
   try {
     await execa(path.resolve('..', 'markdownlint.js'), ['.'], {
       cwd: path.join(__dirname, 'markdownlintignore'),
@@ -906,7 +906,7 @@ test('.markdownlintignore is applied correctly', async (t) => {
   }
 });
 
-test('.markdownlintignore works with semi-absolute paths', async (t) => {
+test('.markdownlintignore works with semi-absolute paths', async t => {
   try {
     await execa(path.resolve('..', 'markdownlint.js'), ['./incorrect.md'], {
       cwd: path.join(__dirname, 'markdownlintignore'),
@@ -924,7 +924,7 @@ test('.markdownlintignore works with semi-absolute paths', async (t) => {
   }
 });
 
-test('--ignore-path works with .markdownlintignore', async (t) => {
+test('--ignore-path works with .markdownlintignore', async t => {
   try {
     await execa(
       path.resolve('..', 'markdownlint.js'),
@@ -947,7 +947,7 @@ test('--ignore-path works with .markdownlintignore', async (t) => {
   }
 });
 
-test('--ignore-path works with .ignorefile', async (t) => {
+test('--ignore-path works with .ignorefile', async t => {
   try {
     await execa(
       path.resolve('..', 'markdownlint.js'),
@@ -969,7 +969,7 @@ test('--ignore-path works with .ignorefile', async (t) => {
   }
 });
 
-test('--ignore-path fails for missing file', async (t) => {
+test('--ignore-path fails for missing file', async t => {
   const missingFile = 'missing-file';
   try {
     await execa(
@@ -988,7 +988,7 @@ test('--ignore-path fails for missing file', async (t) => {
   }
 });
 
-test('Linter text file --output must end with EOF newline', async (t) => {
+test('Linter text file --output must end with EOF newline', async t => {
   const output = '../outputE.txt';
   const endOfLine = new RegExp(os.EOL + '$');
   try {
@@ -1004,7 +1004,7 @@ test('Linter text file --output must end with EOF newline', async (t) => {
   }
 });
 
-test('--dot option to include folders/files with a dot', async (t) => {
+test('--dot option to include folders/files with a dot', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -1026,7 +1026,7 @@ test('--dot option to include folders/files with a dot', async (t) => {
   }
 });
 
-test('without --dot option exclude folders/files with a dot', async (t) => {
+test('without --dot option exclude folders/files with a dot', async t => {
   const result = await execa(
     '../markdownlint.js',
     [
@@ -1043,7 +1043,7 @@ test('without --dot option exclude folders/files with a dot', async (t) => {
   t.is(result.exitCode, 0);
 });
 
-test('with --quiet option does not print to stdout or stderr', async (t) => {
+test('with --quiet option does not print to stdout or stderr', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -1058,7 +1058,7 @@ test('with --quiet option does not print to stdout or stderr', async (t) => {
   }
 });
 
-test('--enable flag', async (t) => {
+test('--enable flag', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -1082,7 +1082,7 @@ test('--enable flag', async (t) => {
   }
 });
 
-test('--enable flag does not modify already enabled rules', async (t) => {
+test('--enable flag does not modify already enabled rules', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -1100,7 +1100,7 @@ test('--enable flag does not modify already enabled rules', async (t) => {
   }
 });
 
-test('--enable flag accepts rule alias', async (t) => {
+test('--enable flag accepts rule alias', async t => {
   try {
     await execa(
       '../markdownlint.js',
@@ -1124,7 +1124,7 @@ test('--enable flag accepts rule alias', async (t) => {
   }
 });
 
-test('--disable flag', async (t) => {
+test('--disable flag', async t => {
   const result = await execa(
     '../markdownlint.js',
     ['--disable', 'MD002', 'MD014', 'MD022', 'MD041', '--', 'incorrect.md'],
@@ -1152,7 +1152,7 @@ test('--disable flag', async (t) => {
   }
 });
 
-test('--disable flag overrides --enable flag', async (t) => {
+test('--disable flag overrides --enable flag', async t => {
   const result = await execa(
     '../markdownlint.js',
     [
