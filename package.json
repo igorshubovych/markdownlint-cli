@@ -44,7 +44,7 @@
     "js-yaml": "^4.1.0",
     "jsonc-parser": "~3.0.0",
     "markdownlint": "~0.24.0",
-    "markdownlint-rule-helpers": "~0.15.0",
+    "markdownlint-rule-helpers": "~0.16.0",
     "minimatch": "~3.0.4",
     "run-con": "~1.2.10"
   },
