@@ -499,7 +499,7 @@ test('error on malformed YAML configuration file', async t => {
       {stripFinalNewline: false});
   } catch (error) {
     t.is(error.stdout, '');
-    t.regex(error.stderr, /Cannot read or parse config file 'malformed-config.yaml': Unable to parse 'malformed-config.yaml'; Unexpected token/);
+    t.regex(error.stderr, /Cannot read or parse config file 'malformed-config.yaml': Unable to parse 'malformed-config.yaml'; Parser 0: Unexpected token/);
     t.is(error.exitCode, 4);
   }
 });
