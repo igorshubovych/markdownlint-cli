@@ -73,6 +73,7 @@
       "!test/custom-rules/**/*.js",
       "!test/md043-config.js"
     ],
-    "failFast": true
+    "failFast": true,
+    "workerThreads": false
   }
 }
