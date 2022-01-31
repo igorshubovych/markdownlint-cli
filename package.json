@@ -38,7 +38,7 @@
   "homepage": "https://github.com/igorshubovych/markdownlint-cli#readme",
   "dependencies": {
     "commander": "~9.0.0",
-    "get-stdin": "~8.0.0",
+    "get-stdin": "~9.0.0",
     "glob": "~7.2.0",
     "ignore": "~5.2.0",
     "js-yaml": "^4.1.0",
