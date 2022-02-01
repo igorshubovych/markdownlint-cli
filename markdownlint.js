@@ -332,8 +332,10 @@ try {
   if ((files.length > 0) && !options.stdin) {
     lintAndPrint(null, diff);
   } else if ((files.length === 0) && options.stdin && !options.fix) {
-    const getStdin = require('get-stdin');
-    getStdin().then(lintAndPrint);
+    // eslint-disable-next-line node/no-unsupported-features/es-syntax
+    import('get-stdin')
+      .then(module => module.default())
+      .then(lintAndPrint);
   } else {
     program.help();
   }
