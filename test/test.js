@@ -5,7 +5,9 @@ const path = require('path');
 const os = require('os');
 const process = require('process');
 const test = require('ava');
-const execa = require('execa');
+
+// eslint-disable-next-line node/no-unsupported-features/es-syntax
+const execa = (...args) => import('execa').then(module => module.execa(...args));
 
 const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+(:\d+)? MD\d{3}/gm;
 
