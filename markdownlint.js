@@ -31,11 +31,7 @@ const exitCodes = {
   unexpectedError: 4
 };
 
-const projectConfigFiles = [
-  '.markdownlint.json',
-  '.markdownlint.yaml',
-  '.markdownlint.yml'
-];
+const projectConfigFiles = ['.markdownlint.json', '.markdownlint.yaml', '.markdownlint.yml'];
 const configFileParsers = [jsoncParse, jsYamlSafeLoad];
 const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();
@@ -60,11 +56,7 @@ function readConfiguration(userConfigFile) {
   // However I have to do it to overwrite configuration from .markdownlint.{json,yaml,yml}.
   if (userConfigFile) {
     try {
-      const userConfig = jsConfigFile
-        // Evaluate .js configuration file as code
-        ? require(path.resolve(processCwd, userConfigFile))
-        // Load JSON/YAML configuration as data
-        : markdownlint.readConfigSync(userConfigFile, configFileParsers);
+      const userConfig = jsConfigFile ? require(path.resolve(processCwd, userConfigFile)) : markdownlint.readConfigSync(userConfigFile, configFileParsers);
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
       console.error(`Cannot read or parse config file '${userConfigFile}': ${error.message}`);
@@ -93,12 +85,8 @@ function prepareFileList(files, fileExtensions, previousResults) {
       if (fs.lstatSync(file).isDirectory()) {
         // Directory (file falls through to below)
         if (previousResults) {
-          const matcher = new minimatch.Minimatch(
-            path.resolve(processCwd, path.join(file, '**', extensionGlobPart)), globOptions
-          );
-          return previousResults.filter(
-            fileInfo => matcher.match(fileInfo.absolute)
-          ).map(fileInfo => fileInfo.original);
+          const matcher = new minimatch.Minimatch(path.resolve(processCwd, path.join(file, '**', extensionGlobPart)), globOptions);
+          return previousResults.filter(fileInfo => matcher.match(fileInfo.absolute)).map(fileInfo => fileInfo.original);
         }
 
         return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
@@ -107,9 +95,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
       // Not a directory, not a file, may be a glob
       if (previousResults) {
         const matcher = new minimatch.Minimatch(path.resolve(processCwd, file), globOptions);
-        return previousResults.filter(
-          fileInfo => matcher.match(fileInfo.absolute)
-        ).map(fileInfo => fileInfo.original);
+        return previousResults.filter(fileInfo => matcher.match(fileInfo.absolute)).map(fileInfo => fileInfo.original);
       }
 
       return glob.sync(file, globOptions);
@@ -126,40 +112,40 @@ function prepareFileList(files, fileExtensions, previousResults) {
 }
 
 function printResult(lintResult) {
-  const results = Object.keys(lintResult).flatMap(file => lintResult[file].map(result => {
-    if (options.json) {
-      return {
-        fileName: file,
-        ...result
-      };
-    }
+  const results = Object.keys(lintResult).flatMap(file =>
+    lintResult[file].map(result => {
+      if (options.json) {
+        return {
+          fileName: file,
+          ...result
+        };
+      }
 
-    return {
-      file: file,
-      lineNumber: result.lineNumber,
-      column: (result.errorRange && result.errorRange[0]) || 0,
-      names: result.ruleNames.join('/'),
-      description: result.ruleDescription
-            + (result.errorDetail ? ' [' + result.errorDetail + ']' : '')
-            + (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
-    };
-  }));
+      return {
+        file: file,
+        lineNumber: result.lineNumber,
+        column: (result.errorRange && result.errorRange[0]) || 0,
+        names: result.ruleNames.join('/'),
+        description: result.ruleDescription + (result.errorDetail ? ' [' + result.errorDetail + ']' : '') + (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
+      };
+    })
+  );
 
   let lintResultString = '';
   if (results.length > 0) {
     if (options.json) {
-      results.sort((a, b) => a.fileName.localeCompare(b.fileName) || a.lineNumber - b.lineNumber
-          || a.ruleDescription.localeCompare(b.ruleDescription));
+      results.sort((a, b) => a.fileName.localeCompare(b.fileName) || a.lineNumber - b.lineNumber || a.ruleDescription.localeCompare(b.ruleDescription));
       lintResultString = JSON.stringify(results, null, 2);
     } else {
-      results.sort((a, b) => a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber
-          || a.names.localeCompare(b.names) || a.description.localeCompare(b.description));
+      results.sort((a, b) => a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber || a.names.localeCompare(b.names) || a.description.localeCompare(b.description));
 
-      lintResultString = results.map(result => {
-        const {file, lineNumber, column, names, description} = result;
-        const columnText = column ? `:${column}` : '';
-        return `${file}:${lineNumber}${columnText} ${names} ${description}`;
-      }).join('\n');
+      lintResultString = results
+        .map(result => {
+          const {file, lineNumber, column, names, description} = result;
+          const columnText = column ? `:${column}` : '';
+          return `${file}:${lineNumber}${columnText} ${names} ${description}`;
+        })
+        .join('\n');
     }
 
     // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
@@ -171,9 +157,7 @@ function printResult(lintResult) {
   }
 
   if (options.output) {
-    lintResultString = lintResultString.length > 0
-      ? lintResultString + os.EOL
-      : lintResultString;
+    lintResultString = lintResultString.length > 0 ? lintResultString + os.EOL : lintResultString;
     try {
       fs.writeFileSync(options.output, lintResultString);
     } catch (error) {
@@ -236,9 +220,7 @@ function loadCustomRules(rules) {
   return rules.flatMap(rule => {
     try {
       const resolvedPath = [tryResolvePath(rule)];
-      const fileList = prepareFileList(resolvedPath, ['js']).flatMap(
-        filepath => require(filepath.absolute)
-      );
+      const fileList = prepareFileList(resolvedPath, ['js']).flatMap(filepath => require(filepath.absolute));
       if (fileList.length === 0) {
         throw new Error('No such rule');
       }
@@ -266,13 +248,10 @@ if (existsSync(ignorePath)) {
   ignoreFilter = fileInfo => !ignoreInstance.ignores(fileInfo.relative);
 }
 
-const files = prepareFileList(program.args, ['md', 'markdown'])
-  .filter(value => ignoreFilter(value));
+const files = prepareFileList(program.args, ['md', 'markdown']).filter(value => ignoreFilter(value));
 const ignores = prepareFileList(options.ignore, ['md', 'markdown'], files);
 const customRules = loadCustomRules(options.rules);
-const diff = files.filter(
-  file => !ignores.some(ignore => ignore.absolute === file.absolute)
-).map(paths => paths.original);
+const diff = files.filter(file => !ignores.some(ignore => ignore.absolute === file.absolute)).map(paths => paths.original);
 
 function lintAndPrint(stdin, files) {
   files = files || [];
@@ -329,9 +308,9 @@ function lintAndPrint(stdin, files) {
 }
 
 try {
-  if ((files.length > 0) && !options.stdin) {
+  if (files.length > 0 && !options.stdin) {
     lintAndPrint(null, diff);
-  } else if ((files.length === 0) && options.stdin && !options.fix) {
+  } else if (files.length === 0 && options.stdin && !options.fix) {
     // eslint-disable-next-line node/no-unsupported-features/es-syntax
     import('get-stdin')
       .then(module => module.default())

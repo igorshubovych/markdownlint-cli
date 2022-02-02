@@ -55,6 +55,7 @@
     "xo": "^0.47.0"
   },
   "xo": {
+    "prettier": true,
     "space": true,
     "rules": {
       "comma-dangle": 0,
@@ -66,6 +67,12 @@
       "unicorn/prefer-module": 0,
       "unicorn/prefer-ternary": 0
     }
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "endOfLine": "auto",
+    "printWidth": 1000,
+    "trailingComma": "none"
   },
   "ava": {
     "files": [
