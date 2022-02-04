@@ -70,8 +70,10 @@
   },
   "prettier": {
     "arrowParens": "avoid",
+    "bracketSpacing": false,
     "endOfLine": "auto",
     "printWidth": 1000,
+    "singleQuote": true,
     "trailingComma": "none"
   },
   "ava": {
