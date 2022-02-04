@@ -1,10 +1,10 @@
-FROM node:12-alpine
+FROM node:lts-alpine
 
 WORKDIR /usr/src/app
 
 COPY . .
 
-RUN npm install -g
+RUN npm install --global --production
 
 WORKDIR /usr/src/app/files
 

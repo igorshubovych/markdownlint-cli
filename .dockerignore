@@ -1,10 +1,2 @@
-.node_repl_history
-.vscode/
-.idea/
-test/
-.editorconfig
-.travis.yml
-appveyor.yml
-node_modules\
-dist\
+test
 node_modules
