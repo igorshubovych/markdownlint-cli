@@ -1,9 +1,11 @@
-name: Publish a Docker container to GitHub Packages
+name: Publish a Docker container image to GitHub Packages
 
 on:
   push:
+    branches:
+      - master
     tags:
-      - 'v*'
+      - v*
 
 env:
   REGISTRY: ghcr.io
@@ -20,14 +22,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Log in to the container registry
+      - name: Log in to the registry
         uses: docker/login-action@v1.12.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract tags and labels for container
+      - name: Extract tags and labels
         id: meta
         uses: docker/metadata-action@v3.6.2
         with:
