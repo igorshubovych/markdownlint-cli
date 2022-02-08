@@ -1,11 +1,13 @@
 FROM node:lts-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY . .
 
-RUN npm install --global --production
+RUN npm install --production
 
-WORKDIR /usr/src/app/files
+RUN npm install --global
+
+WORKDIR /workdir
 
 ENTRYPOINT ["/usr/local/bin/markdownlint"]
