@@ -42,6 +42,12 @@ markdownlint --help
     -h, --help                                  display help for command
 ```
 
+Or run using [Docker](https://www.docker.com) and [GitHub Packages](https://github.com/features/packages):
+
+```bash
+docker run -v $PWD:/workdir ghcr.io/igorshubovych/markdownlint-cli:latest "*.md"
+```
+
 ### Globbing
 
 `markdownlint-cli` supports advanced globbing patterns like `**/*.md` ([more information][globprimer]).
