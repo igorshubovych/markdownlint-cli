@@ -364,7 +364,7 @@ test('--output with invalid input and --json outputs issues as json', async t =>
     t.is(error.stdout, '');
     t.is(error.stderr, '');
     t.is(error.exitCode, 1);
-    t.is(JSON.parse(fs.readFileSync(output, 'utf8')).length, 2);
+    t.is(JSON.parse(fs.readFileSync(output)).length, 2);
     fs.unlinkSync(output);
   }
 });
