@@ -45,7 +45,7 @@
     "jsonc-parser": "~3.0.0",
     "markdownlint": "~0.25.1",
     "markdownlint-rule-helpers": "~0.16.0",
-    "minimatch": "~4.1.1",
+    "minimatch": "~5.0.0",
     "run-con": "~1.2.10"
   },
   "devDependencies": {
