@@ -16,6 +16,10 @@ const rc = require('run-con');
 const minimatch = require('minimatch');
 const pkg = require('./package.json');
 
+function posixPath(p) {
+  return p.split(path.sep).join(path.posix.sep);
+}
+
 function jsoncParse(text) {
   return JSON.parse(require('jsonc-parser').stripComments(text));
 }
@@ -85,7 +89,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
       if (fs.lstatSync(file).isDirectory()) {
         // Directory (file falls through to below)
         if (previousResults) {
-          const matcher = new minimatch.Minimatch(path.resolve(processCwd, path.join(file, '**', extensionGlobPart)), globOptions);
+          const matcher = new minimatch.Minimatch(posixPath(path.resolve(processCwd, path.join(file, '**', extensionGlobPart))), globOptions);
           return previousResults.filter(fileInfo => matcher.match(fileInfo.absolute)).map(fileInfo => fileInfo.original);
         }
 
@@ -94,7 +98,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
     } catch {
       // Not a directory, not a file, may be a glob
       if (previousResults) {
-        const matcher = new minimatch.Minimatch(path.resolve(processCwd, file), globOptions);
+        const matcher = new minimatch.Minimatch(posixPath(path.resolve(processCwd, file)), globOptions);
         return previousResults.filter(fileInfo => matcher.match(fileInfo.absolute)).map(fileInfo => fileInfo.original);
       }
 
