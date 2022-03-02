@@ -14,13 +14,13 @@
     minimum_pre_commit_version: 0.15.0
 -   id: markdownlint-docker
     name: markdownlint-docker
-    description: "Checks the style of Markdown/Commonmark files, uses projects official docker image."
+    description: "Checks the style of Markdown/Commonmark files."
     entry: ghcr.io/igorshubovych/markdownlint-cli
     language: docker_image
     types: [markdown]
 -   id: markdownlint-fix-docker
     name: markdownlint-fix-docker
-    description: "Fixes the style of Markdown/Commonmark files, uses projects official docker image.."
+    description: "Fixes the style of Markdown/Commonmark files."
     entry: ghcr.io/igorshubovych/markdownlint-cli --fix
     language: docker_image
     types: [markdown]
