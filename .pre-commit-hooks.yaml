@@ -18,9 +18,11 @@
     entry: ghcr.io/igorshubovych/markdownlint-cli
     language: docker_image
     types: [markdown]
+    minimum_pre_commit_version: 0.15.0
 -   id: markdownlint-fix-docker
     name: markdownlint-fix-docker
     description: "Fixes the style of Markdown/Commonmark files."
     entry: ghcr.io/igorshubovych/markdownlint-cli --fix
     language: docker_image
     types: [markdown]
+    minimum_pre_commit_version: 0.15.0
