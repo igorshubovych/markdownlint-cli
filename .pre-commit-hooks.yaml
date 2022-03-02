@@ -18,3 +18,9 @@
     entry: ghcr.io/igorshubovych/markdownlint-cli
     language: docker_image
     types: [markdown]
+-   id: markdownlint-fix-docker
+    name: markdownlint-fix-docker
+    description: "Fixes the style of Markdown/Commonmark files, uses projects official docker image.."
+    entry: ghcr.io/igorshubovych/markdownlint-cli --fix
+    language: docker_image
+    types: [markdown]
