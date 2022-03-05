@@ -41,7 +41,7 @@ const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();
 
 function readConfiguration(userConfigFile) {
-  const jsConfigFile = /\.js$/i.test(userConfigFile);
+  const jsConfigFile = /\.(c)?js$/i.test(userConfigFile);
 
   // Load from well-known config files
   let config = rc('markdownlint', {});
