@@ -786,3 +786,17 @@ test('--disable flag overrides --enable flag', async t => {
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
 });
+
+test('configuration can be .js in the CommonJS workspace', async t => {
+  const result = await execa('../../../markdownlint.js', ['--config', '.markdownlint.js', 'test.md'], {cwd: "./workspace/commonjs", stripFinalNewline: false});
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+});
+
+test('configuration can be .cjs in the ESM (module) workspace', async t => {
+  const result = await execa('../../../markdownlint.js', ['--config', '.markdownlint.cjs', 'test.md'], {cwd: "./workspace/module", stripFinalNewline: false});
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+});
