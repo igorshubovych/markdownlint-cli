@@ -114,8 +114,6 @@ If a rule is passed to both `--enable` and `--disable`, it will be disabled.
 
 > JS configuration files must be provided via the `--config` argument; they are not automatically loaded because running untrusted code is a security concern.
 
-[ESM-only]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
-
 ## Exit codes
 
 `markdownlint-cli` returns one of the following exit codes:
@@ -164,3 +162,4 @@ MIT © Igor Shubovych
 [gitignore]: https://git-scm.com/docs/gitignore
 [pre-commit]: https://pre-commit.com/
 [pre-commit-version]: https://pre-commit.com/#overriding-language-version
+[ESM-only]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
