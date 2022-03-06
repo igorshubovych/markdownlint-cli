@@ -83,6 +83,7 @@
       "!test/md043-config.js"
     ],
     "failFast": true,
+    "timeout": "1m",
     "workerThreads": false
   }
 }
