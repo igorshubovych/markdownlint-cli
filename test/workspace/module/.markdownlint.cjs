@@ -1,3 +1,3 @@
 module.exports = {
-  "line-length": false,
+  'line-length': false,
 };
