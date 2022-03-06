@@ -105,7 +105,8 @@ The CLI argument `--config` is not required.
 If it is not provided, `markdownlint-cli` looks for the file `.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for the file `.markdownlintrc` in the current or all parent folders.
 The algorithm is described in detail on the [`rc` package page][rc-standards].
 If the `--config` argument is provided, the file must be valid JSON, JSONC, JS, or YAML.
-JS configuration files contain JavaScript code, must have the `.js` extension, and must export (via `module.exports = ...`) a configuration object of the form shown above.
+JS configuration files contain JavaScript code, must have the `.js` or `.cjs` file extension, and must export (via `module.exports = ...`) a configuration object of the form shown above.
+If your workspace _(project)_ is [ESM-only] _(`"type": "module"` set in the root `package.json` file)_, then the configuration file **should end with `.cjs` file extension**.
 A JS configuration file may internally `require` one or more npm packages as a way of reusing configuration across projects.
 
 `--enable` and `--disable` override configuration files; if a configuration file disables `MD002` and you pass `--enable MD002`, it will be enabled.
@@ -161,3 +162,4 @@ MIT © Igor Shubovych
 [gitignore]: https://git-scm.com/docs/gitignore
 [pre-commit]: https://pre-commit.com/
 [pre-commit-version]: https://pre-commit.com/#overriding-language-version
+[ESM-only]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
