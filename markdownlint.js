@@ -93,7 +93,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
           return previousResults.filter(fileInfo => matcher.match(fileInfo.absolute)).map(fileInfo => fileInfo.original);
         }
 
-        return glob.sync(path.join(file, '**', extensionGlobPart), globOptions);
+        return glob.sync(posixPath(path.join(file, '**', extensionGlobPart)), globOptions);
       }
     } catch {
       // Not a directory, not a file, may be a glob
