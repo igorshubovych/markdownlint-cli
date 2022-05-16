@@ -39,7 +39,7 @@
   "dependencies": {
     "commander": "~9.2.0",
     "get-stdin": "~9.0.0",
-    "glob": "~8.0.1",
+    "glob": "~8.0.3",
     "ignore": "~5.2.0",
     "js-yaml": "^4.1.0",
     "jsonc-parser": "~3.0.0",
