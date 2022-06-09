@@ -57,7 +57,7 @@ Quoting the glob like `--ignore '*.md'` passes it through unexpanded and ignores
 
 #### Globbing examples
 
-To lint all Markdown files recursively in a Node.js project (excluding dependencies), `*/**.md` wildcard comes in handy. The following commands might be used:
+To lint all Markdown files recursively in a Node.js project (excluding dependencies), `**/*.md` wildcard comes in handy. The following commands might be used:
 
 Windows CMD: `markdownlint **/*.md --ignore node_modules`
 
