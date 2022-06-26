@@ -315,7 +315,6 @@ try {
   if (files.length > 0 && !options.stdin) {
     lintAndPrint(null, diff);
   } else if (files.length === 0 && options.stdin && !options.fix) {
-    // eslint-disable-next-line node/no-unsupported-features/es-syntax
     import('get-stdin')
       .then(module => module.default())
       .then(lintAndPrint);
