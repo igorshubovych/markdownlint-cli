@@ -46,7 +46,7 @@
     "markdownlint": "~0.26.0",
     "markdownlint-rule-helpers": "~0.17.0",
     "minimatch": "~5.1.0",
-    "run-con": "~1.2.10"
+    "run-con": "~1.2.11"
   },
   "devDependencies": {
     "ava": "^4.3.1",
