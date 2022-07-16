@@ -35,7 +35,7 @@ const exitCodes = {
   unexpectedError: 4
 };
 
-const projectConfigFiles = ['.markdownlint.json', '.markdownlint.yaml', '.markdownlint.yml'];
+const projectConfigFiles = ['.markdownlint.jsonc', '.markdownlint.json', '.markdownlint.yaml', '.markdownlint.yml'];
 const configFileParsers = [jsoncParse, jsYamlSafeLoad];
 const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();

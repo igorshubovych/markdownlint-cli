@@ -102,7 +102,7 @@ A sample configuration file:
 For more examples, see [.markdownlint.jsonc][markdownlint-jsonc], [.markdownlint.yaml][markdownlint-yaml], or the [style folder][style-folder].
 
 The CLI argument `--config` is not required.
-If it is not provided, `markdownlint-cli` looks for the file `.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for the file `.markdownlintrc` in the current or all parent folders.
+If it is not provided, `markdownlint-cli` looks for the file `.markdownlint.jsonc`/`.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for the file `.markdownlintrc` in the current or all parent folders.
 The algorithm is described in detail on the [`rc` package page][rc-standards].
 If the `--config` argument is provided, the file must be valid JSON, JSONC, JS, or YAML.
 JS configuration files contain JavaScript code, must have the `.js` or `.cjs` file extension, and must export (via `module.exports = ...`) a configuration object of the form shown above.

@@ -433,17 +433,21 @@ function getCwdConfigFileTest(extension) {
   };
 }
 
+test('.markdownlint.jsonc in cwd is used automatically', getCwdConfigFileTest('jsonc'));
+
 test('.markdownlint.json in cwd is used automatically', getCwdConfigFileTest('json'));
 
 test('.markdownlint.yaml in cwd is used automatically', getCwdConfigFileTest('yaml'));
 
 test('.markdownlint.yml in cwd is used automatically', getCwdConfigFileTest('yml'));
 
+test('.markdownlint.jsonc in cwd is used instead of .markdownlint.json or .markdownlint.yaml or .markdownlint.yml', getCwdConfigFileTest('jsonc-json-yaml-yml'));
+
 test('.markdownlint.json in cwd is used instead of .markdownlint.yaml or .markdownlint.yml', getCwdConfigFileTest('json-yaml-yml'));
 
 test('.markdownlint.yaml in cwd is used instead of .markdownlint.yml', getCwdConfigFileTest('yaml-yml'));
 
-test('.markdownlint.json with JavaScript-style comments is handled', getCwdConfigFileTest('jsonc'));
+test('.markdownlint.json with JavaScript-style comments is handled', getCwdConfigFileTest('json-c'));
 
 test('Custom rule from single file loaded', async t => {
   try {
