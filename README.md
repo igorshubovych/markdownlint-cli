@@ -48,6 +48,9 @@ Or run using [Docker](https://www.docker.com) and [GitHub Packages](https://gith
 docker run -v $PWD:/workdir ghcr.io/igorshubovych/markdownlint-cli:latest "*.md"
 ```
 
+> **Note**
+> Because `--enable` and `--disable` are [variadic arguments that accept multiple values][commander-variadic], it is necessary to end the list by passing `--` before the `<files|directories|globs>` argument like so: `markdownlint --disable MD013 -- README.md`.
+
 ### Globbing
 
 `markdownlint-cli` supports advanced globbing patterns like `**/*.md` ([more information][globprimer]).
@@ -149,6 +152,7 @@ MIT © Igor Shubovych
 
 [actions-badge]: https://github.com/igorshubovych/markdownlint-cli/workflows/CI/badge.svg?branch=master
 [actions-url]: https://github.com/igorshubovych/markdownlint-cli/actions?query=workflow%3ACI
+[commander-variadic]: https://github.com/tj/commander.js#variadic-option
 [markdownlint]: https://github.com/DavidAnson/markdownlint
 [markdownlint-jsonc]: https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.jsonc
 [markdownlint-yaml]: https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.yaml
