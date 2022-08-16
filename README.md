@@ -37,8 +37,8 @@ markdownlint --help
     -q, --quiet                                 do not write issues to STDOUT
     -r, --rules  [file|directory|glob|package]  include custom rule files (default: [])
     -s, --stdin                                 read from STDIN (does not work with files)
-    --enable [rules...]                         Enable certain rules, e.g. --enable MD013 MD041
-    --disable [rules...]                        Disable certain rules, e.g. --disable MD013 MD041
+    --enable [rules...]                         Enable certain rules (list must end with --), e.g. --enable MD013 MD041 --
+    --disable [rules...]                        Disable certain rules (list must end with --), e.g. --disable MD013 MD041 --
     -h, --help                                  display help for command
 ```
 
