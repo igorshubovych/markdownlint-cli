@@ -192,8 +192,8 @@ program
   .option('-q, --quiet', 'do not write issues to STDOUT')
   .option('-r, --rules  [file|directory|glob|package]', 'include custom rule files', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
-  .option('--enable [rules...]', 'Enable certain rules, e.g. --enable MD013 MD041')
-  .option('--disable [rules...]', 'Disable certain rules, e.g. --disable MD013 MD041');
+  .option('--enable [rules...]', 'Enable certain rules (list must end with --), e.g. --enable MD013 MD041 --')
+  .option('--disable [rules...]', 'Disable certain rules (list must end with --), e.g. --disable MD013 MD041 --');
 
 program.parse(process.argv);
 
