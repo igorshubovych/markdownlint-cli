@@ -106,7 +106,7 @@ For more examples, see [.markdownlint.jsonc][markdownlint-jsonc], [.markdownlint
 
 The CLI argument `--config` is not required.
 If it is not provided, `markdownlint-cli` looks for the file `.markdownlint.jsonc`/`.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for the file `.markdownlintrc` in the current or all parent folders.
-The algorithm is described in detail on the [`rc` package page][rc-standards]. Note that when relying on its lookup of `.markdownlintrc` in the current or parent folders, the file doesn't accept a `yaml` syntax (just INI and JSON), and it cannot have other extensions (such as `.json`), it must be named strictly `.markdownlintrc`.
+The algorithm is described in detail on the [`rc` package page][rc-standards]. Note that when relying on the lookup of a file named `.markdownlintrc` in the current or parent folders, the only syntaxes accepted are INI and JSON, and the file cannot have an extension.
 If the `--config` argument is provided, the file must be valid JSON, JSONC, JS, or YAML.
 JS configuration files contain JavaScript code, must have the `.js` or `.cjs` file extension, and must export (via `module.exports = ...`) a configuration object of the form shown above.
 If your workspace _(project)_ is [ESM-only] _(`"type": "module"` set in the root `package.json` file)_, then the configuration file **should end with `.cjs` file extension**.
