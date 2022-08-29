@@ -49,10 +49,10 @@
     "run-con": "~1.2.11"
   },
   "devDependencies": {
-    "ava": "^4.3.1",
+    "ava": "^4.3.3",
     "execa": "^6.1.0",
     "test-rule-package": "./test/custom-rules/test-rule-package",
-    "xo": "^0.51.0"
+    "xo": "^0.52.2"
   },
   "xo": {
     "prettier": true,
