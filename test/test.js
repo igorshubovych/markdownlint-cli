@@ -63,6 +63,13 @@ test('linting of correct Markdown file yields no output with absolute path', asy
   t.is(result.exitCode, 0);
 });
 
+test('linting of correct Markdown file with inline configuration yields no output', async t => {
+  const result = await execa('../markdownlint.js', ['inline.md'], {stripFinalNewline: false});
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+});
+
 test('linting of incorrect Markdown file fails', async t => {
   try {
     await execa('../markdownlint.js', ['--config', 'test-config.json', 'incorrect.md'], {stripFinalNewline: false});

@@ -260,6 +260,7 @@ const diff = files.filter(file => !ignores.some(ignore => ignore.absolute === fi
 function lintAndPrint(stdin, files) {
   files = files || [];
   const config = readConfiguration(options.config);
+  const configParsers = [jsoncParse];
 
   for (const rule of options.enable || []) {
     // Leave default values in place if rule is an object
@@ -274,6 +275,7 @@ function lintAndPrint(stdin, files) {
 
   const lintOptions = {
     config,
+    configParsers,
     customRules,
     files
   };
