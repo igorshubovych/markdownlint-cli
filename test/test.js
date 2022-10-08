@@ -63,8 +63,15 @@ test('linting of correct Markdown file yields no output with absolute path', asy
   t.is(result.exitCode, 0);
 });
 
-test('linting of correct Markdown file with inline configuration yields no output', async t => {
-  const result = await execa('../markdownlint.js', ['inline.md'], {stripFinalNewline: false});
+test('linting of correct Markdown file with inline JSONC configuration yields no output', async t => {
+  const result = await execa('../markdownlint.js', ['inline-jsonc.md'], {stripFinalNewline: false});
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+});
+
+test('linting of correct Markdown file with inline YAML configuration yields no output', async t => {
+  const result = await execa('../markdownlint.js', ['inline-yaml.md'], {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);

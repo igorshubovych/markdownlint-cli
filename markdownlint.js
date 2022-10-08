@@ -36,7 +36,7 @@ const exitCodes = {
 };
 
 const projectConfigFiles = ['.markdownlint.jsonc', '.markdownlint.json', '.markdownlint.yaml', '.markdownlint.yml'];
-const configFileParsers = [jsoncParse, jsYamlSafeLoad];
+const configParsers = [jsoncParse, jsYamlSafeLoad];
 const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();
 
@@ -48,7 +48,7 @@ function readConfiguration(userConfigFile) {
   for (const projectConfigFile of projectConfigFiles) {
     try {
       fs.accessSync(projectConfigFile, fs.R_OK);
-      const projectConfig = markdownlint.readConfigSync(projectConfigFile, configFileParsers);
+      const projectConfig = markdownlint.readConfigSync(projectConfigFile, configParsers);
       config = {...config, ...projectConfig};
       break;
     } catch {
@@ -60,7 +60,7 @@ function readConfiguration(userConfigFile) {
   // However I have to do it to overwrite configuration from .markdownlint.{json,yaml,yml}.
   if (userConfigFile) {
     try {
-      const userConfig = jsConfigFile ? require(path.resolve(processCwd, userConfigFile)) : markdownlint.readConfigSync(userConfigFile, configFileParsers);
+      const userConfig = jsConfigFile ? require(path.resolve(processCwd, userConfigFile)) : markdownlint.readConfigSync(userConfigFile, configParsers);
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
       console.error(`Cannot read or parse config file '${userConfigFile}': ${error.message}`);
@@ -260,7 +260,6 @@ const diff = files.filter(file => !ignores.some(ignore => ignore.absolute === fi
 function lintAndPrint(stdin, files) {
   files = files || [];
   const config = readConfiguration(options.config);
-  const configParsers = [jsoncParse];
 
   for (const rule of options.enable || []) {
     // Leave default values in place if rule is an object
