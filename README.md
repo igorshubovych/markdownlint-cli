@@ -144,6 +144,7 @@ To run `markdownlint-cli` as part of a [pre-commit][pre-commit] workflow, add so
 ## Related
 
 - [markdownlint][markdownlint] - API for this module
+- [markdownlint-cli2][markdownlint-cli2] - another CLI
 - [glob][glob] - Pattern matching implementation
 - [ignore][ignore] - `.markdownlintignore` implementation
 
@@ -161,6 +162,7 @@ MIT © Igor Shubovych
 [config]: https://github.com/DavidAnson/markdownlint#optionsconfig
 [style-folder]: https://github.com/DavidAnson/markdownlint/tree/main/style
 [rc-standards]: https://www.npmjs.com/package/rc#standards
+[markdownlint-cli2]: https://github.com/DavidAnson/markdownlint-cli2
 [glob]: https://github.com/isaacs/node-glob
 [globprimer]: https://github.com/isaacs/node-glob/blob/master/README.md#glob-primer
 [ignore]: https://github.com/kaelzhang/node-ignore
