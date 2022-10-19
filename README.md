@@ -144,7 +144,7 @@ To run `markdownlint-cli` as part of a [pre-commit][pre-commit] workflow, add so
 ## Related
 
 - [markdownlint][markdownlint] - API for this module
-- [markdownlint-cli2][markdownlint-cli2] - another CLI
+- [markdownlint-cli2][markdownlint-cli2] - Alternate CLI implementation
 - [glob][glob] - Pattern matching implementation
 - [ignore][ignore] - `.markdownlintignore` implementation
 
@@ -156,13 +156,13 @@ MIT © Igor Shubovych
 [actions-url]: https://github.com/igorshubovych/markdownlint-cli/actions?query=workflow%3ACI
 [commander-variadic]: https://github.com/tj/commander.js#variadic-option
 [markdownlint]: https://github.com/DavidAnson/markdownlint
+[markdownlint-cli2]: https://github.com/DavidAnson/markdownlint-cli2
 [markdownlint-jsonc]: https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.jsonc
 [markdownlint-yaml]: https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.yaml
 [rules]: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
 [config]: https://github.com/DavidAnson/markdownlint#optionsconfig
 [style-folder]: https://github.com/DavidAnson/markdownlint/tree/main/style
 [rc-standards]: https://www.npmjs.com/package/rc#standards
-[markdownlint-cli2]: https://github.com/DavidAnson/markdownlint-cli2
 [glob]: https://github.com/isaacs/node-glob
 [globprimer]: https://github.com/isaacs/node-glob/blob/master/README.md#glob-primer
 [ignore]: https://github.com/kaelzhang/node-ignore
