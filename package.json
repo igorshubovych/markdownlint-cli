@@ -49,7 +49,7 @@
     "run-con": "~1.2.11"
   },
   "devDependencies": {
-    "ava": "^4.3.3",
+    "ava": "^5.0.1",
     "execa": "^6.1.0",
     "test-rule-package": "./test/custom-rules/test-rule-package",
     "xo": "^0.52.4"
