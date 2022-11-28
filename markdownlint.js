@@ -2,11 +2,11 @@
 
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const Module = require('module');
-const os = require('os');
-const process = require('process');
+const fs = require('node:fs');
+const path = require('node:path');
+const Module = require('node:module');
+const os = require('node:os');
+const process = require('node:process');
 const program = require('commander');
 
 const options = program.opts();

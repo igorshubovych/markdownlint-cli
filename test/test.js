@@ -1,9 +1,9 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const process = require('process');
+const fs = require('node:fs');
+const path = require('node:path');
+const os = require('node:os');
+const process = require('node:process');
 const test = require('ava');
 
 const execa = (...args) => import('execa').then(module => module.execa(...args));

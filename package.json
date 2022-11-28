@@ -65,7 +65,8 @@
       "promise/prefer-await-to-then": 0,
       "object-shorthand": 0,
       "unicorn/prefer-module": 0,
-      "unicorn/prefer-ternary": 0
+      "unicorn/prefer-ternary": 0,
+      "unicorn/prefer-top-level-await": 0
     }
   },
   "prettier": {
