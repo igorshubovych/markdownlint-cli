@@ -40,7 +40,7 @@
     "commander": "~9.4.1",
     "get-stdin": "~9.0.0",
     "glob": "~8.0.3",
-    "ignore": "~5.2.0",
+    "ignore": "~5.2.1",
     "js-yaml": "^4.1.0",
     "jsonc-parser": "~3.2.0",
     "markdownlint": "~0.26.2",
