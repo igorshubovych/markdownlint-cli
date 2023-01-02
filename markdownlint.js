@@ -293,7 +293,7 @@ function lintAndPrint(stdin, files) {
       ...lintOptions,
       resultVersion: 3
     };
-    const markdownlintRuleHelpers = require('markdownlint-rule-helpers');
+    const markdownlintRuleHelpers = require('markdownlint/helpers');
     for (const file of files) {
       fixOptions.files = [file];
       const fixResult = markdownlint.sync(fixOptions);
