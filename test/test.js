@@ -518,10 +518,10 @@ test('Custom rules from glob loaded', async t => {
 test('Custom rule from node_modules package loaded', async t => {
   try {
     const input = '# Input\n';
-    await execa('../markdownlint.js', ['--rules', 'test-rule-package', '--stdin'], {input, stripFinalNewline: false});
+    await execa('../markdownlint.js', ['--rules', 'markdownlint-cli-local-test-rule', '--stdin'], {input, stripFinalNewline: false});
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 test-rule-package Test rule package broken', ''].join('\n');
+    const expected = ['stdin:1 markdownlint-cli-local-test-rule Test rule package broken', ''].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -531,14 +531,14 @@ test('Custom rule from node_modules package loaded', async t => {
 test('Custom rule from node_modules package loaded relative to cwd', async t => {
   try {
     const input = '# Input\n';
-    await execa(path.resolve('..', 'markdownlint.js'), ['--rules', 'test-rule-package', '--stdin'], {
+    await execa(path.resolve('..', 'markdownlint.js'), ['--rules', 'markdownlint-cli-local-test-rule', '--stdin'], {
       input,
       cwd: path.join(__dirname, 'custom-rules', 'relative-to-cwd'),
       stripFinalNewline: false
     });
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 test-rule-package Test rule package relative to cwd broken', ''].join('\n');
+    const expected = ['stdin:1 markdownlint-cli-local-test-rule Test rule package relative to cwd broken', ''].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -548,10 +548,10 @@ test('Custom rule from node_modules package loaded relative to cwd', async t => 
 test('Custom rule from package loaded', async t => {
   try {
     const input = '# Input\n';
-    await execa('../markdownlint.js', ['--rules', './custom-rules/test-rule-package', '--stdin'], {input, stripFinalNewline: false});
+    await execa('../markdownlint.js', ['--rules', './custom-rules/markdownlint-cli-local-test-rule', '--stdin'], {input, stripFinalNewline: false});
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 test-rule-package Test rule package broken', ''].join('\n');
+    const expected = ['stdin:1 markdownlint-cli-local-test-rule Test rule package broken', ''].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -561,10 +561,10 @@ test('Custom rule from package loaded', async t => {
 test('Custom rule from several packages loaded', async t => {
   try {
     const input = '# Input\n';
-    await execa('../markdownlint.js', ['--rules', './custom-rules/test-rule-package', '--rules', './custom-rules/test-rule-package-other', '--stdin'], {input, stripFinalNewline: false});
+    await execa('../markdownlint.js', ['--rules', './custom-rules/markdownlint-cli-local-test-rule', '--rules', './custom-rules/markdownlint-cli-local-test-rule-other', '--stdin'], {input, stripFinalNewline: false});
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 test-rule-package Test rule package broken', 'stdin:1 test-rule-package-other Test rule package other broken', ''].join('\n');
+    const expected = ['stdin:1 markdownlint-cli-local-test-rule Test rule package broken', 'stdin:1 markdownlint-cli-local-test-rule-other Test rule package other broken', ''].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -574,7 +574,7 @@ test('Custom rule from several packages loaded', async t => {
 test('Invalid custom rule name reports error', async t => {
   try {
     const input = '# Input\n';
-    await execa('../markdownlint.js', ['--rules', 'test-rule-package', '--rules', 'invalid-package', '--stdin'], {input, stripFinalNewline: false});
+    await execa('../markdownlint.js', ['--rules', 'markdownlint-cli-local-test-rule', '--rules', 'invalid-package', '--stdin'], {input, stripFinalNewline: false});
     t.fail();
   } catch (error) {
     const expected = ['Cannot load custom rule invalid-package: No such rule', ''].join('\n');
