@@ -641,7 +641,7 @@ test('.markdownlintignore is applied correctly', async t => {
   } catch (error) {
     const expected = ['incorrect.md:1:8 MD047/single-trailing-newline Files should end with a single newline character', 'subdir/incorrect.markdown:1:8 MD047/single-trailing-newline Files should end with a single newline character', ''].join('\n');
     t.is(error.stdout, '');
-    t.is(error.stderr, expected);
+    t.is(error.stderr.replace(/\\/g, '/'), expected);
     t.is(error.exitCode, 1);
   }
 });
@@ -671,7 +671,7 @@ test('--ignore-path works with .markdownlintignore', async t => {
   } catch (error) {
     const expected = ['incorrect.md:1:8 MD047/single-trailing-newline Files should end with a single newline character', 'subdir/incorrect.markdown:1:8 MD047/single-trailing-newline Files should end with a single newline character', ''].join('\n');
     t.is(error.stdout, '');
-    t.is(error.stderr, expected);
+    t.is(error.stderr.replace(/\\/g, '/'), expected);
     t.is(error.exitCode, 1);
   }
 });
