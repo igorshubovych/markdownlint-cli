@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "ava": "^5.2.0",
-    "execa": "^7.1.0",
+    "execa": "^7.1.1",
     "markdownlint-cli-local-test-rule": "./test/custom-rules/markdownlint-cli-local-test-rule",
     "xo": "^0.53.1"
   },
