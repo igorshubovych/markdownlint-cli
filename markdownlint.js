@@ -8,13 +8,13 @@ const Module = require('node:module');
 const os = require('node:os');
 const process = require('node:process');
 const program = require('commander');
-
-const options = program.opts();
 const glob = require('glob');
 const markdownlint = require('markdownlint');
 const rc = require('run-con');
 const minimatch = require('minimatch');
 const pkg = require('./package.json');
+
+const options = program.opts();
 
 function posixPath(p) {
   return p.split(path.sep).join(path.posix.sep);
