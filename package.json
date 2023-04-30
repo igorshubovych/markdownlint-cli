@@ -43,7 +43,7 @@
     "ignore": "~5.2.4",
     "js-yaml": "^4.1.0",
     "jsonc-parser": "~3.2.0",
-    "markdownlint": "~0.28.1",
+    "markdownlint": "~0.28.2",
     "minimatch": "~9.0.0",
     "run-con": "~1.2.11"
   },
