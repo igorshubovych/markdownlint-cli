@@ -48,7 +48,7 @@
     "run-con": "~1.2.11"
   },
   "devDependencies": {
-    "ava": "^5.3.0",
+    "ava": "^5.3.1",
     "execa": "^7.1.1",
     "markdownlint-cli-local-test-rule": "./test/custom-rules/markdownlint-cli-local-test-rule",
     "xo": "^0.54.2"
