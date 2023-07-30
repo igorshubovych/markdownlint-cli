@@ -192,6 +192,7 @@ program
   .option('-q, --quiet', 'do not write issues to STDOUT')
   .option('-r, --rules  [file|directory|glob|package]', 'include custom rule files', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
+  .option('-v, --verbose', 'write filenames to STDOUT')
   .option('--enable [rules...]', 'Enable certain rules, e.g. --enable MD013 MD041 --')
   .option('--disable [rules...]', 'Disable certain rules, e.g. --disable MD013 MD041 --');
 
@@ -295,10 +296,18 @@ function lintAndPrint(stdin, files) {
     };
     const markdownlintRuleHelpers = require('markdownlint/helpers');
     for (const file of files) {
+      if (options.verbose) {
+        console.log('checking', file);
+      }
+
       fixOptions.files = [file];
       const fixResult = markdownlint.sync(fixOptions);
       const fixes = fixResult[file].filter(error => error.fixInfo);
       if (fixes.length > 0) {
+        if (options.verbose) {
+          console.log('fixing', file);
+        }
+
         const originalText = fs.readFileSync(file, fsOptions);
         const fixedText = markdownlintRuleHelpers.applyFixes(originalText, fixes);
         if (originalText !== fixedText) {
