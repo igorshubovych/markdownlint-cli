@@ -824,3 +824,26 @@ test('configuration can be .cjs in the ESM (module) workspace', async t => {
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
 });
+
+test('--verbose flag with --fix for correct file', async t => {
+  const result = await execa('../markdownlint.js', ['--fix', '--verbose', 'correct.md'], {stripFinalNewline: false});
+  t.true(result.stdout.includes('checking correct.md'));
+  t.true(!result.stdout.includes('fixing correct.md'));
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+});
+
+test('--verbose flag with --fix for incorrect file', async t => {
+  const fixFileD = 'incorrect.d.mdf';
+  try {
+    fs.copyFileSync('incorrect.md', fixFileD);
+    await execa('../markdownlint.js', ['--fix', '--verbose', '--config', 'test-config.json', path.resolve(fixFileD)], {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.true(error.stdout.includes('checking ' + path.resolve(fixFileD)));
+    t.true(error.stdout.includes('fixing ' + path.resolve(fixFileD)));
+    t.is(error.stderr.match(errorPattern).length, 2);
+    t.is(error.exitCode, 1);
+    fs.unlinkSync(fixFileD);
+  }
+});
