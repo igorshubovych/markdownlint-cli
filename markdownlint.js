@@ -192,7 +192,7 @@ program
   .option('-q, --quiet', 'do not write issues to STDOUT')
   .option('-r, --rules  [file|directory|glob|package]', 'include custom rule files', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
-  .option('-v, --verbose', 'write filenames to STDOUT')
+  .option('-v, --verbose', 'write file names to STDOUT')
   .option('--enable [rules...]', 'Enable certain rules, e.g. --enable MD013 MD041 --')
   .option('--disable [rules...]', 'Disable certain rules, e.g. --disable MD013 MD041 --');
 
