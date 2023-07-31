@@ -257,6 +257,11 @@ const files = prepareFileList(program.args, ['md', 'markdown']).filter(value => 
 const ignores = prepareFileList(options.ignore, ['md', 'markdown'], files);
 const customRules = loadCustomRules(options.rules);
 const diff = files.filter(file => !ignores.some(ignore => ignore.absolute === file.absolute)).map(paths => paths.original);
+if (options.verbose) {
+  for (const file of diff) {
+    console.log('checking', file);
+  }
+}
 
 function lintAndPrint(stdin, files) {
   files = files || [];
@@ -296,10 +301,6 @@ function lintAndPrint(stdin, files) {
     };
     const markdownlintRuleHelpers = require('markdownlint/helpers');
     for (const file of files) {
-      if (options.verbose) {
-        console.log('checking', file);
-      }
-
       fixOptions.files = [file];
       const fixResult = markdownlint.sync(fixOptions);
       const fixes = fixResult[file].filter(error => error.fixInfo);

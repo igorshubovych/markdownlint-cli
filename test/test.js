@@ -825,6 +825,13 @@ test('configuration can be .cjs in the ESM (module) workspace', async t => {
   t.is(result.exitCode, 0);
 });
 
+test('--verbose flag for correct file', async t => {
+  const result = await execa('../markdownlint.js', ['--verbose', 'correct.md'], {stripFinalNewline: false});
+  t.true(result.stdout.includes('checking correct.md'));
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+});
+
 test('--verbose flag with --fix for correct file', async t => {
   const result = await execa('../markdownlint.js', ['--fix', '--verbose', 'correct.md'], {stripFinalNewline: false});
   t.true(result.stdout.includes('checking correct.md'));
