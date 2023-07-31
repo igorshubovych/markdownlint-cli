@@ -415,7 +415,7 @@ test('error on configuration file not found', async t => {
     await execa('../markdownlint.js', ['--config', 'non-existent-file-path.yaml', 'correct.md'], {stripFinalNewline: false});
   } catch (error) {
     t.is(error.stdout, '');
-    t.regex(error.stderr, /Cannot read or parse config file 'non-existent-file-path.yaml': ENOENT: no such file or directory, open 'non-existent-file-path.yaml'/);
+    t.regex(error.stderr, /Cannot read or parse config file 'non-existent-file-path\.yaml': ENOENT: no such file or directory, open '.*non-existent-file-path\.yaml'/);
     t.is(error.exitCode, 4);
   }
 });
