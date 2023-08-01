@@ -198,6 +198,10 @@ program
 
 program.parse(process.argv);
 
+if (options.quiet && options.verbose) {
+  options.verbose = false;
+}
+
 if (options.verbose) {
   console.log(pkg.name, "version", pkg.version);
 }
