@@ -198,6 +198,11 @@ program
 
 program.parse(process.argv);
 
+if (options.verbose) {
+  console.log(pkg.name, "version", pkg.version);
+}
+
+
 function tryResolvePath(filepath) {
   try {
     if (path.basename(filepath) === filepath && path.extname(filepath) === '') {
