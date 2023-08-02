@@ -116,48 +116,64 @@ function prepareFileList(files, fileExtensions, previousResults) {
 }
 
 function printResult(lintResult) {
-  const results = Object.keys(lintResult).flatMap(file =>
-    lintResult[file].map(result => {
-      if (options.json) {
+  const results = Object.keys(lintResult)
+    .flatMap(file => {
+      if (lintResult[file].length > 0) {
+        return lintResult[file].map(result => {
+          if (options.json) {
+            return {
+              fileName: file,
+              ...result
+            };
+          }
+
+          return {
+            file: file,
+            lineNumber: result.lineNumber,
+            column: (result.errorRange && result.errorRange[0]) || 0,
+            names: result.ruleNames.join('/'),
+            description: result.ruleDescription + (result.errorDetail ? ' [' + result.errorDetail + ']' : '') + (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
+          };
+        });
+      }
+
+      if (options.verbose && !options.json) {
         return {
-          fileName: file,
-          ...result
+          file: file
         };
       }
 
-      return {
-        file: file,
-        lineNumber: result.lineNumber,
-        column: (result.errorRange && result.errorRange[0]) || 0,
-        names: result.ruleNames.join('/'),
-        description: result.ruleDescription + (result.errorDetail ? ' [' + result.errorDetail + ']' : '') + (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
-      };
+      return null;
     })
-  );
+    .filter(Boolean);
 
   let lintResultString = '';
+  let lintResultStrings = [];
   if (results.length > 0) {
     if (options.json) {
+      // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
+      // streams (e.g., when the output is being piped). Just set the exit code
+      // and let the program terminate normally.
+      // @see {@link https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_exit_code}
+      // @see {@link https://github.com/igorshubovych/markdownlint-cli/pull/29#issuecomment-343535291}
+      process.exitCode = exitCodes.lintFindings;
       results.sort((a, b) => a.fileName.localeCompare(b.fileName) || a.lineNumber - b.lineNumber || a.ruleDescription.localeCompare(b.ruleDescription));
       lintResultString = JSON.stringify(results, null, 2);
     } else {
       results.sort((a, b) => a.file.localeCompare(b.file) || a.lineNumber - b.lineNumber || a.names.localeCompare(b.names) || a.description.localeCompare(b.description));
 
-      lintResultString = results
-        .map(result => {
+      lintResultStrings = results.map(result => {
+        if (result.lineNumber) {
+          process.exitCode = exitCodes.lintFindings;
           const {file, lineNumber, column, names, description} = result;
           const columnText = column ? `:${column}` : '';
           return `${file}:${lineNumber}${columnText} ${names} ${description}`;
-        })
-        .join('\n');
-    }
+        }
 
-    // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
-    // streams (e.g., when the output is being piped). Just set the exit code
-    // and let the program terminate normally.
-    // @see {@link https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_exit_code}
-    // @see {@link https://github.com/igorshubovych/markdownlint-cli/pull/29#issuecomment-343535291}
-    process.exitCode = exitCodes.lintFindings;
+        return `${result.file}: ✔`;
+      });
+      lintResultString = lintResultStrings.join('\n');
+    }
   }
 
   if (options.output) {
@@ -169,7 +185,17 @@ function printResult(lintResult) {
       process.exitCode = exitCodes.failedToWriteOutputFile;
     }
   } else if (lintResultString && !options.quiet) {
-    console.error(lintResultString);
+    if (options.json) {
+      console.error(lintResultString);
+    } else {
+      for (const line of lintResultStrings) {
+        if (line.endsWith(': ✔')) {
+          console.log(line);
+        } else {
+          console.error(line);
+        }
+      }
+    }
   }
 }
 
@@ -192,7 +218,7 @@ program
   .option('-q, --quiet', 'do not write issues to STDOUT')
   .option('-r, --rules  [file|directory|glob|package]', 'include custom rule files', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
-  .option('-v, --verbose', 'write file names to STDOUT')
+  .option('-v, --verbose', 'verbose mode')
   .option('--enable [rules...]', 'Enable certain rules, e.g. --enable MD013 MD041 --')
   .option('--disable [rules...]', 'Disable certain rules, e.g. --disable MD013 MD041 --');
 
@@ -202,10 +228,9 @@ if (options.quiet && options.verbose) {
   options.verbose = false;
 }
 
-if (options.verbose) {
-  console.log(pkg.name, "version", pkg.version);
+if (options.verbose && !options.output) {
+  console.log(pkg.name, 'version', pkg.version);
 }
-
 
 function tryResolvePath(filepath) {
   try {
@@ -266,10 +291,8 @@ const files = prepareFileList(program.args, ['md', 'markdown']).filter(value => 
 const ignores = prepareFileList(options.ignore, ['md', 'markdown'], files);
 const customRules = loadCustomRules(options.rules);
 const diff = files.filter(file => !ignores.some(ignore => ignore.absolute === file.absolute)).map(paths => paths.original);
-if (options.verbose) {
-  for (const file of diff) {
-    console.log('checking', file);
-  }
+if (options.verbose && !options.stdin) {
+  console.log('files to check:', diff.join(' '));
 }
 
 function lintAndPrint(stdin, files) {
@@ -314,7 +337,7 @@ function lintAndPrint(stdin, files) {
       const fixResult = markdownlint.sync(fixOptions);
       const fixes = fixResult[file].filter(error => error.fixInfo);
       if (fixes.length > 0) {
-        if (options.verbose) {
+        if (options.verbose && !options.output) {
           console.log('fixing', file);
         }
 
