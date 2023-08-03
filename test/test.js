@@ -876,3 +876,27 @@ test('--stdin and --verbose with valid input logs stdin as source', async t => {
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
 });
+
+test('--output and --verbose with valid input logs nothing to console', async t => {
+  const input = ['# Heading', '', 'Text', ''].join('\n');
+  const output = '../outputG.txt';
+  const result = await execa('../markdownlint.js', ['--stdin', '--verbose', '--output', output], {input, stripFinalNewline: false});
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+  fs.unlinkSync(output);
+});
+
+test('--output and --verbose with invalid input logs nothing to console', async t => {
+  const input = ['Heading', '', 'Text ', ''].join('\n');
+  const output = '../outputH.txt';
+  try {
+    await execa('../markdownlint.js', ['--stdin', '--verbose', '--output', output], {input, stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr, '');
+    t.is(error.exitCode, 1);
+    fs.unlinkSync(output);
+  }
+});
