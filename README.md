@@ -113,7 +113,7 @@ JS configuration files contain JavaScript code, must have the `.js` or `.cjs` fi
 If your workspace _(project)_ is [ESM-only] _(`"type": "module"` set in the root `package.json` file)_, then the configuration file **should end with `.cjs` file extension**.
 A JS configuration file may internally `require` one or more npm packages as a way of reusing configuration across projects.
 
-`--enable` and `--disable` override configuration files; if a configuration file disables `MD002` and you pass `--enable MD002`, it will be enabled.
+`--enable` and `--disable` override configuration files; if a configuration file disables `MD123` and you pass `--enable MD123`, it will be enabled.
 If a rule is passed to both `--enable` and `--disable`, it will be disabled.
 
 > JS configuration files must be provided via the `--config` argument; they are not automatically loaded because running untrusted code is a security concern.

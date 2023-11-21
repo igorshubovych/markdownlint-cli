@@ -83,7 +83,7 @@ test('linting of incorrect Markdown file fails', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 8);
+    t.is(error.stderr.match(errorPattern).length, 7);
     t.is(error.exitCode, 1);
   }
 });
@@ -95,19 +95,19 @@ test('linting of incorrect Markdown file fails prints issues as json', async t =
   } catch (error) {
     t.is(error.stdout, '');
     const issues = JSON.parse(error.stderr);
-    t.is(issues.length, 8);
-    // RuleInformation changes with version so that field just check not null and present
+    t.is(issues.length, 7);
     const issue = issues[0];
+    // Property "ruleInformation" changes with library version
     t.true(issue.ruleInformation.length > 0);
     issue.ruleInformation = null;
     const expected = {
       fileName: 'incorrect.md',
       lineNumber: 1,
-      ruleNames: ['MD002', 'first-heading-h1', 'first-header-h1'],
-      ruleDescription: 'First heading should be a top-level heading',
+      ruleNames: ['MD041', 'first-line-heading', 'first-line-h1'],
+      ruleDescription: 'First line in a file should be a top-level heading',
       ruleInformation: null,
-      errorContext: null,
-      errorDetail: 'Expected: h1; Actual: h2',
+      errorContext: '## header 2',
+      errorDetail: null,
       errorRange: null,
       fixInfo: null
     };
@@ -122,7 +122,7 @@ test('linting of incorrect Markdown file fails with absolute path', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 8);
+    t.is(error.stderr.match(errorPattern).length, 7);
     t.is(error.exitCode, 1);
   }
 });
@@ -163,7 +163,7 @@ test('glob linting works with failing files', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 17);
+    t.is(error.stderr.match(errorPattern).length, 15);
     t.is(error.exitCode, 1);
   }
 });
@@ -181,7 +181,7 @@ test('dir linting works with failing .markdown files', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 10);
+    t.is(error.stderr.match(errorPattern).length, 9);
     t.is(error.exitCode, 1);
   }
 });
@@ -192,7 +192,7 @@ test('dir linting works with failing .markdown files and absolute path', async t
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 10);
+    t.is(error.stderr.match(errorPattern).length, 9);
     t.is(error.exitCode, 1);
   }
 });
@@ -217,7 +217,7 @@ test('glob linting with failing files has fewer errors when ignored by dir', asy
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 9);
+    t.is(error.stderr.match(errorPattern).length, 8);
     t.is(error.exitCode, 1);
   }
 });
@@ -228,7 +228,7 @@ test('glob linting with failing files has fewer errors when ignored by dir and a
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 9);
+    t.is(error.stderr.match(errorPattern).length, 8);
     t.is(error.exitCode, 1);
   }
 });
@@ -267,17 +267,7 @@ test('linting results are sorted by file/line/names/description', async t => {
     await execa('../markdownlint.js', ['--config', 'test-config.json', 'incorrect.md'], {stripFinalNewline: false});
     t.fail();
   } catch (error) {
-    const expected = [
-      'incorrect.md:1 MD002/first-heading-h1/first-header-h1 First heading should be a top-level heading [Expected: h1; Actual: h2]',
-      'incorrect.md:1 MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below] [Context: "## header 2"]',
-      'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]',
-      'incorrect.md:2 MD022/blanks-around-headings/blanks-around-headers Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "# header"]',
-      'incorrect.md:5:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
-      'incorrect.md:11:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
-      'incorrect.md:17:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
-      'incorrect.md:23:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]',
-      ''
-    ].join('\n');
+    const expected = ['incorrect.md:1 MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below] [Context: "## header 2"]', 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]', 'incorrect.md:2 MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "# header"]', 'incorrect.md:5:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]', 'incorrect.md:11:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]', 'incorrect.md:17:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]', 'incorrect.md:23:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]', ''].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -591,7 +581,7 @@ test('fixing errors in a file yields fewer errors', async t => {
     await execa('../markdownlint.js', ['--fix', '--config', 'test-config.json', fixFileA], {stripFinalNewline: false});
     t.fail();
   } catch (error) {
-    const expected = [fixFileA + ':1 MD002/first-heading-h1/first-header-h1 First heading should be a top-level heading [Expected: h1; Actual: h2]', fixFileA + ':1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]', ''].join('\n');
+    const expected = [fixFileA + ':1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]', ''].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -607,7 +597,7 @@ test('fixing errors in a file with absolute path yields fewer errors', async t =
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 2);
+    t.is(error.stderr.match(errorPattern).length, 1);
     t.is(error.exitCode, 1);
     fs.unlinkSync(fixFileB);
   }
@@ -624,7 +614,7 @@ test('fixing errors with a glob yields fewer errors', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 4);
+    t.is(error.stderr.match(errorPattern).length, 2);
     t.is(error.exitCode, 1);
     fs.unlinkSync(fixFileC);
     fs.unlinkSync(fixSubFileC);
@@ -724,7 +714,7 @@ test('--dot option to include folders/files with a dot', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 13);
+    t.is(error.stderr.match(errorPattern).length, 11);
     t.is(error.exitCode, 1);
   }
 });
@@ -749,11 +739,11 @@ test('with --quiet option does not print to stdout or stderr', async t => {
 
 test('--enable flag', async t => {
   try {
-    await execa('../markdownlint.js', ['--enable', 'MD002', '--config', 'default-false-config.yml', 'incorrect.md'], {stripFinalNewline: false});
+    await execa('../markdownlint.js', ['--enable', 'MD041', '--config', 'default-false-config.yml', 'incorrect.md'], {stripFinalNewline: false});
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr, 'incorrect.md:1 MD002/first-heading-h1/first-header-h1 First heading should be a top-level heading [Expected: h1; Actual: h2]\n');
+    t.is(error.stderr, 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]\n');
     t.is(error.exitCode, 1);
   }
 });
@@ -764,24 +754,24 @@ test('--enable flag does not modify already enabled rules', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr, 'correct.md:1 MD043/required-headings/required-headers Required heading structure [Expected: # First; Actual: # header]\n');
+    t.is(error.stderr, 'correct.md:1 MD043/required-headings Required heading structure [Expected: # First; Actual: # header]\n');
     t.is(error.exitCode, 1);
   }
 });
 
 test('--enable flag accepts rule alias', async t => {
   try {
-    await execa('../markdownlint.js', ['--enable', 'first-header-h1', '--config', 'default-false-config.yml', 'incorrect.md'], {stripFinalNewline: false});
+    await execa('../markdownlint.js', ['--enable', 'first-line-heading', '--config', 'default-false-config.yml', 'incorrect.md'], {stripFinalNewline: false});
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr, 'incorrect.md:1 MD002/first-heading-h1/first-header-h1 First heading should be a top-level heading [Expected: h1; Actual: h2]\n');
+    t.is(error.stderr, 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]\n');
     t.is(error.exitCode, 1);
   }
 });
 
 test('--disable flag', async t => {
-  const result = await execa('../markdownlint.js', ['--disable', 'MD002', 'MD014', 'MD022', 'MD041', '--', 'incorrect.md'], {stripFinalNewline: false});
+  const result = await execa('../markdownlint.js', ['--disable', 'MD014', 'MD022', 'MD041', '--', 'incorrect.md'], {stripFinalNewline: false});
 
   t.is(result.stdout, '');
   t.is(result.stderr, '');
@@ -798,7 +788,7 @@ test('--disable flag', async t => {
 });
 
 test('--disable flag overrides --enable flag', async t => {
-  const result = await execa('../markdownlint.js', ['--disable', 'MD002', '--enable', 'MD002', '--config', 'default-false-config.yml', 'incorrect.md'], {stripFinalNewline: false});
+  const result = await execa('../markdownlint.js', ['--disable', 'MD041', '--enable', 'MD041', '--config', 'default-false-config.yml', 'incorrect.md'], {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
