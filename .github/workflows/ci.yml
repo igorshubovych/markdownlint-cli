@@ -1,6 +1,6 @@
 name: CI
 
-on:
+on:OS Aplet
   push:
     branches-ignore:
       - "dependabot/**"
