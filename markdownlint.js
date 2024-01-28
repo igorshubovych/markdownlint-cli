@@ -21,10 +21,18 @@ function posixPath(p) {
 }
 
 function jsoncParse(text) {
-  return JSON.parse(require('jsonc-parser').stripComments(text));
+  const {parse, printParseErrorCode} = require('jsonc-parser');
+  const errors = [];
+  const result = parse(text, errors, {allowTrailingComma: true});
+  if (errors.length > 0) {
+    const aggregate = errors.map(error => `${printParseErrorCode(error.error)} (offset ${error.offset}, length ${error.length})`).join(', ');
+    throw new Error(`Unable to parse JSON(C) content, ${aggregate}`);
+  }
+
+  return result;
 }
 
-function jsYamlSafeLoad(text) {
+function yamlParse(text) {
   return require('js-yaml').load(text);
 }
 
@@ -36,7 +44,7 @@ const exitCodes = {
 };
 
 const projectConfigFiles = ['.markdownlint.jsonc', '.markdownlint.json', '.markdownlint.yaml', '.markdownlint.yml'];
-const configParsers = [jsoncParse, jsYamlSafeLoad];
+const configParsers = [jsoncParse, yamlParse];
 const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();
 
