@@ -28,6 +28,7 @@ build/Release
 node_modules
 # Keep it for test
 !test/custom-rules/relative-to-cwd/node_modules
+!test/custom-rules/scoped-package/node_modules
 
 # Optional npm cache directory
 .npm

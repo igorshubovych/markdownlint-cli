@@ -535,6 +535,21 @@ test('Custom rule from node_modules package loaded relative to cwd', async t => 
   }
 });
 
+test('Custom rule with scoped package name via --rules', async t => {
+  try {
+    await execa(path.resolve('..', 'markdownlint.js'), ['--rules', '@scoped/custom-rule', 'scoped-test.md'], {
+      cwd: path.join(__dirname, 'custom-rules', 'scoped-package'),
+      stripFinalNewline: false
+    });
+    t.fail();
+  } catch (error) {
+    const expected = ['scoped-test.md:1 scoped-rule Scoped rule', ''].join('\n');
+    t.is(error.stdout, '');
+    t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
+  }
+});
+
 test('Custom rule from package loaded', async t => {
   try {
     const input = '# Input\n';

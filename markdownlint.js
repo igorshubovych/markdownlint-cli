@@ -199,7 +199,7 @@ program.parse(process.argv);
 
 function tryResolvePath(filepath) {
   try {
-    if (path.basename(filepath) === filepath && path.extname(filepath) === '') {
+    if ((path.basename(filepath) === filepath || filepath.startsWith('@')) && path.extname(filepath) === '') {
       // Looks like a package name, resolve it relative to cwd
       // Get list of directories, where requested module can be.
       let paths = Module._nodeModulePaths(processCwd);
