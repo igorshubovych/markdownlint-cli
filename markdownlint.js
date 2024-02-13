@@ -266,14 +266,12 @@ const customRules = loadCustomRules(options.rules);
 const diff = files.filter(file => !ignores.some(ignore => ignore.absolute === file.absolute)).map(paths => paths.original);
 
 function lintAndPrint(stdin, files) {
-  files = files || [];
+  files ||= [];
   const config = readConfiguration(options.config);
 
   for (const rule of options.enable || []) {
     // Leave default values in place if rule is an object
-    if (!config[rule]) {
-      config[rule] = true;
-    }
+    config[rule] ||= true;
   }
 
   for (const rule of options.disable || []) {
@@ -324,9 +322,7 @@ try {
   if (files.length > 0 && !options.stdin) {
     lintAndPrint(null, diff);
   } else if (files.length === 0 && options.stdin && !options.fix) {
-    import('get-stdin')
-      .then(module => module.default())
-      .then(lintAndPrint);
+    import('get-stdin').then(module => module.default()).then(lintAndPrint);
   } else {
     program.help();
   }
