@@ -400,6 +400,13 @@ test('configuration file can be JavaScript', async t => {
   t.is(result.exitCode, 0);
 });
 
+test('configuration file can be TOML', async t => {
+  const result = await execa('../markdownlint.js', ['--config', 'md043-config.toml', 'md043-config.md'], {stripFinalNewline: false});
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+});
+
 test('error on configuration file not found', async t => {
   try {
     await execa('../markdownlint.js', ['--config', 'non-existent-file-path.yaml', 'correct.md'], {stripFinalNewline: false});
