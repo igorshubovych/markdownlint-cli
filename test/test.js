@@ -6,7 +6,7 @@ const os = require('node:os');
 const process = require('node:process');
 const test = require('ava');
 
-const execa = (...args) => import('execa').then(module => module.execa(...args));
+const execa = (...arguments_) => import('execa').then(module => module.execa(...arguments_));
 
 const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+(:\d+)? MD\d{3}/gm;
 
