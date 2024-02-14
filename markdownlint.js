@@ -334,7 +334,3 @@ try {
   console.error(error);
   process.exit(exitCodes.unexpectedError);
 }
-
-
-
-"Unable to parse '../ci-analytics-poc/pyproject.toml'; Parser 0: Unable to parse JSON(C) content, InvalidSymbol (offset 1, length 23), InvalidSymbol (offset 26, length 10), InvalidSymbol (offset 37, length 1), EndOfFileExpected (offset 39, length 1); Parser 1: end of the stream or a document separator is expected (2:1)\n\n 1 | [tool.pytest.ini_options]\n 2 | pythonpath = [\n-----^\n 3 |   \"ci_analytics_automation/issue ...\n 4 | ]; Parser 2: a is not defined"
