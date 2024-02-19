@@ -448,6 +448,8 @@ test('.markdownlint.jsonc in cwd is used automatically', getCwdConfigFileTest('j
 
 test('.markdownlint.json in cwd is used automatically', getCwdConfigFileTest('json'));
 
+test('.markdownlint.toml in cwd is used automatically', getCwdConfigFileTest('toml'));
+
 test('.markdownlint.yaml in cwd is used automatically', getCwdConfigFileTest('yaml'));
 
 test('.markdownlint.yml in cwd is used automatically', getCwdConfigFileTest('yml'));

@@ -37,7 +37,7 @@ function yamlParse(text) {
 }
 
 function tomlParse(text) {
-  return require('toml').parse(text).tool.markdownlint;
+  return require('toml').parse(text);
 }
 
 const exitCodes = {
@@ -47,7 +47,7 @@ const exitCodes = {
   unexpectedError: 4
 };
 
-const projectConfigFiles = ['.markdownlint.jsonc', '.markdownlint.json', '.markdownlint.yaml', '.markdownlint.yml'];
+const projectConfigFiles = ['.markdownlint.jsonc', '.markdownlint.json', '.markdownlint.yaml', '.markdownlint.yml', '.markdownlint.toml'];
 const configParsers = [jsoncParse, yamlParse, tomlParse];
 const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();
@@ -57,6 +57,7 @@ function readConfiguration(userConfigFile) {
 
   // Load from well-known config files
   let config = rc('markdownlint', {});
+
   for (const projectConfigFile of projectConfigFiles) {
     try {
       fs.accessSync(projectConfigFile, fs.R_OK);

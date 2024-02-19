@@ -1,3 +1,2 @@
-[tool.markdownlint]
 MD012 = false
 MD043 = { headings = ["# First", "## Second", "### Third"] }

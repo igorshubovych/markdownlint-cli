@@ -88,7 +88,7 @@ Because this option makes changes to the input files, it is good to make a backu
 
 `markdownlint-cli` reuses [the rules][rules] from `markdownlint` package.
 
-Configuration is stored in JSON, JSONC, YAML, or INI files in the same [config format][config]. Further, configuration can be stored as TOML file under ```[tool.markdownlint]```
+Configuration is stored in JSON, JSONC, YAML, INI, or TOML files in the same [config format][config].
 
 A sample configuration file:
 
@@ -103,7 +103,6 @@ A sample configuration file:
 ```
 
 ```toml
-[tool.markdownlint]
 default = true
 heading-style = { style = "atx_closed" }
 ul-indent = { indent = 4 }
@@ -126,8 +125,6 @@ A JS configuration file may internally `require` one or more npm packages as a w
 If a rule is passed to both `--enable` and `--disable`, it will be disabled.
 
 > JS configuration files must be provided via the `--config` argument; they are not automatically loaded because running untrusted code is a security concern.
-
-> TOML configuration files must be provided via the `--config` argument; they are not automatically loaded.
 
 ## Exit codes
 
