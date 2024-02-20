@@ -27,7 +27,7 @@ markdownlint --help
 
   Options:
     -V, --version                               output the version number
-    -c, --config [configFile]                   configuration file (JSON, JSONC, JS, or YAML)
+    -c, --config [configFile]                   configuration file (JSON, JSONC, JS, YAML, or TOML)
     -d, --dot                                   include files/folders with a dot (for example `.github`)
     -f, --fix                                   fix basic errors (does not work with STDIN)
     -i, --ignore [file|directory|glob]          file(s) to ignore/exclude (default: [])
@@ -102,15 +102,7 @@ A sample configuration file:
 }
 ```
 
-```toml
-default = true
-heading-style = { style = "atx_closed" }
-ul-indent = { indent = 4 }
-no-hard-tabs = false
-whitespace = false
-```
-
-For more examples, see [.markdownlint.jsonc][markdownlint-jsonc], [.markdownlint.yaml][markdownlint-yaml], or the [style folder][style-folder].
+For more examples, see [.markdownlint.jsonc][markdownlint-jsonc], [.markdownlint.yaml][markdownlint-yaml], [test-config.toml](test/test-config.toml) or the [style folder][style-folder].
 
 The CLI argument `--config` is not required.
 If it is not provided, `markdownlint-cli` looks for the file `.markdownlint.jsonc`/`.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for the file `.markdownlintrc` in the current or all parent folders.
@@ -124,7 +116,8 @@ A JS configuration file may internally `require` one or more npm packages as a w
 `--enable` and `--disable` override configuration files; if a configuration file disables `MD123` and you pass `--enable MD123`, it will be enabled.
 If a rule is passed to both `--enable` and `--disable`, it will be disabled.
 
-> JS configuration files must be provided via the `--config` argument; they are not automatically loaded because running untrusted code is a security concern.
+> - JS configuration files must be provided via the `--config` argument; they are not automatically loaded because running untrusted code is a security concern.
+> - TOML configuration files must be provided via the `--config` argument; they are not automatically loaded.
 
 ## Exit codes
 

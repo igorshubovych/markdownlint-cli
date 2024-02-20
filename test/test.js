@@ -407,6 +407,28 @@ test('configuration file can be TOML', async t => {
   t.is(result.exitCode, 0);
 });
 
+test('linting using a toml configuration file works', async t => {
+  try {
+    await execa('../markdownlint.js', ['--config', 'test-config.toml', '**/*.md'], {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr.match(errorPattern).length, 15);
+    t.is(error.exitCode, 1);
+  }
+});
+
+test('linting using a yaml configuration file works', async t => {
+  try {
+    await execa('../markdownlint.js', ['--config', 'test-config.yaml', '**/*.md'], {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr.match(errorPattern).length, 15);
+    t.is(error.exitCode, 1);
+  }
+});
+
 test('error on configuration file not found', async t => {
   try {
     await execa('../markdownlint.js', ['--config', 'non-existent-file-path.yaml', 'correct.md'], {stripFinalNewline: false});
@@ -447,8 +469,6 @@ function getCwdConfigFileTest(extension) {
 test('.markdownlint.jsonc in cwd is used automatically', getCwdConfigFileTest('jsonc'));
 
 test('.markdownlint.json in cwd is used automatically', getCwdConfigFileTest('json'));
-
-test('.markdownlint.toml in cwd is used automatically', getCwdConfigFileTest('toml'));
 
 test('.markdownlint.yaml in cwd is used automatically', getCwdConfigFileTest('yaml'));
 

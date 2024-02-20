@@ -37,7 +37,8 @@ function yamlParse(text) {
 }
 
 function tomlParse(text) {
-  return require('toml').parse(text);
+  //It is necessary to add the prototype manually because of https://github.com/BinaryMuse/toml-node/issues/55
+  return require('deep-extend')({}, require('toml').parse(text));
 }
 
 const exitCodes = {
@@ -47,8 +48,9 @@ const exitCodes = {
   unexpectedError: 4
 };
 
-const projectConfigFiles = ['.markdownlint.jsonc', '.markdownlint.json', '.markdownlint.yaml', '.markdownlint.yml', '.markdownlint.toml'];
-const configParsers = [jsoncParse, yamlParse, tomlParse];
+const projectConfigFiles = ['.markdownlint.jsonc', '.markdownlint.json', '.markdownlint.yaml', '.markdownlint.yml'];
+// toml files can be (incorrectly) read by yamlParse but not vice versa -> tomlParse needs to go first in the list
+const configParsers = [jsoncParse, tomlParse, yamlParse];
 const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();
 
@@ -57,7 +59,6 @@ function readConfiguration(userConfigFile) {
 
   // Load from well-known config files
   let config = rc('markdownlint', {});
-
   for (const projectConfigFile of projectConfigFiles) {
     try {
       fs.accessSync(projectConfigFile, fs.R_OK);
