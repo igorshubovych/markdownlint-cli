@@ -199,7 +199,7 @@ program
   .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
   .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
-  .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
+  .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, ['node_modules'])
   .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
   .option('-j, --json', 'write issues in json format')
   .option('-o, --output [outputFile]', 'write issues to file (no console)')

@@ -30,7 +30,7 @@ markdownlint --help
     -c, --config [configFile]                   configuration file (JSON, JSONC, JS, YAML, or TOML)
     -d, --dot                                   include files/folders with a dot (for example `.github`)
     -f, --fix                                   fix basic errors (does not work with STDIN)
-    -i, --ignore [file|directory|glob]          file(s) to ignore/exclude (default: [])
+    -i, --ignore [file|directory|glob]          file(s) to ignore/exclude (default: ['node_modules'])
     -p, --ignore-path [file]                    path to file with ignore pattern(s)
     -j, --json                                  write issues in json format
     -o, --output [outputFile]                   write issues to file (no console)
