@@ -36,6 +36,11 @@ function yamlParse(text) {
   return require('js-yaml').load(text);
 }
 
+function tomlParse(text) {
+  // It is necessary to add the prototype manually because of https://github.com/BinaryMuse/toml-node/issues/55
+  return require('deep-extend')({}, require('toml').parse(text));
+}
+
 const exitCodes = {
   lintFindings: 1,
   failedToWriteOutputFile: 2,
@@ -44,7 +49,8 @@ const exitCodes = {
 };
 
 const projectConfigFiles = ['.markdownlint.jsonc', '.markdownlint.json', '.markdownlint.yaml', '.markdownlint.yml'];
-const configParsers = [jsoncParse, yamlParse];
+// TOML files can be (incorrectly) read by yamlParse (but not vice versa), so tomlParse needs to go before yamlParse
+const configParsers = [jsoncParse, tomlParse, yamlParse];
 const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();
 

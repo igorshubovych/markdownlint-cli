@@ -45,7 +45,8 @@
     "jsonc-parser": "~3.2.1",
     "markdownlint": "~0.33.0",
     "minimatch": "~9.0.3",
-    "run-con": "~1.3.2"
+    "run-con": "~1.3.2",
+    "toml": "~3.0.0"
   },
   "devDependencies": {
     "ava": "^6.1.1",
