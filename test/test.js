@@ -198,7 +198,7 @@ test('dir linting works with failing .markdown files and absolute path', async t
 });
 
 test('glob linting with failing files passes when failures ignored by glob', async t => {
-  const result = await execa('../markdownlint.js', ['--config', 'test-config.json', '**/*.md', '--ignore', '**/incorrect.md'], {stripFinalNewline: false});
+  const result = await execa('../markdownlint.js', ['--config', 'test-config.json', '**/i*.md', '--ignore', '**/incorrect.md'], {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
@@ -256,7 +256,7 @@ test('dir linting with failing files has fewer errors when ignored by file and a
 });
 
 test('glob linting with failing files passes when ignored by multiple globs', async t => {
-  const result = await execa('../markdownlint.js', ['--config', 'test-config.json', 'subdir-incorrect', '--ignore', '**/*.md', '--ignore', '**/*.markdown'], {stripFinalNewline: false});
+  const result = await execa('../markdownlint.js', ['--config', 'test-config.json', 'subdir-incorrect', '--ignore', '**/*.md', '--ignore', '**/*.markdown', '--ignore', '**/*.MD'], {stripFinalNewline: false});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
