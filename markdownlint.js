@@ -91,7 +91,10 @@ function prepareFileList(files, fileExtensions, previousResults) {
     nodir: true
   };
   let extensionGlobPart = '*.';
-  if (fileExtensions.length === 1) {
+  if (!fileExtensions) {
+    // Match everything
+    extensionGlobPart = '';
+  } else if (fileExtensions.length === 1) {
     // Glob seems not to match patterns like 'foo.{js}'
     extensionGlobPart += fileExtensions[0];
   } else {
@@ -267,7 +270,7 @@ if (existsSync(ignorePath)) {
 }
 
 const files = prepareFileList(program.args, ['md', 'markdown']).filter(value => ignoreFilter(value));
-const ignores = prepareFileList(options.ignore, ['md', 'markdown'], files);
+const ignores = prepareFileList(options.ignore, null, files);
 const customRules = loadCustomRules(options.rules);
 const diff = files.filter(file => !ignores.some(ignore => ignore.absolute === file.absolute)).map(paths => paths.original);
 

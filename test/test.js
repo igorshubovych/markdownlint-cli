@@ -262,6 +262,13 @@ test('glob linting with failing files passes when ignored by multiple globs', as
   t.is(result.exitCode, 0);
 });
 
+test('glob linting with directory ignore applies to all files within', async t => {
+  const result = await execa('../markdownlint.js', ['subdir-incorrect/**', '--ignore', 'subdir-incorrect'], {stripFinalNewline: false});
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+});
+
 test('linting results are sorted by file/line/names/description', async t => {
   try {
     await execa('../markdownlint.js', ['--config', 'test-config.json', 'incorrect.md'], {stripFinalNewline: false});
