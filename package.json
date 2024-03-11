@@ -52,7 +52,7 @@
     "ava": "^6.1.2",
     "execa": "^8.0.1",
     "markdownlint-cli-local-test-rule": "./test/custom-rules/markdownlint-cli-local-test-rule",
-    "xo": "^0.57.0"
+    "xo": "^0.58.0"
   },
   "xo": {
     "prettier": true,
