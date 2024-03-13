@@ -163,7 +163,7 @@ test('glob linting works with failing files', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 15);
+    t.is(error.stderr.match(errorPattern).length, 23);
     t.is(error.exitCode, 1);
   }
 });
@@ -217,7 +217,7 @@ test('glob linting with failing files has fewer errors when ignored by dir', asy
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 8);
+    t.is(error.stderr.match(errorPattern).length, 16);
     t.is(error.exitCode, 1);
   }
 });
@@ -228,7 +228,7 @@ test('glob linting with failing files has fewer errors when ignored by dir and a
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 8);
+    t.is(error.stderr.match(errorPattern).length, 16);
     t.is(error.exitCode, 1);
   }
 });
@@ -420,7 +420,7 @@ test('linting using a toml configuration file works', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 15);
+    t.is(error.stderr.match(errorPattern).length, 23);
     t.is(error.exitCode, 1);
   }
 });
@@ -431,7 +431,7 @@ test('linting using a yaml configuration file works', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 15);
+    t.is(error.stderr.match(errorPattern).length, 23);
     t.is(error.exitCode, 1);
   }
 });
@@ -669,6 +669,21 @@ test('fixing errors with a glob yields fewer errors', async t => {
     t.is(error.exitCode, 1);
     fs.unlinkSync(fixFileC);
     fs.unlinkSync(fixSubFileC);
+  }
+});
+
+test('default ignore is applied correctly', async t => {
+  try {
+    await execa(path.resolve('..', 'markdownlint.js'), ['.'], {
+      cwd: path.join(__dirname, 'default-ignore'),
+      stripFinalNewline: false
+    });
+    t.fail();
+  } catch (error) {
+    const expected = ['incorrect.md:1:8 MD047/single-trailing-newline Files should end with a single newline character', ''].join('\n');
+    t.is(error.stdout, '');
+    t.is(error.stderr.replaceAll('\\', '/'), expected);
+    t.is(error.exitCode, 1);
   }
 });
 
