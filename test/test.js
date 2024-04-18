@@ -865,3 +865,79 @@ test('configuration can be .cjs in the ESM (module) workspace', async t => {
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
 });
+
+test('--verbose flag for correct file', async t => {
+  const result = await execa('../markdownlint.js', ['--verbose', 'correct.md'], {stripFinalNewline: false});
+  t.true(result.stdout.includes('files to check: correct.md'));
+  t.true(result.stdout.includes('correct.md: ✔'));
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+});
+
+test('--verbose flag with --fix for correct file', async t => {
+  const result = await execa('../markdownlint.js', ['--fix', '--verbose', 'correct.md'], {stripFinalNewline: false});
+  t.true(result.stdout.includes('files to check: correct.md'));
+  t.true(result.stdout.includes('correct.md: ✔'));
+  t.true(!result.stdout.includes('fixing correct.md'));
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+});
+
+test('--verbose flag with --fix for incorrect file', async t => {
+  const fixFileD = 'incorrect.d.mdf';
+  try {
+    fs.copyFileSync('incorrect.md', fixFileD);
+    await execa('../markdownlint.js', ['--fix', '--verbose', '--config', 'test-config.json', path.resolve(fixFileD)], {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.true(error.stdout.includes('files to check: ' + path.resolve(fixFileD)));
+    t.true(error.stdout.includes('fixing ' + path.resolve(fixFileD)));
+    t.is(error.stderr.match(errorPattern).length, 2);
+    t.is(error.exitCode, 1);
+    fs.unlinkSync(fixFileD);
+  }
+});
+
+test('--quiet overrides --verbose', async t => {
+  try {
+    await execa('../markdownlint.js', ['--quiet', '--verbose', '--config', 'test-config.json', 'incorrect.md'], {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr, '');
+    t.is(error.exitCode, 1);
+  }
+});
+
+test('--stdin and --verbose with valid input logs stdin as source', async t => {
+  const input = ['# Heading', '', 'Text', ''].join('\n');
+  const result = await execa('../markdownlint.js', ['--verbose', '--stdin'], {input, stripFinalNewline: false});
+  t.true(result.stdout.includes('stdin: ✔'));
+  t.true(!result.stdout.includes('files to check:'));
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+});
+
+test('--output and --verbose with valid input logs nothing to console', async t => {
+  const input = ['# Heading', '', 'Text', ''].join('\n');
+  const output = '../outputG.txt';
+  const result = await execa('../markdownlint.js', ['--stdin', '--verbose', '--output', output], {input, stripFinalNewline: false});
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+  fs.unlinkSync(output);
+});
+
+test('--output and --verbose with invalid input logs nothing to console', async t => {
+  const input = ['Heading', '', 'Text ', ''].join('\n');
+  const output = '../outputH.txt';
+  try {
+    await execa('../markdownlint.js', ['--stdin', '--verbose', '--output', output], {input, stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr, '');
+    t.is(error.exitCode, 1);
+    fs.unlinkSync(output);
+  }
+});
