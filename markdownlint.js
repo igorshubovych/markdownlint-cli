@@ -199,18 +199,18 @@ program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
-  .option('-c, --config [configFile]', 'configuration file (JSON, JSONC, JS, or YAML)')
+  .option('-c, --config <configFile>', 'configuration file (JSON, JSONC, JS, or YAML)')
   .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
-  .option('-i, --ignore [file|directory|glob]', 'file(s) to ignore/exclude', concatArray, [])
+  .option('-i, --ignore <file|directory|glob>', 'file(s) to ignore/exclude', concatArray, [])
   .option('-j, --json', 'write issues in json format')
-  .option('-o, --output [outputFile]', 'write issues to file (no console)')
-  .option('-p, --ignore-path [file]', 'path to file with ignore pattern(s)')
+  .option('-o, --output <outputFile>', 'write issues to file (no console)')
+  .option('-p, --ignore-path <file>', 'path to file with ignore pattern(s)')
   .option('-q, --quiet', 'do not write issues to STDOUT')
-  .option('-r, --rules  [file|directory|glob|package]', 'include custom rule files', concatArray, [])
+  .option('-r, --rules  <file|directory|glob|package>', 'include custom rule files', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
-  .option('--enable [rules...]', 'Enable certain rules, e.g. --enable MD013 MD041 --')
-  .option('--disable [rules...]', 'Disable certain rules, e.g. --disable MD013 MD041 --');
+  .option('--enable <rules...>', 'Enable certain rules, e.g. --enable MD013 MD041 --')
+  .option('--disable <rules...>', 'Disable certain rules, e.g. --disable MD013 MD041 --');
 
 program.parse(process.argv);
 
