@@ -1,0 +1,7 @@
+name = "unused"
+
+[key]
+other-name = "unused"
+
+[key.subkey]
+commands-show-output = false

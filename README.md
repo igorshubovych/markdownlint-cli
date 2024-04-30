@@ -26,20 +26,21 @@ markdownlint --help
   MarkdownLint Command Line Interface
 
   Options:
-    -V, --version                               output the version number
-    -c, --config [configFile]                   configuration file (JSON, JSONC, JS, YAML, or TOML)
-    -d, --dot                                   include files/folders with a dot (for example `.github`)
-    -f, --fix                                   fix basic errors (does not work with STDIN)
-    -i, --ignore [file|directory|glob]          file(s) to ignore/exclude (default: [])
-    -j, --json                                  write issues in json format
-    -o, --output [outputFile]                   write issues to file (no console)
-    -p, --ignore-path [file]                    path to file with ignore pattern(s)
-    -q, --quiet                                 do not write issues to STDOUT
-    -r, --rules  [file|directory|glob|package]  include custom rule files (default: [])
-    -s, --stdin                                 read from STDIN (does not work with files)
-    --enable [rules...]                         Enable certain rules, e.g. --enable MD013 MD041 --
-    --disable [rules...]                        Disable certain rules, e.g. --disable MD013 MD041 --
-    -h, --help                                  display help for command
+    -V, --version                              output the version number
+    -c, --config <configFile>                  configuration file (JSON, JSONC, JS, YAML, or TOML)
+    --configPointer <pointer>                  JSON Pointer to object within configuration file (default: "")
+    -d, --dot                                  include files/folders with a dot (for example `.github`)
+    -f, --fix                                  fix basic errors (does not work with STDIN)
+    -i, --ignore <file|directory|glob>         file(s) to ignore/exclude (default: [])
+    -j, --json                                 write issues in json format
+    -o, --output <outputFile>                  write issues to file (no console)
+    -p, --ignore-path <file>                   path to file with ignore pattern(s)
+    -q, --quiet                                do not write issues to STDOUT
+    -r, --rules <file|directory|glob|package>  include custom rule files (default: [])
+    -s, --stdin                                read from STDIN (does not work with files)
+    --enable <rules...>                        Enable certain rules, e.g. --enable MD013 MD041 --
+    --disable <rules...>                       Disable certain rules, e.g. --disable MD013 MD041 --
+    -h, --help                                 display help for command
 ```
 
 Or run using [Docker](https://www.docker.com) and [GitHub Packages](https://github.com/features/packages):
@@ -113,6 +114,9 @@ JS configuration files contain JavaScript code, must have the `.js` or `.cjs` fi
 If your workspace _(project)_ is [ESM-only] _(`"type": "module"` set in the root `package.json` file)_, then the configuration file **should end with `.cjs` file extension**.
 A JS configuration file may internally `require` one or more npm packages as a way of reusing configuration across projects.
 
+The `--configPointer` argument allows the use of [JSON Pointer][json-pointer] syntax to identify a sub-object within the configuration object (per above).
+This argument can be used with any configuration file type and makes it possible to nest a configuration object within another file like `package.json` or `pyproject.toml` (e.g., via `/key` or `/key/subkey`).
+
 `--enable` and `--disable` override configuration files; if a configuration file disables `MD123` and you pass `--enable MD123`, it will be enabled.
 If a rule is passed to both `--enable` and `--disable`, it will be disabled.
 
@@ -156,6 +160,7 @@ MIT © Igor Shubovych
 [actions-badge]: https://github.com/igorshubovych/markdownlint-cli/workflows/CI/badge.svg?branch=master
 [actions-url]: https://github.com/igorshubovych/markdownlint-cli/actions?query=workflow%3ACI
 [commander-variadic]: https://github.com/tj/commander.js#variadic-option
+[json-pointer]: https://datatracker.ietf.org/doc/html/rfc6901
 [markdownlint]: https://github.com/DavidAnson/markdownlint
 [markdownlint-cli2]: https://github.com/DavidAnson/markdownlint-cli2
 [markdownlint-jsonc]: https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.jsonc

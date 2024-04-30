@@ -12,6 +12,7 @@ const glob = require('glob');
 const markdownlint = require('markdownlint');
 const rc = require('run-con');
 const minimatch = require('minimatch');
+const jsonpointer = require('jsonpointer');
 const pkg = require('./package.json');
 
 const options = program.opts();
@@ -55,8 +56,6 @@ const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();
 
 function readConfiguration(userConfigFile) {
-  const jsConfigFile = /\.c?js$/i.test(userConfigFile);
-
   // Load from well-known config files
   let config = rc('markdownlint', {});
   for (const projectConfigFile of projectConfigFiles) {
@@ -71,9 +70,10 @@ function readConfiguration(userConfigFile) {
   }
 
   // Normally parsing this file is not needed, because it is already parsed by rc package.
-  // However I have to do it to overwrite configuration from .markdownlint.{json,yaml,yml}.
+  // However I have to do it to overwrite configuration from .markdownlint.{jsonc,json,yaml,yml}.
   if (userConfigFile) {
     try {
+      const jsConfigFile = /\.c?js$/i.test(userConfigFile);
       const userConfig = jsConfigFile ? require(path.resolve(processCwd, userConfigFile)) : markdownlint.readConfigSync(userConfigFile, configParsers);
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
@@ -199,7 +199,8 @@ program
   .version(pkg.version)
   .description(pkg.description)
   .usage('[options] <files|directories|globs>')
-  .option('-c, --config <configFile>', 'configuration file (JSON, JSONC, JS, or YAML)')
+  .option('-c, --config <configFile>', 'configuration file (JSON, JSONC, JS, YAML, or TOML)')
+  .option('--configPointer <pointer>', 'JSON Pointer to object within configuration file', '')
   .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
   .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
   .option('-i, --ignore <file|directory|glob>', 'file(s) to ignore/exclude', concatArray, [])
@@ -207,7 +208,7 @@ program
   .option('-o, --output <outputFile>', 'write issues to file (no console)')
   .option('-p, --ignore-path <file>', 'path to file with ignore pattern(s)')
   .option('-q, --quiet', 'do not write issues to STDOUT')
-  .option('-r, --rules  <file|directory|glob|package>', 'include custom rule files', concatArray, [])
+  .option('-r, --rules <file|directory|glob|package>', 'include custom rule files', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
   .option('--enable <rules...>', 'Enable certain rules, e.g. --enable MD013 MD041 --')
   .option('--disable <rules...>', 'Disable certain rules, e.g. --disable MD013 MD041 --');
@@ -276,7 +277,8 @@ const diff = files.filter(file => !ignores.some(ignore => ignore.absolute === fi
 
 function lintAndPrint(stdin, files) {
   files ||= [];
-  const config = readConfiguration(options.config);
+  const configuration = readConfiguration(options.config);
+  const config = jsonpointer.get(configuration, options.configPointer) || {};
 
   for (const rule of options.enable || []) {
     // Leave default values in place if rule is an object

@@ -489,6 +489,50 @@ test('.markdownlint.yaml in cwd is used instead of .markdownlint.yml', getCwdCon
 
 test('.markdownlint.json with JavaScript-style comments is handled', getCwdConfigFileTest('json-c'));
 
+test('invalid JSON Pointer', async t => {
+  try {
+    await execa('../markdownlint.js', ['--config', 'nested-config.json', '--configPointer', 'INVALID', '**/*.md'], {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.regex(error.stderr, /Invalid JSON pointer\./);
+    t.is(error.exitCode, 4);
+  }
+});
+
+test('empty JSON Pointer', async t => {
+  try {
+    await execa('../markdownlint.js', ['--config', 'nested-config.json', '--configPointer', '/EMPTY', 'incorrect.md'], {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr.match(errorPattern).length, 7);
+    t.is(error.exitCode, 1);
+  }
+});
+
+test('valid JSON Pointer with JSON configuration', async t => {
+  try {
+    await execa('../markdownlint.js', ['--config', 'nested-config.json', '--configPointer', '/key', 'incorrect.md'], {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr.match(errorPattern).length, 1);
+    t.is(error.exitCode, 1);
+  }
+});
+
+test('valid JSON Pointer with TOML configuration', async t => {
+  try {
+    await execa('../markdownlint.js', ['--config', 'nested-config.toml', '--configPointer', '/key/subkey', 'incorrect.md'], {stripFinalNewline: false});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    t.is(error.stderr.match(errorPattern).length, 3);
+    t.is(error.exitCode, 1);
+  }
+});
+
 test('Custom rule from single file loaded', async t => {
   try {
     const input = '# Input\n';
