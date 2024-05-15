@@ -38,8 +38,7 @@ function yamlParse(text) {
 }
 
 function tomlParse(text) {
-  // It is necessary to add the prototype manually because of https://github.com/BinaryMuse/toml-node/issues/55
-  return require('deep-extend')({}, require('toml').parse(text));
+  return require('smol-toml').parse(text);
 }
 
 const exitCodes = {
