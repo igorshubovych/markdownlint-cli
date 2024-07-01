@@ -42,7 +42,7 @@
     "glob": "~10.4.2",
     "ignore": "~5.3.1",
     "js-yaml": "^4.1.0",
-    "jsonc-parser": "~3.3.0",
+    "jsonc-parser": "~3.3.1",
     "jsonpointer": "5.0.1",
     "markdownlint": "~0.34.0",
     "minimatch": "~9.0.5",
