@@ -40,7 +40,7 @@
     "commander": "~12.1.0",
     "get-stdin": "~9.0.0",
     "glob": "~11.0.0",
-    "ignore": "~5.3.1",
+    "ignore": "~5.3.2",
     "js-yaml": "^4.1.0",
     "jsonc-parser": "~3.3.1",
     "jsonpointer": "5.0.1",
