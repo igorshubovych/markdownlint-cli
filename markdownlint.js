@@ -309,14 +309,13 @@ function lintAndPrint(stdin, files) {
       ...lintOptions,
       resultVersion: 3
     };
-    const markdownlintRuleHelpers = require('markdownlint/helpers');
     for (const file of files) {
       fixOptions.files = [file];
       const fixResult = markdownlint.sync(fixOptions);
       const fixes = fixResult[file].filter(error => error.fixInfo);
       if (fixes.length > 0) {
         const originalText = fs.readFileSync(file, fsOptions);
-        const fixedText = markdownlintRuleHelpers.applyFixes(originalText, fixes);
+        const fixedText = markdownlint.applyFixes(originalText, fixes);
         if (originalText !== fixedText) {
           fs.writeFileSync(file, fixedText, fsOptions);
         }
