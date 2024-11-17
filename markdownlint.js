@@ -331,7 +331,7 @@ try {
   if (files.length > 0 && !options.stdin) {
     lintAndPrint(null, diff);
   } else if (files.length === 0 && options.stdin && !options.fix) {
-    import('get-stdin').then(module => module.default()).then(lintAndPrint);
+    import('node:stream/consumers').then(module => module.text(process.stdin)).then(lintAndPrint);
   } else {
     program.help();
   }
