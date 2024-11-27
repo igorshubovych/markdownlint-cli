@@ -2,6 +2,7 @@
   "name": "markdownlint-cli",
   "version": "0.43.0",
   "description": "MarkdownLint Command Line Interface",
+  "type": "module",
   "main": "markdownlint.js",
   "bin": {
     "markdownlint": "markdownlint.js"
@@ -40,10 +41,10 @@
     "commander": "~12.1.0",
     "glob": "~11.0.0",
     "ignore": "~6.0.2",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "~4.1.0",
     "jsonc-parser": "~3.3.1",
-    "jsonpointer": "5.0.1",
-    "markdownlint": "~0.36.1",
+    "jsonpointer": "~5.0.1",
+    "markdownlint": "~0.37.0",
     "minimatch": "~10.0.1",
     "run-con": "~1.3.2",
     "smol-toml": "~1.3.1"
@@ -80,8 +81,12 @@
   "ava": {
     "files": [
       "test/**/*.js",
+      "test/**/*.cjs",
+      "test/**/*.mjs",
       "!test/custom-rules/**/*.js",
-      "!test/md043-config.js"
+      "!test/custom-rules/**/*.cjs",
+      "!test/custom-rules/**/*.mjs",
+      "!test/md043-config.cjs"
     ],
     "failFast": true,
     "timeout": "1m",
