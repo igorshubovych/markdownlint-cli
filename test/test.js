@@ -1,26 +1,36 @@
-'use strict';
+import fs from 'node:fs';
+import fsPromises from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
+import process from 'node:process';
+import {fileURLToPath} from 'node:url';
+import test from 'ava';
+import nanoSpawn from 'nano-spawn';
 
-const fs = require('node:fs');
-const path = require('node:path');
-const os = require('node:os');
-const process = require('node:process');
-const test = require('ava');
-
-const spawn = async (script, arguments_, options) => {
-  const {default: spawn} = await import('nano-spawn');
-  return spawn('node', [script, ...arguments_], options).then(subprocess => ({
+const spawn = (script, arguments_, options) => {
+  return nanoSpawn('node', [script, ...arguments_], options).then(subprocess => ({
     ...subprocess,
     exitCode: 0
   }));
 };
 
+// Shims import.meta.filename on Node 18
+const __filename = fileURLToPath(import.meta.url);
+
+// Shims import.meta.dirname on Node 18
+const __dirname = path.dirname(__filename);
+
+// Avoids "ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time"
+const importWithTypeJson = async file => JSON.parse(await fsPromises.readFile(path.resolve(__dirname, file)));
+
+const packageJson = await importWithTypeJson('../package.json');
 const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+(:\d+)? MD\d{3}/gm;
 
 process.chdir('./test');
 
 test('--version option', async t => {
   const result = await spawn('../markdownlint.js', ['--version']);
-  t.regex(result.stdout, /^\d+\.\d+\.\d+$/);
+  t.is(result.stdout, packageJson.version);
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
 });
@@ -28,6 +38,7 @@ test('--version option', async t => {
 test('--help option', async t => {
   const result = await spawn('../markdownlint.js', ['--help']);
   t.true(result.stdout.includes('markdownlint'));
+  t.true(result.stdout.includes(packageJson.description));
   t.true(result.stdout.includes('--version'));
   t.true(result.stdout.includes('--help'));
   t.is(result.stderr, '');
@@ -408,7 +419,7 @@ test('configuration file can be YAML', async t => {
 });
 
 test('configuration file can be JavaScript', async t => {
-  const result = await spawn('../markdownlint.js', ['--config', 'md043-config.js', 'md043-config.md']);
+  const result = await spawn('../markdownlint.js', ['--config', 'md043-config.cjs', 'md043-config.md']);
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
@@ -542,7 +553,7 @@ test('valid JSON Pointer with TOML configuration', async t => {
 test('Custom rule from single file loaded', async t => {
   try {
     const stdin = {string: '# Input\n'};
-    await spawn('../markdownlint.js', ['--rules', 'custom-rules/files/test-rule-1.js', '--stdin'], {stdin});
+    await spawn('../markdownlint.js', ['--rules', 'custom-rules/files/test-rule-1.cjs', '--stdin'], {stdin});
     t.fail();
   } catch (error) {
     const expected = ['stdin:1 test-rule-1 Test rule broken'].join('\n');
@@ -555,7 +566,7 @@ test('Custom rule from single file loaded', async t => {
 test('Multiple custom rules from single file loaded', async t => {
   try {
     const stdin = {string: '# Input\n'};
-    await spawn('../markdownlint.js', ['--rules', 'custom-rules/files/test-rule-3-4.js', '--stdin'], {stdin});
+    await spawn('../markdownlint.js', ['--rules', 'custom-rules/files/test-rule-3-4.cjs', '--stdin'], {stdin});
     t.fail();
   } catch (error) {
     const expected = ['stdin:1 test-rule-3 Test rule 3 broken', 'stdin:1 test-rule-4 Test rule 4 broken'].join('\n');
@@ -581,7 +592,7 @@ test('Custom rules from directory loaded', async t => {
 test('Custom rules from glob loaded', async t => {
   try {
     const stdin = {string: '# Input\n'};
-    await spawn('../markdownlint.js', ['--rules', 'custom-rules/files/**/*.js', '--stdin'], {stdin});
+    await spawn('../markdownlint.js', ['--rules', 'custom-rules/files/**/*.cjs', '--stdin'], {stdin});
     t.fail();
   } catch (error) {
     const expected = ['stdin:1 test-rule-1 Test rule broken', 'stdin:1 test-rule-2 Test rule 2 broken', 'stdin:1 test-rule-3 Test rule 3 broken', 'stdin:1 test-rule-4 Test rule 4 broken'].join('\n');

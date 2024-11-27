@@ -1,21 +1,22 @@
 #!/usr/bin/env node
 
-'use strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import Module from 'node:module';
+import os from 'node:os';
+import process from 'node:process';
+import {program} from 'commander';
+import {glob} from 'glob';
+import markdownlint from 'markdownlint';
+import rc from 'run-con';
+import {minimatch} from 'minimatch';
+import jsonpointer from 'jsonpointer';
 
-const fs = require('node:fs');
-const path = require('node:path');
-const Module = require('node:module');
-const os = require('node:os');
-const process = require('node:process');
-const {program} = require('commander');
-const glob = require('glob');
-const markdownlint = require('markdownlint');
-const rc = require('run-con');
-const minimatch = require('minimatch');
-const jsonpointer = require('jsonpointer');
-const pkg = require('./package.json');
-
+const require = Module.createRequire(import.meta.url);
 const options = program.opts();
+// The following two values are copied from package.json (and validated by tests)
+const version = '0.43.0';
+const description = 'MarkdownLint Command Line Interface';
 
 function posixPath(p) {
   return p.split(path.sep).join(path.posix.sep);
@@ -195,8 +196,8 @@ function concatArray(item, array) {
 }
 
 program
-  .version(pkg.version)
-  .description(pkg.description)
+  .version(version)
+  .description(description)
   .usage('[options] <files|directories|globs>')
   .option('-c, --config <configFile>', 'configuration file (JSON, JSONC, JS, YAML, or TOML)')
   .option('--configPointer <pointer>', 'JSON Pointer to object within configuration file', '')
@@ -241,7 +242,7 @@ function loadCustomRules(rules) {
   return rules.flatMap(rule => {
     try {
       const resolvedPath = [tryResolvePath(rule)];
-      const fileList = prepareFileList(resolvedPath, ['js']).flatMap(filepath => require(filepath.absolute));
+      const fileList = prepareFileList(resolvedPath, ['js', 'cjs', 'mjs']).flatMap(filepath => require(filepath.absolute));
       if (fileList.length === 0) {
         throw new Error('No such rule');
       }
@@ -300,15 +301,8 @@ function lintAndPrint(stdin, files) {
     };
   }
 
-  if (options.json) {
-    lintOptions.resultVersion = 3;
-  }
-
   if (options.fix) {
-    const fixOptions = {
-      ...lintOptions,
-      resultVersion: 3
-    };
+    const fixOptions = {...lintOptions};
     for (const file of files) {
       fixOptions.files = [file];
       const fixResult = markdownlint.sync(fixOptions);
