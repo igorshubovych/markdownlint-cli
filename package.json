@@ -52,7 +52,7 @@
     "ava": "^6.2.0",
     "markdownlint-cli-local-test-rule": "./test/custom-rules/markdownlint-cli-local-test-rule",
     "nano-spawn": "^0.2.0",
-    "xo": "^0.59.3"
+    "xo": "^0.60.0"
   },
   "xo": {
     "prettier": true,
