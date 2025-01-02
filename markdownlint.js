@@ -199,7 +199,6 @@ function concatArray(item, array) {
 program
   .version(version)
   .description(description)
-  .usage('[options] <files|directories|globs>')
   .option('-c, --config <configFile>', 'configuration file (JSON, JSONC, JS, YAML, or TOML)')
   .option('--configPointer <pointer>', 'JSON Pointer to object within configuration file', '')
   .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
@@ -212,7 +211,8 @@ program
   .option('-r, --rules <file|directory|glob|package>', 'include custom rule files', concatArray, [])
   .option('-s, --stdin', 'read from STDIN (does not work with files)')
   .option('--enable <rules...>', 'Enable certain rules, e.g. --enable MD013 MD041 --')
-  .option('--disable <rules...>', 'Disable certain rules, e.g. --disable MD013 MD041 --');
+  .option('--disable <rules...>', 'Disable certain rules, e.g. --disable MD013 MD041 --')
+  .argument('[files|directories|globs...]', 'files, directories, and/or globs to lint');
 
 program.parse(process.argv);
 
