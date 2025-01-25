@@ -16,7 +16,7 @@ import jsonpointer from 'jsonpointer';
 const require = Module.createRequire(import.meta.url);
 const options = program.opts();
 // The following two values are copied from package.json (and validated by tests)
-const version = '0.43.0';
+const version = '0.44.0';
 const description = 'MarkdownLint Command Line Interface';
 
 function posixPath(p) {
