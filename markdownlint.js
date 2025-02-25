@@ -6,7 +6,7 @@ import Module from 'node:module';
 import os from 'node:os';
 import process from 'node:process';
 import {program} from 'commander';
-import {glob} from 'glob';
+import {globSync} from 'tinyglobby';
 import {applyFixes} from 'markdownlint';
 import {lint, readConfig} from 'markdownlint/sync';
 import rc from 'run-con';
@@ -89,7 +89,8 @@ function readConfiguration(userConfigFile) {
 function prepareFileList(files, fileExtensions, previousResults) {
   const globOptions = {
     dot: Boolean(options.dot),
-    nodir: true
+    onlyFiles: true,
+    expandDirectories: false
   };
   let extensionGlobPart = '*.';
   if (!fileExtensions) {
@@ -111,7 +112,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
           return previousResults.filter(fileInfo => matcher.match(fileInfo.absolute)).map(fileInfo => fileInfo.original);
         }
 
-        return glob.sync(posixPath(path.join(file, '**', extensionGlobPart)), globOptions);
+        return globSync(posixPath(path.join(file, '**', extensionGlobPart)), globOptions);
       }
     } catch {
       // Not a directory, not a file, may be a glob
@@ -120,7 +121,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
         return previousResults.filter(fileInfo => matcher.match(fileInfo.absolute)).map(fileInfo => fileInfo.original);
       }
 
-      return glob.sync(file, globOptions);
+      return globSync(file, globOptions);
     }
 
     // File
