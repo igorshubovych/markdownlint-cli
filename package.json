@@ -40,7 +40,7 @@
   "dependencies": {
     "commander": "~13.1.0",
     "glob": "~10.4.5",
-    "ignore": "~7.0.3",
+    "ignore": "~7.0.4",
     "js-yaml": "~4.1.0",
     "jsonc-parser": "~3.3.1",
     "jsonpointer": "~5.0.1",
