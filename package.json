@@ -8,7 +8,7 @@
     "markdownlint": "markdownlint.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "invalid": "node ./markdownlint.js --config test/test-config.json -- test/incorrect.md",

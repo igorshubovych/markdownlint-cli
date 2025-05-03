@@ -14,10 +14,10 @@ const spawn = (script, arguments_, options) => {
   }));
 };
 
-// Shims import.meta.filename on Node 18
+// Shims import.meta.filename on Node before 20.11.0
 const __filename = fileURLToPath(import.meta.url);
 
-// Shims import.meta.dirname on Node 18
+// Shims import.meta.dirname on Node before 20.11.0
 const __dirname = path.dirname(__filename);
 
 // Avoids "ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time"
