@@ -19,6 +19,10 @@ const options = program.opts();
 const version = '0.44.0';
 const description = 'MarkdownLint Command Line Interface';
 
+function markdownItFactory() {
+  return require('markdown-it')({html: true});
+}
+
 function posixPath(p) {
   return p.split(path.sep).join(path.posix.sep);
 }
@@ -291,6 +295,7 @@ function lintAndPrint(stdin, files) {
   }
 
   const lintOptions = {
+    markdownItFactory,
     config,
     configParsers,
     customRules,
