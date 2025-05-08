@@ -65,7 +65,7 @@ function readConfiguration(userConfigFile) {
   let config = rc('markdownlint', {});
   for (const projectConfigFile of projectConfigFiles) {
     try {
-      fs.accessSync(projectConfigFile, fs.R_OK);
+      fs.accessSync(projectConfigFile);
       const projectConfig = readConfig(projectConfigFile, configParsers);
       config = {...config, ...projectConfig};
       break;
