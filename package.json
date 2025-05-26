@@ -39,6 +39,7 @@
   "homepage": "https://github.com/igorshubovych/markdownlint-cli#readme",
   "dependencies": {
     "commander": "~14.0.0",
+    "deep-extend": "~0.6.0",
     "ignore": "~7.0.4",
     "js-yaml": "~4.1.0",
     "jsonc-parser": "~3.3.1",
@@ -54,7 +55,7 @@
     "ava": "^6.2.0",
     "markdownlint-cli-local-test-rule": "./test/custom-rules/markdownlint-cli-local-test-rule",
     "nano-spawn": "^1.0.2",
-    "xo": "^0.60.0"
+    "xo": "^1.0.0"
   },
   "xo": {
     "prettier": true,
