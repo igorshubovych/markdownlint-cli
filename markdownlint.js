@@ -94,7 +94,8 @@ function prepareFileList(files, fileExtensions, previousResults) {
   const globOptions = {
     dot: Boolean(options.dot),
     onlyFiles: true,
-    expandDirectories: false
+    expandDirectories: false,
+    caseSensitiveMatch: !(os.platform() === 'win32' || os.platform() === 'darwin')
   };
   let extensionGlobPart = '*.';
   if (!fileExtensions) {
