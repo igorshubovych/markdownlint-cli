@@ -208,7 +208,7 @@ program
   .option('-c, --config <configFile>', 'configuration file (JSON, JSONC, JS, YAML, or TOML)')
   .option('--configPointer <pointer>', 'JSON Pointer to object within configuration file', '')
   .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
-  .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
+  .option('-f, --fix', 'fix basic errors')
   .option('-i, --ignore <file|directory|glob>', 'file(s) to ignore/exclude', concatArray, [])
   .option('-j, --json', 'write issues in json format')
   .option('-o, --output <outputFile>', 'write issues to file (no console)')
@@ -311,6 +311,32 @@ function lintAndPrint(stdin, files) {
 
   if (options.fix) {
     const fixOptions = {...lintOptions};
+    if (stdin) {
+      // Handle fix for stdin
+      const fixResult = lint(fixOptions);
+      const fixes = fixResult.stdin.filter(error => error.fixInfo);
+      let outputText = stdin;
+      if (fixes.length > 0) {
+        outputText = applyFixes(stdin, fixes);
+      }
+
+      if (options.output) {
+        // Write content to output file
+        try {
+          fs.writeFileSync(options.output, outputText);
+        } catch (error) {
+          console.warn('Cannot write to output file ' + options.output + ': ' + error.message);
+          process.exitCode = exitCodes.failedToWriteOutputFile;
+        }
+      } else if (!options.quiet) {
+        // Output content to stdout
+        process.stdout.write(outputText);
+      }
+
+      return; // Exit early when fixing stdin
+    }
+
+    // Handle fix for files
     for (const file of files) {
       fixOptions.files = [file];
       const fixResult = lint(fixOptions);
@@ -332,7 +358,7 @@ function lintAndPrint(stdin, files) {
 try {
   if (files.length > 0 && !options.stdin) {
     lintAndPrint(null, diff);
-  } else if (files.length === 0 && options.stdin && !options.fix) {
+  } else if (files.length === 0 && options.stdin) {
     import('node:stream/consumers').then(module => module.text(process.stdin)).then(lintAndPrint);
   } else {
     program.help();

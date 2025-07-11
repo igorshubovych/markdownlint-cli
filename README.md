@@ -33,7 +33,7 @@ Options:
   -c, --config <configFile>                  configuration file (JSON, JSONC, JS, YAML, or TOML)
   --configPointer <pointer>                  JSON Pointer to object within configuration file (default: "")
   -d, --dot                                  include files/folders with a dot (for example `.github`)
-  -f, --fix                                  fix basic errors (does not work with STDIN)
+  -f, --fix                                  fix basic errors
   -i, --ignore <file|directory|glob>         file(s) to ignore/exclude (default: [])
   -j, --json                                 write issues in json format
   -o, --output <outputFile>                  write issues to file (no console)
