@@ -316,9 +316,7 @@ function lintAndPrint(stdin, files) {
       const fixResult = lint(fixOptions);
       const fixes = fixResult.stdin.filter(error => error.fixInfo);
       let outputText = stdin;
-      if (fixes.length > 0) {
-        outputText = applyFixes(stdin, fixes);
-      }
+      outputText = applyFixes(stdin, fixes);
 
       if (options.output) {
         // Write content to output file
@@ -328,10 +326,8 @@ function lintAndPrint(stdin, files) {
           console.warn('Cannot write to output file ' + options.output + ': ' + error.message);
           process.exitCode = exitCodes.failedToWriteOutputFile;
         }
-      } else if (!options.quiet) {
-        // Output content to stdout
-        process.stdout.write(outputText);
       }
+      process.stdout.write(outputText);
 
       return; // Exit early when fixing stdin
     }
