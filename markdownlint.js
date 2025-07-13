@@ -60,6 +60,15 @@ const configParsers = [jsoncParse, tomlParse, yamlParse];
 const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();
 
+function writeOutputFile(path, content) {
+  try {
+    fs.writeFileSync(path, content);
+  } catch (error) {
+    console.warn('Cannot write to output file ' + path + ': ' + error.message);
+    process.exitCode = exitCodes.failedToWriteOutputFile;
+  }
+}
+
 function readConfiguration(userConfigFile) {
   // Load from well-known config files
   let config = rc('markdownlint', {});
@@ -186,12 +195,7 @@ function printResult(lintResult) {
 
   if (options.output) {
     lintResultString = lintResultString.length > 0 ? lintResultString + os.EOL : lintResultString;
-    try {
-      fs.writeFileSync(options.output, lintResultString);
-    } catch (error) {
-      console.warn('Cannot write to output file ' + options.output + ': ' + error.message);
-      process.exitCode = exitCodes.failedToWriteOutputFile;
-    }
+    writeOutputFile(options.output, lintResultString)
   } else if (lintResultString && !options.quiet) {
     console.error(lintResultString);
   }
@@ -319,13 +323,7 @@ function lintAndPrint(stdin, files) {
       outputText = applyFixes(stdin, fixes);
 
       if (options.output) {
-        // Write content to output file
-        try {
-          fs.writeFileSync(options.output, outputText);
-        } catch (error) {
-          console.warn('Cannot write to output file ' + options.output + ': ' + error.message);
-          process.exitCode = exitCodes.failedToWriteOutputFile;
-        }
+        writeOutputFile(options.output, outputText);
       }
       process.stdout.write(outputText);
 
