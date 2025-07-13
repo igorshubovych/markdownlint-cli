@@ -62,7 +62,7 @@ const processCwd = process.cwd();
 
 function writeOutputFile(path, content) {
   try {
-    fs.writeFileSync(path, content);
+    fs.writeFileSync(path, content, fsOptions);
   } catch (error) {
     console.warn('Cannot write to output file ' + path + ': ' + error.message);
     process.exitCode = exitCodes.failedToWriteOutputFile;
@@ -195,7 +195,7 @@ function printResult(lintResult) {
 
   if (options.output) {
     lintResultString = lintResultString.length > 0 ? lintResultString + os.EOL : lintResultString;
-    writeOutputFile(options.output, lintResultString)
+    writeOutputFile(options.output, lintResultString);
   } else if (lintResultString && !options.quiet) {
     console.error(lintResultString);
   }
@@ -324,10 +324,19 @@ function lintAndPrint(stdin, files) {
 
       if (options.output) {
         writeOutputFile(options.output, outputText);
+        // Check for remaining errors after fix
+        const checkOptions = {...lintOptions};
+        checkOptions.strings = {stdin: outputText};
+        const checkResult = lint(checkOptions);
+        if (Object.keys(checkResult).some(file => checkResult[file].length > 0)) {
+          printResult(checkResult);
+        }
+        return; // Exit early when output is specified
       }
-      process.stdout.write(outputText);
 
-      return; // Exit early when fixing stdin
+      // Update stdin with fixed content for subsequent linting
+      stdin = outputText;
+      lintOptions.strings.stdin = outputText;
     }
 
     // Handle fix for files

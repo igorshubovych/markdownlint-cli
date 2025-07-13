@@ -412,9 +412,9 @@ test('--output with invalid path fails', async t => {
 });
 
 test('--stdin --fix with fixable content outputs fixed content', async t => {
-  const stdin = {string: ['Heading', '', 'Text with trailing spaces   ', '', '- List item  ', ''].join('\n')};
+  const stdin = {string: ['# Heading', '', 'Text with trailing spaces   ', '', '- List item', ''].join('\n')};
   const result = await spawn('../markdownlint.js', ['--stdin', '--fix'], {stdin});
-  const expected = ['Heading', '', 'Text with trailing spaces', '', '- List item  '].join('\n');
+  const expected = ['# Heading', '', 'Text with trailing spaces', '', '- List item'].join('\n');
   t.is(result.stdout, expected);
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
@@ -437,20 +437,20 @@ test('--stdin --fix with empty input outputs empty content', async t => {
 });
 
 test('--stdin --fix --output writes fixed content to file', async t => {
-  const stdin = {string: ['Heading', '', 'Text with trailing spaces   ', ''].join('\n')};
+  const stdin = {string: ['# Heading', '', 'Text with trailing spaces   ', ''].join('\n')};
   const output = '../outputStdinFix.md';
   const result = await spawn('../markdownlint.js', ['--stdin', '--fix', '--output', output], {stdin});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
   const fileContent = fs.readFileSync(output, 'utf8');
-  const expected = ['Heading', '', 'Text with trailing spaces', ''].join('\n');
+  const expected = ['# Heading', '', 'Text with trailing spaces', ''].join('\n');
   t.is(fileContent, expected);
   fs.unlinkSync(output);
 });
 
 test('--stdin --fix --quiet suppresses stdout', async t => {
-  const stdin = {string: ['Heading', '', 'Text with trailing spaces   '].join('\n')};
+  const stdin = {string: ['# Heading', '', 'Text with trailing spaces   '].join('\n')};
   const result = await spawn('../markdownlint.js', ['--stdin', '--fix', '--quiet'], {stdin});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
@@ -460,10 +460,33 @@ test('--stdin --fix --quiet suppresses stdout', async t => {
 test('--stdin --fix with unfixable errors still outputs original content', async t => {
   // MD041 first-line-heading is not automatically fixable
   const stdin = {string: ['## Not a first level heading', '', 'Text content'].join('\n')};
-  const result = await spawn('../markdownlint.js', ['--stdin', '--fix', '--config', 'test-config.json'], {stdin});
-  t.is(result.stdout, stdin.string);
-  t.is(result.stderr, '');
-  t.is(result.exitCode, 0);
+  try {
+    await spawn('../markdownlint.js', ['--stdin', '--fix', '--config', 'test-config.json'], {stdin});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, stdin.string);
+    t.is(error.stderr.match(errorPattern).length, 1);
+    t.true(error.stderr.includes('stdin:1'));
+    t.true(error.stderr.includes('MD041'));
+    t.is(error.exitCode, 1);
+  }
+});
+
+test('--stdin --fix with mixed fixable and unfixable errors', async t => {
+  // MD041 (first-line-heading) is not fixable, trailing spaces should be fixable
+  const stdin = {string: ['## Not a first level heading   ', '', 'Text content   '].join('\n')};
+  const expected = ['## Not a first level heading', '', 'Text content'].join('\n');
+  try {
+    await spawn('../markdownlint.js', ['--stdin', '--fix'], {stdin});
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, expected);
+    t.is(error.stderr.match(errorPattern).length, 1);
+    t.true(error.stderr.includes('stdin:1'));
+    t.true(error.stderr.includes('MD041'));
+    t.false(error.stderr.includes('MD009')); // Trailing spaces should be fixed
+    t.is(error.exitCode, 1);
+  }
 });
 
 test('configuration file can be YAML', async t => {
