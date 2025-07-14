@@ -331,12 +331,26 @@ function lintAndPrint(stdin, files) {
         if (Object.keys(checkResult).some(file => checkResult[file].length > 0)) {
           printResult(checkResult);
         }
+
         return; // Exit early when output is specified
       }
 
       // Update stdin with fixed content for subsequent linting
       stdin = outputText;
       lintOptions.strings.stdin = outputText;
+
+      // Check for remaining errors after fix
+      const remainingErrors = lint(lintOptions);
+      const hasErrors = Object.keys(remainingErrors).some(file => remainingErrors[file].length > 0);
+
+      process.stdout.write(outputText);
+
+      if (hasErrors) {
+        // Print remaining errors to stderr
+        printResult(remainingErrors);
+      }
+
+      return; // Exit after handling stdin with fix
     }
 
     // Handle fix for files

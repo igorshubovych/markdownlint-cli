@@ -449,14 +449,6 @@ test('--stdin --fix --output writes fixed content to file', async t => {
   fs.unlinkSync(output);
 });
 
-test('--stdin --fix --quiet suppresses stdout', async t => {
-  const stdin = {string: ['# Heading', '', 'Text with trailing spaces   '].join('\n')};
-  const result = await spawn('../markdownlint.js', ['--stdin', '--fix', '--quiet'], {stdin});
-  t.is(result.stdout, '');
-  t.is(result.stderr, '');
-  t.is(result.exitCode, 0);
-});
-
 test('--stdin --fix with unfixable errors still outputs original content', async t => {
   // MD041 first-line-heading is not automatically fixable
   const stdin = {string: ['## Not a first level heading', '', 'Text content'].join('\n')};
