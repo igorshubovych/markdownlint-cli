@@ -49,7 +49,7 @@
     "minimatch": "~10.0.3",
     "run-con": "~1.3.2",
     "smol-toml": "~1.4.2",
-    "tinyglobby": "~0.2.12"
+    "tinyglobby": "~0.2.15"
   },
   "devDependencies": {
     "ava": "^6.4.1",
