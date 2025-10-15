@@ -126,7 +126,8 @@ test('linting of incorrect Markdown file fails prints issues as json', async t =
       errorContext: '## header 2',
       errorDetail: null,
       errorRange: null,
-      fixInfo: null
+      fixInfo: null,
+      severity: 'error'
     };
     t.deepEqual(issues[0], expected);
     t.is(error.exitCode, 1);
