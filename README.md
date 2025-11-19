@@ -142,7 +142,7 @@ To run `markdownlint-cli` as part of a [pre-commit][pre-commit] workflow, add so
 
 ```yaml
 - repo: https://github.com/igorshubovych/markdownlint-cli
-  rev: v0.45.0
+  rev: v0.46.0
   hooks:
   - id: markdownlint
 ```
