@@ -1,0 +1,11 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: local
+    hooks:
+      - id: sync-version
+        name: Sync version references
+        entry: node .github/scripts/sync-version-on-commit.mjs
+        language: system
+        files: ^(package\.json|markdownlint\.js|README\.md|\.pre-commit-hooks\.yaml)$
+        pass_filenames: false
