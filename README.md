@@ -142,12 +142,62 @@ To run `markdownlint-cli` as part of a [pre-commit][pre-commit] workflow, add so
 
 ```yaml
 - repo: https://github.com/igorshubovych/markdownlint-cli
-  rev: v0.46.0
+  rev: v0.46.1
   hooks:
   - id: markdownlint
 ```
 
 > Depending on the environment this workflow runs in, it may be necessary to [override the language version of Node.js used by pre-commit][pre-commit-version].
+
+## Contributing
+
+### Setting up local development
+
+This project uses [pre-commit][pre-commit] hooks to maintain version consistency across multiple files. To set up your local development environment:
+
+#### macOS/Linux
+
+```bash
+# Install pre-commit (if not already installed)
+pip install pre-commit
+# or
+brew install pre-commit
+
+# Install the git hook scripts
+pre-commit install
+```
+
+#### Windows
+
+```powershell
+# Install pre-commit via pip
+pip install pre-commit
+
+# Install the git hook scripts
+pre-commit install
+```
+
+#### What the pre-commit hooks do
+
+- **Version sync**: Automatically ensures version references in `markdownlint.js`, `README.md`, and `.pre-commit-hooks.yaml` stay in sync with `package.json`
+
+When you commit changes to any version-related files, the hooks will:
+
+1. Read the version from `package.json`
+2. Update all other files to match
+3. If files were modified, the commit will fail with a message asking you to review and stage the changes
+4. Review the changes with `git diff` and re-add them with `git add`
+5. Retry your commit
+
+#### Running hooks manually
+
+```bash
+# Run all hooks on all files
+pre-commit run --all-files
+
+# Run hooks only on staged files
+pre-commit run
+```
 
 ## Related
 
