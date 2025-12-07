@@ -60,6 +60,15 @@ const configParsers = [jsoncParse, tomlParse, yamlParse];
 const fsOptions = {encoding: 'utf8'};
 const processCwd = process.cwd();
 
+function writeOutputFile(path, content) {
+  try {
+    fs.writeFileSync(path, content, fsOptions);
+  } catch (error) {
+    console.warn('Cannot write to output file ' + path + ': ' + error.message);
+    process.exitCode = exitCodes.failedToWriteOutputFile;
+  }
+}
+
 function readConfiguration(userConfigFile) {
   // Load from well-known config files
   let config = rc('markdownlint', {});
@@ -186,12 +195,7 @@ function printResult(lintResult) {
 
   if (options.output) {
     lintResultString = lintResultString.length > 0 ? lintResultString + os.EOL : lintResultString;
-    try {
-      fs.writeFileSync(options.output, lintResultString);
-    } catch (error) {
-      console.warn('Cannot write to output file ' + options.output + ': ' + error.message);
-      process.exitCode = exitCodes.failedToWriteOutputFile;
-    }
+    writeOutputFile(options.output, lintResultString);
   } else if (lintResultString && !options.quiet) {
     console.error(lintResultString);
   }
@@ -208,7 +212,7 @@ program
   .option('-c, --config <configFile>', 'configuration file (JSON, JSONC, JS, YAML, or TOML)')
   .option('--configPointer <pointer>', 'JSON Pointer to object within configuration file', '')
   .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
-  .option('-f, --fix', 'fix basic errors (does not work with STDIN)')
+  .option('-f, --fix', 'fix basic errors')
   .option('-i, --ignore <file|directory|glob>', 'file(s) to ignore/exclude', concatArray, [])
   .option('-j, --json', 'write issues in json format')
   .option('-o, --output <outputFile>', 'write issues to file (no console)')
@@ -311,6 +315,45 @@ function lintAndPrint(stdin, files) {
 
   if (options.fix) {
     const fixOptions = {...lintOptions};
+    if (stdin) {
+      // Handle fix for stdin
+      const fixResult = lint(fixOptions);
+      const fixes = fixResult.stdin.filter(error => error.fixInfo);
+      let outputText = stdin;
+      outputText = applyFixes(stdin, fixes);
+
+      if (options.output) {
+        writeOutputFile(options.output, outputText);
+        // Check for remaining errors after fix
+        const checkOptions = {...lintOptions};
+        checkOptions.strings = {stdin: outputText};
+        const checkResult = lint(checkOptions);
+        if (Object.keys(checkResult).some(file => checkResult[file].length > 0)) {
+          printResult(checkResult);
+        }
+
+        return; // Exit early when output is specified
+      }
+
+      // Update stdin with fixed content for subsequent linting
+      stdin = outputText;
+      lintOptions.strings.stdin = outputText;
+
+      // Check for remaining errors after fix
+      const remainingErrors = lint(lintOptions);
+      const hasErrors = Object.keys(remainingErrors).some(file => remainingErrors[file].length > 0);
+
+      process.stdout.write(outputText);
+
+      if (hasErrors) {
+        // Print remaining errors to stderr
+        printResult(remainingErrors);
+      }
+
+      return; // Exit after handling stdin with fix
+    }
+
+    // Handle fix for files
     for (const file of files) {
       fixOptions.files = [file];
       const fixResult = lint(fixOptions);
@@ -332,7 +375,7 @@ function lintAndPrint(stdin, files) {
 try {
   if (files.length > 0 && !options.stdin) {
     lintAndPrint(null, diff);
-  } else if (files.length === 0 && options.stdin && !options.fix) {
+  } else if (files.length === 0 && options.stdin) {
     import('node:stream/consumers').then(module => module.text(process.stdin)).then(lintAndPrint);
   } else {
     program.help();
