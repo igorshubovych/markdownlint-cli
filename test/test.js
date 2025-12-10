@@ -105,7 +105,19 @@ test('linting of incorrect Markdown file fails', async t => {
   }
 });
 
-test('linting of incorrect Markdown file fails prints issues as json', async t => {
+test('linting of incorrect Markdown file fails and prints issues', async t => {
+  try {
+    await spawn('../markdownlint.js', ['--config', 'warning-config.json', 'incorrect.md']);
+    t.fail();
+  } catch (error) {
+    t.is(error.stdout, '');
+    const expected = ['incorrect.md:1 MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below] [Context: "## header 2"]', 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]', 'incorrect.md:2 MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "# header"]'].join('\n');
+    t.is(error.stderr, expected);
+    t.is(error.exitCode, 1);
+  }
+});
+
+test('linting of incorrect Markdown file fails and prints issues as json', async t => {
   try {
     await spawn('../markdownlint.js', ['--config', 'warning-config.json', 'incorrect.md', '--json']);
     t.fail();
