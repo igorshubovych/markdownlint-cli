@@ -154,7 +154,8 @@ function printResult(lintResult) {
         lineNumber: result.lineNumber,
         column: (result.errorRange && result.errorRange[0]) || 0,
         names: result.ruleNames.join('/'),
-        description: result.ruleDescription + (result.errorDetail ? ' [' + result.errorDetail + ']' : '') + (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : '')
+        description: result.ruleDescription + (result.errorDetail ? ' [' + result.errorDetail + ']' : '') + (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : ''),
+        severity: result.severity
       };
     })
   );
@@ -169,9 +170,9 @@ function printResult(lintResult) {
 
       lintResultString = results
         .map(result => {
-          const {file, lineNumber, column, names, description} = result;
+          const {file, lineNumber, column, names, description, severity} = result;
           const columnText = column ? `:${column}` : '';
-          return `${file}:${lineNumber}${columnText} ${names} ${description}`;
+          return `${file}:${lineNumber}${columnText} ${severity} ${names} ${description}`;
         })
         .join('\n');
     }

@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
 const importWithTypeJson = async file => JSON.parse(await fsPromises.readFile(path.resolve(__dirname, file)));
 
 const packageJson = await importWithTypeJson('../package.json');
-const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+(:\d+)? MD\d{3}/gm;
+const errorPattern = /(\.md|\.markdown|\.mdf|stdin):\d+(:\d+)? error MD\d{3}/gm;
 
 process.chdir('./test');
 
@@ -111,7 +111,7 @@ test('linting of incorrect Markdown file fails and prints issues', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    const expected = ['incorrect.md:1 MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below] [Context: "## header 2"]', 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]', 'incorrect.md:2 MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "# header"]'].join('\n');
+    const expected = ['incorrect.md:1 error MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below] [Context: "## header 2"]', 'incorrect.md:1 warning MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]', 'incorrect.md:2 error MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "# header"]'].join('\n');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
   }
@@ -337,7 +337,9 @@ test('linting results are sorted by file/line/names/description', async t => {
     await spawn('../markdownlint.js', ['--config', 'test-config.json', 'incorrect.md']);
     t.fail();
   } catch (error) {
-    const expected = ['incorrect.md:1 MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below] [Context: "## header 2"]', 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]', 'incorrect.md:2 MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "# header"]', 'incorrect.md:5:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]', 'incorrect.md:11:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]', 'incorrect.md:17:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]', 'incorrect.md:23:1 MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]'].join('\n');
+    const expected = ['incorrect.md:1 error MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Below] [Context: "## header 2"]', 'incorrect.md:1 error MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]', 'incorrect.md:2 error MD022/blanks-around-headings Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above] [Context: "# header"]', 'incorrect.md:5:1 error MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]', 'incorrect.md:11:1 error MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]', 'incorrect.md:17:1 error MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]', 'incorrect.md:23:1 error MD014/commands-show-output Dollar signs used before commands without showing output [Context: "$ code"]'].join(
+      '\n'
+    );
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -527,7 +529,7 @@ function getCwdConfigFileTest(extension) {
       });
       t.fail();
     } catch (error) {
-      const expected = ["heading-dollar.md:1:10 MD026/no-trailing-punctuation Trailing punctuation in heading [Punctuation: '$']"].join('\n');
+      const expected = ["heading-dollar.md:1:10 error MD026/no-trailing-punctuation Trailing punctuation in heading [Punctuation: '$']"].join('\n');
       t.is(error.stdout, '');
       t.is(error.stderr, expected);
       t.is(error.exitCode, 1);
@@ -601,7 +603,7 @@ test('Custom rule from single file loaded', async t => {
     await spawn('../markdownlint.js', ['--rules', 'custom-rules/files/test-rule-1.cjs', '--stdin'], {stdin});
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 test-rule-1 Test rule broken'].join('\n');
+    const expected = ['stdin:1 error test-rule-1 Test rule broken'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -614,7 +616,7 @@ test('Multiple custom rules from single file loaded', async t => {
     await spawn('../markdownlint.js', ['--rules', 'custom-rules/files/test-rule-3-4.cjs', '--stdin'], {stdin});
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 test-rule-3 Test rule 3 broken', 'stdin:1 test-rule-4 Test rule 4 broken'].join('\n');
+    const expected = ['stdin:1 error test-rule-3 Test rule 3 broken', 'stdin:1 error test-rule-4 Test rule 4 broken'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -627,7 +629,7 @@ test('Custom rules from directory loaded', async t => {
     await spawn('../markdownlint.js', ['--rules', 'custom-rules/files', '--stdin'], {stdin});
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 test-rule-1 Test rule broken', 'stdin:1 test-rule-2 Test rule 2 broken', 'stdin:1 test-rule-3 Test rule 3 broken', 'stdin:1 test-rule-4 Test rule 4 broken'].join('\n');
+    const expected = ['stdin:1 error test-rule-1 Test rule broken', 'stdin:1 error test-rule-2 Test rule 2 broken', 'stdin:1 error test-rule-3 Test rule 3 broken', 'stdin:1 error test-rule-4 Test rule 4 broken'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -640,7 +642,7 @@ test('Custom rules from glob loaded', async t => {
     await spawn('../markdownlint.js', ['--rules', 'custom-rules/files/**/*.cjs', '--stdin'], {stdin});
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 test-rule-1 Test rule broken', 'stdin:1 test-rule-2 Test rule 2 broken', 'stdin:1 test-rule-3 Test rule 3 broken', 'stdin:1 test-rule-4 Test rule 4 broken'].join('\n');
+    const expected = ['stdin:1 error test-rule-1 Test rule broken', 'stdin:1 error test-rule-2 Test rule 2 broken', 'stdin:1 error test-rule-3 Test rule 3 broken', 'stdin:1 error test-rule-4 Test rule 4 broken'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -653,7 +655,7 @@ test('Custom rule from node_modules package loaded', async t => {
     await spawn('../markdownlint.js', ['--rules', 'markdownlint-cli-local-test-rule', '--stdin'], {stdin});
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 markdownlint-cli-local-test-rule Test rule package broken'].join('\n');
+    const expected = ['stdin:1 error markdownlint-cli-local-test-rule Test rule package broken'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -669,7 +671,7 @@ test('Custom rule from node_modules package loaded relative to cwd', async t => 
     });
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 markdownlint-cli-local-test-rule Test rule package relative to cwd broken'].join('\n');
+    const expected = ['stdin:1 error markdownlint-cli-local-test-rule Test rule package relative to cwd broken'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -683,7 +685,7 @@ test('Custom rule with scoped package name via --rules', async t => {
     });
     t.fail();
   } catch (error) {
-    const expected = ['scoped-test.md:1 scoped-rule Scoped rule'].join('\n');
+    const expected = ['scoped-test.md:1 error scoped-rule Scoped rule'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -696,7 +698,7 @@ test('Custom rule from package loaded', async t => {
     await spawn('../markdownlint.js', ['--rules', './custom-rules/markdownlint-cli-local-test-rule', '--stdin'], {stdin});
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 markdownlint-cli-local-test-rule Test rule package broken'].join('\n');
+    const expected = ['stdin:1 error markdownlint-cli-local-test-rule Test rule package broken'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -709,7 +711,7 @@ test('Custom rule from several packages loaded', async t => {
     await spawn('../markdownlint.js', ['--rules', './custom-rules/markdownlint-cli-local-test-rule', '--rules', './custom-rules/markdownlint-cli-local-test-rule-other', '--stdin'], {stdin});
     t.fail();
   } catch (error) {
-    const expected = ['stdin:1 markdownlint-cli-local-test-rule Test rule package broken', 'stdin:1 markdownlint-cli-local-test-rule-other Test rule package other broken'].join('\n');
+    const expected = ['stdin:1 error markdownlint-cli-local-test-rule Test rule package broken', 'stdin:1 error markdownlint-cli-local-test-rule-other Test rule package other broken'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -736,7 +738,7 @@ test('fixing errors in a file yields fewer errors', async t => {
     await spawn('../markdownlint.js', ['--fix', '--config', 'test-config.json', fixFileA]);
     t.fail();
   } catch (error) {
-    const expected = [fixFileA + ':1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]'].join('\n');
+    const expected = [fixFileA + ':1 error MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -783,7 +785,7 @@ test('.markdownlintignore is applied correctly', async t => {
     });
     t.fail();
   } catch (error) {
-    const expected = ['incorrect.md:1:8 MD047/single-trailing-newline Files should end with a single newline character', 'subdir/incorrect.markdown:1:8 MD047/single-trailing-newline Files should end with a single newline character'].join('\n');
+    const expected = ['incorrect.md:1:8 error MD047/single-trailing-newline Files should end with a single newline character', 'subdir/incorrect.markdown:1:8 error MD047/single-trailing-newline Files should end with a single newline character'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr.replaceAll('\\', '/'), expected);
     t.is(error.exitCode, 1);
@@ -797,7 +799,7 @@ test('.markdownlintignore works with semi-absolute paths', async t => {
     });
     t.fail();
   } catch (error) {
-    const expected = ['./incorrect.md:1:8 MD047/single-trailing-newline Files should end with a single newline character'].join('\n');
+    const expected = ['./incorrect.md:1:8 error MD047/single-trailing-newline Files should end with a single newline character'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -811,7 +813,7 @@ test('--ignore-path works with .markdownlintignore', async t => {
     });
     t.fail();
   } catch (error) {
-    const expected = ['incorrect.md:1:8 MD047/single-trailing-newline Files should end with a single newline character', 'subdir/incorrect.markdown:1:8 MD047/single-trailing-newline Files should end with a single newline character'].join('\n');
+    const expected = ['incorrect.md:1:8 error MD047/single-trailing-newline Files should end with a single newline character', 'subdir/incorrect.markdown:1:8 error MD047/single-trailing-newline Files should end with a single newline character'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr.replaceAll('\\', '/'), expected);
     t.is(error.exitCode, 1);
@@ -825,7 +827,7 @@ test('--ignore-path works with .ignorefile', async t => {
     });
     t.fail();
   } catch (error) {
-    const expected = ['incorrect.markdown:1:8 MD047/single-trailing-newline Files should end with a single newline character'].join('\n');
+    const expected = ['incorrect.markdown:1:8 error MD047/single-trailing-newline Files should end with a single newline character'].join('\n');
     t.is(error.stdout, '');
     t.is(error.stderr, expected);
     t.is(error.exitCode, 1);
@@ -893,7 +895,7 @@ test('--enable flag', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr, 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]');
+    t.is(error.stderr, 'incorrect.md:1 error MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]');
     t.is(error.exitCode, 1);
   }
 });
@@ -904,7 +906,7 @@ test('--enable flag does not modify already enabled rules', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr, 'correct.md:1 MD043/required-headings Required heading structure [Expected: # First; Actual: # header]');
+    t.is(error.stderr, 'correct.md:1 error MD043/required-headings Required heading structure [Expected: # First; Actual: # header]');
     t.is(error.exitCode, 1);
   }
 });
@@ -915,7 +917,7 @@ test('--enable flag accepts rule alias', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr, 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]');
+    t.is(error.stderr, 'incorrect.md:1 error MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]');
     t.is(error.exitCode, 1);
   }
 });
@@ -932,7 +934,7 @@ test('--disable flag', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr, 'incorrect.md:1 MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]');
+    t.is(error.stderr, 'incorrect.md:1 error MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "## header 2"]');
     t.is(error.exitCode, 1);
   }
 });
