@@ -107,29 +107,61 @@ test('linting of incorrect Markdown file fails', async t => {
 
 test('linting of incorrect Markdown file fails prints issues as json', async t => {
   try {
-    await spawn('../markdownlint.js', ['--config', 'test-config.json', 'incorrect.md', '--json']);
+    await spawn('../markdownlint.js', ['--config', 'warning-config.json', 'incorrect.md', '--json']);
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
     const issues = JSON.parse(error.stderr);
-    t.is(issues.length, 7);
-    const issue = issues[0];
-    // Property "ruleInformation" changes with library version
-    t.true(issue.ruleInformation.length > 0);
-    issue.ruleInformation = null;
-    const expected = {
-      fileName: 'incorrect.md',
-      lineNumber: 1,
-      ruleNames: ['MD041', 'first-line-heading', 'first-line-h1'],
-      ruleDescription: 'First line in a file should be a top-level heading',
-      ruleInformation: null,
-      errorContext: '## header 2',
-      errorDetail: null,
-      errorRange: null,
-      fixInfo: null,
-      severity: 'error'
-    };
-    t.deepEqual(issues[0], expected);
+    for (const issue of issues) {
+      // Property "ruleInformation" changes with library version
+      t.true(issue.ruleInformation.length > 0);
+      issue.ruleInformation = null;
+    }
+
+    const expected = [
+      {
+        fileName: 'incorrect.md',
+        lineNumber: 1,
+        ruleNames: ['MD041', 'first-line-heading', 'first-line-h1'],
+        ruleDescription: 'First line in a file should be a top-level heading',
+        ruleInformation: null,
+        errorDetail: null,
+        errorContext: '## header 2',
+        errorRange: null,
+        fixInfo: null,
+        severity: 'warning'
+      },
+      {
+        fileName: 'incorrect.md',
+        lineNumber: 1,
+        ruleNames: ['MD022', 'blanks-around-headings'],
+        ruleDescription: 'Headings should be surrounded by blank lines',
+        ruleInformation: null,
+        errorDetail: 'Expected: 1; Actual: 0; Below',
+        errorContext: '## header 2',
+        errorRange: null,
+        fixInfo: {
+          lineNumber: 2,
+          insertText: '\n'
+        },
+        severity: 'error'
+      },
+      {
+        fileName: 'incorrect.md',
+        lineNumber: 2,
+        ruleNames: ['MD022', 'blanks-around-headings'],
+        ruleDescription: 'Headings should be surrounded by blank lines',
+        ruleInformation: null,
+        errorDetail: 'Expected: 1; Actual: 0; Above',
+        errorContext: '# header',
+        errorRange: null,
+        fixInfo: {
+          insertText: '\n'
+        },
+        severity: 'error'
+      }
+    ];
+    t.deepEqual(issues, expected);
     t.is(error.exitCode, 1);
   }
 });

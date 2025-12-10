@@ -1,0 +1,5 @@
+{
+  "blanks-around-headings": "error",
+  "commands-show-output": false,
+  "first-line-heading": "warning"
+}
