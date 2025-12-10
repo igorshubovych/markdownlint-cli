@@ -160,8 +160,8 @@ To run `markdownlint-cli` as part of a [pre-commit][pre-commit] workflow, add so
 
 MIT © Igor Shubovych
 
-[actions-badge]: https://github.com/igorshubovych/markdownlint-cli/workflows/CI/badge.svg?branch=master
-[actions-url]: https://github.com/igorshubovych/markdownlint-cli/actions?query=workflow%3ACI
+[actions-badge]: https://github.com/igorshubovych/markdownlint-cli/actions/workflows/ci.yml/badge.svg
+[actions-url]: https://github.com/igorshubovych/markdownlint-cli/actions/workflows/ci.yml
 [commander-variadic]: https://github.com/tj/commander.js#variadic-option
 [json-pointer]: https://datatracker.ietf.org/doc/html/rfc6901
 [markdownlint]: https://github.com/DavidAnson/markdownlint
