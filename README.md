@@ -33,7 +33,7 @@ Options:
   -c, --config <configFile>                  configuration file (JSON, JSONC, JS, YAML, or TOML)
   --configPointer <pointer>                  JSON Pointer to object within configuration file (default: "")
   -d, --dot                                  include files/folders with a dot (for example `.github`)
-  -f, --fix                                  fix basic errors (does not work with STDIN)
+  -f, --fix                                  fix basic issues (does not work with STDIN)
   -i, --ignore <file|directory|glob>         file(s) to ignore/exclude (default: [])
   -j, --json                                 write issues in json format
   -o, --output <outputFile>                  write issues to file (no console)
@@ -81,12 +81,12 @@ The order of operations is:
 - Apply exclusions from `-p`/`--ignore-path` (if specified) or `.markdownlintignore` (if present)
 - Apply exclusions from any `-i`/`--ignore` option(s) that are specified
 
-### Fixing errors
+### Fixing issues
 
-When the `--fix` option is specified, `markdownlint-cli` tries to apply all fixes reported by the active rules and reports any errors that remain.
+When the `--fix` option is specified, `markdownlint-cli` tries to apply all fixes reported by the active rules and reports any issues that remain.
 Because this option makes changes to the input files, it is good to make a backup first or work with files under source control so any unwanted changes can be undone.
 
-> Because not all rules include fix information when reporting errors, fixes may overlap, and not all errors are fixable, `--fix` will not usually address all errors.
+> Because not all rules include fix information when reporting issues, fixes may overlap, and not all issues are fixable, `--fix` will not usually address all issues.
 
 ## Configuration
 
@@ -130,11 +130,11 @@ If a rule is passed to both `--enable` and `--disable`, it will be disabled.
 
 `markdownlint-cli` returns one of the following exit codes:
 
-- `0`: Program ran successfully
-- `1`: Linting errors
+- `0`: Linting successful, no errors (warnings possible)
+- `1`: Linting successful, some errors (warnings possible)
 - `2`: Unable to write `-o`/`--output` output file
 - `3`: Unable to load `-r`/`--rules` custom rule
-- `4`: Unexpected error (e.g. malformed config)
+- `4`: Unexpected problem (e.g. malformed config)
 
 ## Use with pre-commit
 

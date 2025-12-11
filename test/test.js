@@ -178,6 +178,14 @@ test('linting of incorrect Markdown file fails and prints issues as json', async
   }
 });
 
+test('linting of incorrect Markdown file with only warnings returns exitCode 0', async t => {
+  const result = await spawn('../markdownlint.js', ['--config', 'warning-config.json', '../LICENSE']);
+  t.is(result.stdout, '');
+  const expected = '../LICENSE:1 warning MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading [Context: "The MIT License (MIT)"]';
+  t.is(result.stderr, expected);
+  t.is(result.exitCode, 0);
+});
+
 test('linting of incorrect Markdown file fails with absolute path', async t => {
   try {
     await spawn('../markdownlint.js', ['--config', 'test-config.json', path.resolve('incorrect.md')]);

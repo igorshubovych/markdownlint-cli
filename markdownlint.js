@@ -48,7 +48,7 @@ function tomlParse(text) {
 }
 
 const exitCodes = {
-  lintFindings: 1,
+  lintErrorsPresent: 1,
   failedToWriteOutputFile: 2,
   failedToLoadCustomRules: 3,
   unexpectedError: 4
@@ -177,12 +177,15 @@ function printResult(lintResult) {
         .join('\n');
     }
 
-    // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
-    // streams (e.g., when the output is being piped). Just set the exit code
-    // and let the program terminate normally.
-    // @see {@link https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_exit_code}
-    // @see {@link https://github.com/igorshubovych/markdownlint-cli/pull/29#issuecomment-343535291}
-    process.exitCode = exitCodes.lintFindings;
+    const errorsPresent = results.some(result => result.severity === 'error');
+    if (errorsPresent) {
+      // Note: process.exit(1) will end abruptly, interrupting asynchronous IO
+      // streams (e.g., when the output is being piped). Just set the exit code
+      // and let the program terminate normally.
+      // @see {@link https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_exit_code}
+      // @see {@link https://github.com/igorshubovych/markdownlint-cli/pull/29#issuecomment-343535291}
+      process.exitCode = exitCodes.lintErrorsPresent;
+    }
   }
 
   if (options.output) {
