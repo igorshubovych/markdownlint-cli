@@ -315,16 +315,23 @@ function lintAndPrint(stdin, files) {
 
   if (options.fix) {
     const fixOptions = {...lintOptions};
+    const maxIterations = 100;
     for (const file of files) {
       fixOptions.files = [file];
-      const fixResult = lint(fixOptions);
-      const fixes = fixResult[file].filter(error => error.fixInfo);
-      if (fixes.length > 0) {
+      for (let iteration = 0; iteration < maxIterations; iteration++) {
+        const fixResult = lint(fixOptions);
+        const fixes = fixResult[file].filter(error => error.fixInfo);
+        if (fixes.length === 0) {
+          break;
+        }
+
         const originalText = fs.readFileSync(file, fsOptions);
         const fixedText = applyFixes(originalText, fixes);
-        if (originalText !== fixedText) {
-          fs.writeFileSync(file, fixedText, fsOptions);
+        if (originalText === fixedText) {
+          break;
         }
+
+        fs.writeFileSync(file, fixedText, fsOptions);
       }
     }
   }
