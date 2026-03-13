@@ -234,7 +234,7 @@ test('glob linting works with failing files', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 15);
+    t.is(error.stderr.match(errorPattern).length, 21);
     t.is(error.exitCode, 1);
   }
 });
@@ -288,7 +288,7 @@ test('glob linting with failing files has fewer errors when ignored by dir', asy
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 8);
+    t.is(error.stderr.match(errorPattern).length, 14);
     t.is(error.exitCode, 1);
   }
 });
@@ -299,7 +299,7 @@ test('glob linting with failing files has fewer errors when ignored by dir and a
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 8);
+    t.is(error.stderr.match(errorPattern).length, 14);
     t.is(error.exitCode, 1);
   }
 });
@@ -493,7 +493,7 @@ test('linting using a toml configuration file works', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 15);
+    t.is(error.stderr.match(errorPattern).length, 21);
     t.is(error.exitCode, 1);
   }
 });
@@ -504,7 +504,7 @@ test('linting using a yaml configuration file works', async t => {
     t.fail();
   } catch (error) {
     t.is(error.stdout, '');
-    t.is(error.stderr.match(errorPattern).length, 15);
+    t.is(error.stderr.match(errorPattern).length, 21);
     t.is(error.exitCode, 1);
   }
 });
@@ -784,6 +784,18 @@ test('fixing errors with a glob yields fewer errors', async t => {
     fs.unlinkSync(fixFileC);
     fs.unlinkSync(fixSubFileC);
   }
+});
+
+test('fixing errors iterates until all fixable issues are resolved', async t => {
+  const fixFileD = 'fix-iterative.d.mdf';
+  fs.copyFileSync('fix-iterative.md', fixFileD);
+  const result = await spawn('../markdownlint.js', ['--fix', fixFileD]);
+  t.is(result.stdout, '');
+  t.is(result.stderr, '');
+  t.is(result.exitCode, 0);
+  const expected = ['# Heading', '', '* item1', '* item2', '', '1. item3', '', '* item4', '* item5', ''].join('\n');
+  t.is(fs.readFileSync(fixFileD, 'utf8'), expected);
+  fs.unlinkSync(fixFileD);
 });
 
 test('.markdownlintignore is applied correctly', async t => {
