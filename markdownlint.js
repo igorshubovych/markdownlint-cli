@@ -78,7 +78,7 @@ function readConfiguration(userConfigFile) {
   // However I have to do it to overwrite configuration from .markdownlint.{jsonc,json,yaml,yml}.
   if (userConfigFile) {
     try {
-      const jsConfigFile = /\.c?js$/i.test(userConfigFile);
+      const jsConfigFile = /\.c?js$/iv.test(userConfigFile);
       const userConfig = jsConfigFile ? require(path.resolve(processCwd, userConfigFile)) : readConfig(userConfigFile, configParsers);
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
