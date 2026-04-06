@@ -54,7 +54,7 @@
   "devDependencies": {
     "ava": "^7.0.0",
     "markdownlint-cli-local-test-rule": "./test/custom-rules/markdownlint-cli-local-test-rule",
-    "nano-spawn": "^2.0.0",
+    "nano-spawn": "^2.1.0",
     "xo": "^2.0.2"
   },
   "xo": {
