@@ -41,7 +41,7 @@
     "commander": "~15.0.0",
     "deep-extend": "~0.6.0",
     "ignore": "~7.0.5",
-    "js-yaml": "~4.2.0",
+    "js-yaml": "~5.0.0",
     "jsonc-parser": "~3.3.1",
     "jsonpointer": "~5.0.1",
     "markdownlint": "~0.41.0",
