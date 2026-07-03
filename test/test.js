@@ -183,9 +183,8 @@ test('linting of unreadable Markdown file fails', async t => {
 });
 
 test('linting of incorrect Markdown via npm run file fails with eol', async t => {
-  const {default: spawn} = await import('nano-spawn');
-  const error = await t.throwsAsync(() => spawn('npm', ['run', 'invalid']));
-  t.regex(error.stderr, /MD\d{3}.*((\nnpm ERR!)|($))/v);
+  const error = await t.throwsAsync(() => nanoSpawn('npm', ['run', 'invalid']));
+  t.regex(error.stderr, /MD\d{3}.*((\nnpm ERR!)|$)/v);
 });
 
 test('glob linting works with passing files', async t => {

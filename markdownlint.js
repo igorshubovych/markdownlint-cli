@@ -170,9 +170,9 @@ function printResult(lintResult) {
 
       lintResultString = results
         .map(result => {
-          const {file, lineNumber, column, names, description, severity} = result;
+          const {file, lineNumber, column, names, severity} = result;
           const columnText = column ? `:${column}` : '';
-          return `${file}:${lineNumber}${columnText} ${severity} ${names} ${description}`;
+          return `${file}:${lineNumber}${columnText} ${severity} ${names} ${result.description}`;
         })
         .join('\n');
     }
@@ -281,10 +281,10 @@ if (existsSync(ignorePath)) {
   ignoreFilter = fileInfo => !ignoreInstance.ignores(fileInfo.relative);
 }
 
-const files = prepareFileList(program.args, ['md', 'markdown']).filter(value => ignoreFilter(value));
-const ignores = prepareFileList(options.ignore, null, files);
+const inputs = prepareFileList(program.args, ['md', 'markdown']).filter(value => ignoreFilter(value));
+const ignores = prepareFileList(options.ignore, null, inputs);
 const customRules = loadCustomRules(options.rules);
-const diff = files.filter(file => ignores.every(ignore => ignore.absolute !== file.absolute)).map(paths => paths.original);
+const diff = inputs.filter(file => ignores.every(ignore => ignore.absolute !== file.absolute)).map(paths => paths.original);
 
 function lintAndPrint(stdin, files) {
   files ||= [];
@@ -334,9 +334,9 @@ function lintAndPrint(stdin, files) {
 }
 
 try {
-  if (files.length > 0 && !options.stdin) {
+  if (inputs.length > 0 && !options.stdin) {
     lintAndPrint(null, diff);
-  } else if (files.length === 0 && options.stdin && !options.fix) {
+  } else if (inputs.length === 0 && options.stdin && !options.fix) {
     import('node:stream/consumers').then(module => module.text(process.stdin)).then(lintAndPrint);
   } else {
     program.help();
