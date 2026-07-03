@@ -6,6 +6,6 @@
 module.exports = {
   MD012: false,
   MD043: {
-    headings: ['# First', '## Second', '### Third']
-  }
+    headings: ['# First', '## Second', '### Third'],
+  },
 };
