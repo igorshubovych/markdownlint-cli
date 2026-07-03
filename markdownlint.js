@@ -51,7 +51,7 @@ const exitCodes = {
   lintErrorsPresent: 1,
   failedToWriteOutputFile: 2,
   failedToLoadCustomRules: 3,
-  unexpectedError: 4
+  unexpectedError: 4,
 };
 
 const projectConfigFiles = ['.markdownlint.jsonc', '.markdownlint.json', '.markdownlint.yaml', '.markdownlint.yml'];
@@ -95,7 +95,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
     dot: Boolean(options.dot),
     onlyFiles: true,
     expandDirectories: false,
-    caseSensitiveMatch: !(os.platform() === 'win32' || os.platform() === 'darwin')
+    caseSensitiveMatch: !(os.platform() === 'win32' || os.platform() === 'darwin'),
   };
   let extensionGlobPart = '*.';
   if (!fileExtensions) {
@@ -135,7 +135,7 @@ function prepareFileList(files, fileExtensions, previousResults) {
   return files.flat().map(file => ({
     original: file,
     relative: path.relative(processCwd, file),
-    absolute: path.resolve(file)
+    absolute: path.resolve(file),
   }));
 }
 
@@ -145,7 +145,7 @@ function printResult(lintResult) {
       if (options.json) {
         return {
           fileName: file,
-          ...result
+          ...result,
         };
       }
 
@@ -155,9 +155,9 @@ function printResult(lintResult) {
         column: (result.errorRange && result.errorRange[0]) || 0,
         names: result.ruleNames.join('/'),
         description: result.ruleDescription + (result.errorDetail ? ' [' + result.errorDetail + ']' : '') + (result.errorContext ? ' [Context: "' + result.errorContext + '"]' : ''),
-        severity: result.severity
+        severity: result.severity,
       };
-    })
+    }),
   );
 
   let lintResultString = '';
@@ -284,7 +284,7 @@ if (existsSync(ignorePath)) {
 const files = prepareFileList(program.args, ['md', 'markdown']).filter(value => ignoreFilter(value));
 const ignores = prepareFileList(options.ignore, null, files);
 const customRules = loadCustomRules(options.rules);
-const diff = files.filter(file => !ignores.some(ignore => ignore.absolute === file.absolute)).map(paths => paths.original);
+const diff = files.filter(file => ignores.every(ignore => ignore.absolute !== file.absolute)).map(paths => paths.original);
 
 function lintAndPrint(stdin, files) {
   files ||= [];
@@ -305,11 +305,11 @@ function lintAndPrint(stdin, files) {
     config,
     configParsers,
     customRules,
-    files
+    files,
   };
   if (stdin) {
     lintOptions.strings = {
-      stdin
+      stdin,
     };
   }
 

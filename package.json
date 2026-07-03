@@ -58,6 +58,7 @@
     "xo": "^3.0.2"
   },
   "xo": {
+    "files": "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,svelte,astro,html}",
     "prettier": true,
     "space": true,
     "rules": {
