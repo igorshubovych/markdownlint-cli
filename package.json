@@ -55,7 +55,7 @@
     "ava": "^8.0.1",
     "markdownlint-cli-local-test-rule": "./test/custom-rules/markdownlint-cli-local-test-rule",
     "nano-spawn": "^2.1.0",
-    "xo": "^3.0.2"
+    "xo": "^4.0.0"
   },
   "xo": {
     "files": "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,svelte,astro,html}",
