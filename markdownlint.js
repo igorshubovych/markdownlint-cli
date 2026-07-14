@@ -78,8 +78,8 @@ function readConfiguration(userConfigFile) {
   // However I have to do it to overwrite configuration from .markdownlint.{jsonc,json,yaml,yml}.
   if (userConfigFile) {
     try {
-      const jsConfigFile = /\.c?js$/iv.test(userConfigFile);
-      const userConfig = jsConfigFile ? require(path.resolve(processCwd, userConfigFile)) : readConfig(userConfigFile, configParsers);
+      const isJsConfigFile = /\.c?js$/iv.test(userConfigFile);
+      const userConfig = isJsConfigFile ? require(path.resolve(processCwd, userConfigFile)) : readConfig(userConfigFile, configParsers);
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
       console.error(`Cannot read or parse config file '${userConfigFile}': ${error.message}`);
@@ -273,6 +273,7 @@ if (options.ignorePath) {
   existsSync = () => true;
 }
 
+// eslint-disable-next-line unicorn/consistent-boolean-name
 let ignoreFilter = () => true;
 if (existsSync(ignorePath)) {
   const ignoreText = fs.readFileSync(ignorePath, fsOptions);
