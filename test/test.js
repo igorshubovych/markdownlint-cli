@@ -44,6 +44,20 @@ test('no files shows help', async t => {
   t.is(result.exitCode, 0);
 });
 
+test('globs that match nothing report that, not usage', async t => {
+  const result = await spawn('../markdownlint.js', ['no-such-directory/**/*.md']);
+  t.is(result.stdout, '');
+  t.is(result.stderr, 'No matching files found.');
+  t.is(result.exitCode, 0);
+});
+
+test('a missing file reports that, not usage', async t => {
+  const result = await spawn('../markdownlint.js', ['no-such-file.md']);
+  t.is(result.stdout, '');
+  t.is(result.stderr, 'No matching files found.');
+  t.is(result.exitCode, 0);
+});
+
 test('files and --stdin shows help', async t => {
   const result = await spawn('../markdownlint.js', ['--stdin', 'correct.md']);
   t.true(result.stdout.includes('--help'));
