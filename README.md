@@ -30,7 +30,7 @@ Arguments:
 
 Options:
   -V, --version                              output the version number
-  -c, --config <configFile>                  configuration file (JSON, JSONC, JS, YAML, or TOML)
+  -c, --config <configFile>                  configuration file (JSON, JSONC, JS, TOML, or YAML)
   --configPointer <pointer>                  JSON Pointer to object within configuration file (default: "")
   -d, --dot                                  include files/folders with a dot (for example `.github`)
   -f, --fix                                  fix basic issues (does not work with STDIN)
@@ -109,10 +109,10 @@ A sample configuration file:
 For more examples, see [.markdownlint.jsonc][markdownlint-jsonc], [.markdownlint.yaml][markdownlint-yaml], [test-config.toml](test/test-config.toml) or the [style folder][style-folder].
 
 The CLI argument `--config` is not required.
-If it is not provided, `markdownlint-cli` looks for the file `.markdownlint.jsonc`/`.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in current folder, or for the file `.markdownlintrc` in the current or all parent folders.
-The algorithm is described in detail on the [`rc` package page][rc-standards].
-Note that when relying on the lookup of a file named `.markdownlintrc` in the current or parent folders, the only syntaxes accepted are INI and JSON, and the file cannot have an extension.
-If the `--config` argument is provided, the file must be valid JSON, JSONC, JS, or YAML.
+If it is not provided, `markdownlint-cli` uses the [`run-con` package to merge configuration from all supported locations][run-con-standards], then overlays any configuration from the first matching file of `.markdownlint.jsonc`/`.markdownlint.json`/`.markdownlint.yaml`/`.markdownlint.yml` in the current folder.
+(For compatibility with other `markdownlint` tooling, use of `run-con` configuration files is discouraged.)
+
+If the `--config` argument is provided, the `configFile` specified must be valid JSON, JSONC, JS, TOML, or YAML.
 JS configuration files contain JavaScript code, must have the `.js` or `.cjs` file extension, and must export (via `module.exports = ...`) a configuration object of the form shown above.
 If your workspace _(project)_ is [ESM-only] _(`"type": "module"` set in the root `package.json` file)_, then the configuration file **should end with `.cjs` file extension**.
 A JS configuration file may internally `require` one or more npm packages as a way of reusing configuration across projects.
@@ -171,7 +171,7 @@ MIT © Igor Shubovych
 [rules]: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
 [config]: https://github.com/DavidAnson/markdownlint#optionsconfig
 [style-folder]: https://github.com/DavidAnson/markdownlint/tree/main/style
-[rc-standards]: https://www.npmjs.com/package/rc#standards
+[run-con-standards]: https://www.npmjs.com/package/run-con#standards
 [glob]: https://github.com/isaacs/node-glob
 [globprimer]: https://github.com/isaacs/node-glob/blob/master/README.md#glob-primer
 [ignore]: https://github.com/kaelzhang/node-ignore

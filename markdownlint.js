@@ -209,7 +209,7 @@ function concatArray(item, array) {
 program
   .version(version)
   .description(description)
-  .option('-c, --config <configFile>', 'configuration file (JSON, JSONC, JS, YAML, or TOML)')
+  .option('-c, --config <configFile>', 'configuration file (JSON, JSONC, JS, TOML, or YAML)')
   .option('--configPointer <pointer>', 'JSON Pointer to object within configuration file', '')
   .option('-d, --dot', 'include files/folders with a dot (for example `.github`)')
   .option('-f, --fix', 'fix basic issues (does not work with STDIN)')
