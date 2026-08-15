@@ -339,6 +339,9 @@ try {
     lintAndPrint(null, diff);
   } else if (inputs.length === 0 && options.stdin && !options.fix) {
     import('node:stream/consumers').then(module => module.text(process.stdin)).then(lintAndPrint);
+  } else if (program.args.length > 0 && !options.stdin) {
+    // Files, directories, or globs were given, but none of them resolved to a Markdown file.
+    console.warn('No matching files found');
   } else {
     program.help();
   }
