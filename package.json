@@ -40,7 +40,7 @@
   "dependencies": {
     "commander": "~15.0.0",
     "deep-extend": "~0.6.0",
-    "ignore": "~7.0.6",
+    "ignore": "~7.0.8",
     "js-yaml": "~5.4.1",
     "jsonc-parser": "~3.3.1",
     "jsonpointer": "~5.0.1",
