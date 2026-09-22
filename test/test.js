@@ -456,7 +456,7 @@ function getCwdConfigFileTest(extension) {
       });
       t.fail();
     } catch (error) {
-      const expected = ["heading-dollar.md:1:10 error MD026/no-trailing-punctuation Trailing punctuation in heading [Punctuation: '$']"].join('\n');
+      const expected = ['heading-dollar.md:1:10 error MD026/no-trailing-punctuation Trailing punctuation in heading [Punctuation: \'$\']'].join('\n');
       t.is(error.stdout, '');
       t.is(error.stderr, expected);
       t.is(error.exitCode, 1);
