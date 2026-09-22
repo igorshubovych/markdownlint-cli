@@ -308,6 +308,7 @@ function lintAndPrint(stdin, files) {
     customRules,
     files,
   };
+  // eslint-disable-next-line unicorn/no-immediate-mutation
   if (stdin) {
     lintOptions.strings = {
       stdin,
@@ -320,6 +321,7 @@ function lintAndPrint(stdin, files) {
       fixOptions.files = [file];
       const fixResult = lint(fixOptions);
       const fixes = fixResult[file].filter(error => error.fixInfo);
+      // eslint-disable-next-line unicorn/prefer-continue
       if (fixes.length > 0) {
         const originalText = fs.readFileSync(file, fsOptions);
         const fixedText = applyFixes(originalText, fixes);

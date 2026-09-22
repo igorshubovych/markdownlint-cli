@@ -57,24 +57,32 @@
     "nano-spawn": "^2.1.0",
     "xo": "^5.0.1"
   },
-  "xo": {
-    "files": "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,svelte,astro,html}",
-    "prettier": true,
-    "space": true,
-    "rules": {
-      "comma-dangle": 0,
-      "linebreak-style": 0,
-      "no-var": 0,
-      "prefer-arrow-callback": 0,
-      "promise/prefer-await-to-then": 0,
-      "object-shorthand": 0,
-      "regexp/prefer-named-capture-group": 0,
-      "unicorn/max-nested-calls": 0,
-      "unicorn/prefer-module": 0,
-      "unicorn/prefer-ternary": 0,
-      "unicorn/prefer-top-level-await": 0
+  "xo": [
+    {
+      "files": "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,svelte,astro,html}",
+      "rules": {
+        "comma-dangle": 0,
+        "linebreak-style": 0,
+        "no-var": 0,
+        "prefer-arrow-callback": 0,
+        "promise/prefer-await-to-then": 0,
+        "object-shorthand": 0,
+        "@stylistic/indent": [ "error", 2 ],
+        "@stylistic/max-len": 0,
+        "regexp/prefer-named-capture-group": 0,
+        "unicorn/max-nested-calls": 0,
+        "unicorn/prefer-module": 0,
+        "unicorn/prefer-ternary": 0,
+        "unicorn/prefer-top-level-await": 0
+      }
+    },
+    {
+      "ignores": [
+        "**/package.json",
+        "test/config-files/json-c/.markdownlint.json"
+      ]
     }
-  },
+  ],
   "prettier": {
     "arrowParens": "avoid",
     "bracketSpacing": false,
