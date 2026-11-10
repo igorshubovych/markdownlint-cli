@@ -83,7 +83,9 @@ function readConfiguration(userConfigFile) {
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
       console.error(`Cannot read or parse config file '${userConfigFile}': ${error.message}`);
-      process.exitCode = exitCodes.unexpectedError;
+      // A configuration error is fatal; exit immediately so a subsequent lint
+      // error cannot replace this exit code with `lintErrorsPresent`.
+      process.exit(exitCodes.unexpectedError);
     }
   }
 
