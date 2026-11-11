@@ -452,7 +452,7 @@ test('configuration file error is not masked by lint errors', async t => {
   const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--config', 'non-existent-file-path.yaml', 'incorrect.md']));
   t.is(error.stdout, '');
   t.regex(error.stderr, /Cannot read or parse config file 'non-existent-file-path\.yaml'/v);
-  t.notRegex(error.stderr, /error MD\d{3}/v);
+  t.notRegex(error.stderr, /error/v);
   t.is(error.exitCode, 4);
 });
 
