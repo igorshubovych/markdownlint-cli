@@ -673,6 +673,17 @@ test('.markdownlintignore works with semi-absolute paths', async t => {
   t.is(error.exitCode, 1);
 });
 
+test('.markdownlintignore works with paths outside the current directory', async t => {
+  const error = await t.throwsAsync(() =>
+    spawn(path.resolve('..', 'markdownlint.js'), ['../incorrect.md'], {
+      cwd: path.join(import.meta.dirname, 'markdownlintignore'),
+    }),
+  );
+  t.is(error.stdout, '');
+  t.true(error.stderr.startsWith('../incorrect.md:'));
+  t.is(error.exitCode, 1);
+});
+
 test('--ignore-path works with .markdownlintignore', async t => {
   const error = await t.throwsAsync(() =>
     spawn(path.resolve('..', 'markdownlint.js'), ['--ignore-path', '.markdownlintignore', '.'], {
