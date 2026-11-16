@@ -281,7 +281,8 @@ if (existsSync(ignorePath)) {
   const ignoreText = fs.readFileSync(ignorePath, fsOptions);
   const ignore = require('ignore');
   const ignoreInstance = ignore().add(ignoreText);
-  ignoreFilter = fileInfo => !ignoreInstance.ignores(fileInfo.relative);
+  // Paths outside the current directory can't match its ignore file, and `ignore` throws on them
+  ignoreFilter = fileInfo => fileInfo.relative.startsWith(`..${path.sep}`) || path.isAbsolute(fileInfo.relative) || !ignoreInstance.ignores(fileInfo.relative);
 }
 
 const inputs = prepareFileList(program.args, ['md', 'markdown']).filter(value => ignoreFilter(value));
