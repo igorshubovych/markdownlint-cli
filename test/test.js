@@ -686,12 +686,12 @@ test('.markdownlintignore works with paths outside the current directory', async
 
 test('.markdownlintignore works with paths that go above the current directory through a subdirectory', async t => {
   const error = await t.throwsAsync(() =>
-    spawn(path.resolve('..', 'markdownlint.js'), [path.join('subdir', '..', '..', 'incorrect.md')], {
+    spawn(path.resolve('..', 'markdownlint.js'), ['subdir/../../incorrect.md'], {
       cwd: path.join(import.meta.dirname, 'markdownlintignore'),
     }),
   );
   t.is(error.stdout, '');
-  t.true(error.stderr.startsWith(path.join('subdir', '..', '..', 'incorrect.md') + ':'));
+  t.true(error.stderr.startsWith('subdir/../../incorrect.md:'));
   t.is(error.exitCode, 1);
 });
 
