@@ -315,24 +315,24 @@ test('glob linting does not try to lint directories as files', async t => {
 });
 
 test('--stdin with empty input has no output', async t => {
-  const stdin = {string: ''};
-  const result = await spawn('../markdownlint.js', ['--stdin'], {stdin});
+  const input = '';
+  const result = await spawn('../markdownlint.js', ['--stdin'], {input});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
 });
 
 test('--stdin with valid input has no output', async t => {
-  const stdin = {string: ['# Heading', '', 'Text', ''].join('\n')};
-  const result = await spawn('../markdownlint.js', ['--stdin'], {stdin});
+  const input = ['# Heading', '', 'Text', ''].join('\n');
+  const result = await spawn('../markdownlint.js', ['--stdin'], {input});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
 });
 
 test('--stdin with invalid input reports violations', async t => {
-  const stdin = {string: ['Heading', '', 'Text ', ''].join('\n')};
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--stdin'], {stdin}));
+  const input = ['Heading', '', 'Text ', ''].join('\n');
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--stdin'], {input}));
   t.is(error.stdout, '');
   t.is(error.stderr.match(errorPattern).length, 2);
   t.is(error.exitCode, 1);
@@ -346,9 +346,9 @@ test('stdin support does not interfere with file linting', async t => {
 });
 
 test('--output with empty input has empty output', async t => {
-  const stdin = {string: ''};
+  const input = '';
   const output = '../outputA.txt';
-  const result = await spawn('../markdownlint.js', ['--stdin', '--output', output], {stdin});
+  const result = await spawn('../markdownlint.js', ['--stdin', '--output', output], {input});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
@@ -357,9 +357,9 @@ test('--output with empty input has empty output', async t => {
 });
 
 test('--output with valid input has empty output', async t => {
-  const stdin = {string: ['# Heading', '', 'Text', ''].join('\n')};
+  const input = ['# Heading', '', 'Text', ''].join('\n');
   const output = '../outputB.txt';
-  const result = await spawn('../markdownlint.js', ['--stdin', '--output', output], {stdin});
+  const result = await spawn('../markdownlint.js', ['--stdin', '--output', output], {input});
   t.is(result.stdout, '');
   t.is(result.stderr, '');
   t.is(result.exitCode, 0);
@@ -368,9 +368,9 @@ test('--output with valid input has empty output', async t => {
 });
 
 test('--output with invalid input outputs violations', async t => {
-  const stdin = {string: ['Heading', '', 'Text ', ''].join('\n')};
+  const input = ['Heading', '', 'Text ', ''].join('\n');
   const output = '../outputC.txt';
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--stdin', '--output', output], {stdin}));
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--stdin', '--output', output], {input}));
   t.is(error.stdout, '');
   t.is(error.stderr, '');
   t.is(error.exitCode, 1);
@@ -379,9 +379,9 @@ test('--output with invalid input outputs violations', async t => {
 });
 
 test('--output with invalid input and --json outputs issues as json', async t => {
-  const stdin = {string: ['Heading', '', 'Text ', ''].join('\n')};
+  const input = ['Heading', '', 'Text ', ''].join('\n');
   const output = '../outputF.json';
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--stdin', '--output', output, '--json'], {stdin}));
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--stdin', '--output', output, '--json'], {input}));
   t.is(error.stdout, '');
   t.is(error.stderr, '');
   t.is(error.exitCode, 1);
@@ -390,9 +390,9 @@ test('--output with invalid input and --json outputs issues as json', async t =>
 });
 
 test('--output with invalid path fails', async t => {
-  const stdin = {string: ''};
+  const input = '';
   const output = 'invalid/outputD.txt';
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--stdin', '--output', output], {stdin}));
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--stdin', '--output', output], {input}));
   t.is(error.stdout, '');
   t.is(error.stderr.replace(/: ENOENT[\s\S]*$/v, ''), 'Cannot write to output file ' + output);
   t.is(error.exitCode, 2);
@@ -517,8 +517,8 @@ test('valid JSON Pointer with TOML configuration', async t => {
 });
 
 test('Custom rule from single file loaded', async t => {
-  const stdin = {string: '# Input\n'};
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'custom-rules/files/test-rule-1.cjs', '--stdin'], {stdin}));
+  const input = '# Input\n';
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'custom-rules/files/test-rule-1.cjs', '--stdin'], {input}));
   const expected = ['stdin:1 error test-rule-1 Test rule broken'].join('\n');
   t.is(error.stdout, '');
   t.is(error.stderr, expected);
@@ -526,8 +526,8 @@ test('Custom rule from single file loaded', async t => {
 });
 
 test('Multiple custom rules from single file loaded', async t => {
-  const stdin = {string: '# Input\n'};
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'custom-rules/files/test-rule-3-4.cjs', '--stdin'], {stdin}));
+  const input = '# Input\n';
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'custom-rules/files/test-rule-3-4.cjs', '--stdin'], {input}));
   const expected = ['stdin:1 error test-rule-3 Test rule 3 broken', 'stdin:1 error test-rule-4 Test rule 4 broken'].join('\n');
   t.is(error.stdout, '');
   t.is(error.stderr, expected);
@@ -535,8 +535,8 @@ test('Multiple custom rules from single file loaded', async t => {
 });
 
 test('Custom rules from directory loaded', async t => {
-  const stdin = {string: '# Input\n'};
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'custom-rules/files', '--stdin'], {stdin}));
+  const input = '# Input\n';
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'custom-rules/files', '--stdin'], {input}));
   const expected = ['stdin:1 error test-rule-1 Test rule broken', 'stdin:1 error test-rule-2 Test rule 2 broken', 'stdin:1 error test-rule-3 Test rule 3 broken', 'stdin:1 error test-rule-4 Test rule 4 broken'].join('\n');
   t.is(error.stdout, '');
   t.is(error.stderr, expected);
@@ -544,8 +544,8 @@ test('Custom rules from directory loaded', async t => {
 });
 
 test('Custom rules from glob loaded', async t => {
-  const stdin = {string: '# Input\n'};
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'custom-rules/files/**/*.cjs', '--stdin'], {stdin}));
+  const input = '# Input\n';
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'custom-rules/files/**/*.cjs', '--stdin'], {input}));
   const expected = ['stdin:1 error test-rule-1 Test rule broken', 'stdin:1 error test-rule-2 Test rule 2 broken', 'stdin:1 error test-rule-3 Test rule 3 broken', 'stdin:1 error test-rule-4 Test rule 4 broken'].join('\n');
   t.is(error.stdout, '');
   t.is(error.stderr, expected);
@@ -553,8 +553,8 @@ test('Custom rules from glob loaded', async t => {
 });
 
 test('Custom rule from node_modules package loaded', async t => {
-  const stdin = {string: '# Input\n'};
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'markdownlint-cli-local-test-rule', '--stdin'], {stdin}));
+  const input = '# Input\n';
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'markdownlint-cli-local-test-rule', '--stdin'], {input}));
   const expected = ['stdin:1 error markdownlint-cli-local-test-rule Test rule package broken'].join('\n');
   t.is(error.stdout, '');
   t.is(error.stderr, expected);
@@ -562,10 +562,10 @@ test('Custom rule from node_modules package loaded', async t => {
 });
 
 test('Custom rule from node_modules package loaded relative to cwd', async t => {
-  const stdin = {string: '# Input\n'};
+  const input = '# Input\n';
   const error = await t.throwsAsync(() =>
     spawn(path.resolve('..', 'markdownlint.js'), ['--rules', 'markdownlint-cli-local-test-rule', '--stdin'], {
-      stdin,
+      input,
       cwd: path.join(import.meta.dirname, 'custom-rules', 'relative-to-cwd'),
     }),
   );
@@ -588,8 +588,8 @@ test('Custom rule with scoped package name via --rules', async t => {
 });
 
 test('Custom rule from package loaded', async t => {
-  const stdin = {string: '# Input\n'};
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', './custom-rules/markdownlint-cli-local-test-rule', '--stdin'], {stdin}));
+  const input = '# Input\n';
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', './custom-rules/markdownlint-cli-local-test-rule', '--stdin'], {input}));
   const expected = ['stdin:1 error markdownlint-cli-local-test-rule Test rule package broken'].join('\n');
   t.is(error.stdout, '');
   t.is(error.stderr, expected);
@@ -597,8 +597,8 @@ test('Custom rule from package loaded', async t => {
 });
 
 test('Custom rule from several packages loaded', async t => {
-  const stdin = {string: '# Input\n'};
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', './custom-rules/markdownlint-cli-local-test-rule', '--rules', './custom-rules/markdownlint-cli-local-test-rule-other', '--stdin'], {stdin}));
+  const input = '# Input\n';
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', './custom-rules/markdownlint-cli-local-test-rule', '--rules', './custom-rules/markdownlint-cli-local-test-rule-other', '--stdin'], {input}));
   const expected = ['stdin:1 error markdownlint-cli-local-test-rule Test rule package broken', 'stdin:1 error markdownlint-cli-local-test-rule-other Test rule package other broken'].join('\n');
   t.is(error.stdout, '');
   t.is(error.stderr, expected);
@@ -606,8 +606,8 @@ test('Custom rule from several packages loaded', async t => {
 });
 
 test('Invalid custom rule name reports error', async t => {
-  const stdin = {string: '# Input\n'};
-  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'markdownlint-cli-local-test-rule', '--rules', 'invalid-package', '--stdin'], {stdin}));
+  const input = '# Input\n';
+  const error = await t.throwsAsync(() => spawn('../markdownlint.js', ['--rules', 'markdownlint-cli-local-test-rule', '--rules', 'invalid-package', '--stdin'], {input}));
   const expected = ['Cannot load custom rule invalid-package: No such rule'].join('\n');
   t.is(error.stdout, '');
   t.is(error.stderr, expected);
