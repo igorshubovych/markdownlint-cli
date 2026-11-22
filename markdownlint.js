@@ -79,6 +79,10 @@ function readConfiguration(userConfigFile) {
   if (userConfigFile) {
     try {
       const isJsConfigFile = /\.c?js$/iv.test(userConfigFile);
+      if (isJsConfigFile) {
+        console.warn(`Warning: '${userConfigFile}' is a JavaScript file and will be executed with the privileges of this process; only use --config with trusted files.`);
+      }
+
       const userConfig = isJsConfigFile ? require(path.resolve(processCwd, userConfigFile)) : readConfig(userConfigFile, configParsers);
       config = require('deep-extend')(config, userConfig);
     } catch (error) {
@@ -255,7 +259,10 @@ function loadCustomRules(rules) {
   return rules.flatMap(rule => {
     try {
       const resolvedPath = [tryResolvePath(rule)];
-      const fileList = prepareFileList(resolvedPath, ['js', 'cjs', 'mjs']).flatMap(filepath => require(filepath.absolute));
+      const fileList = prepareFileList(resolvedPath, ['js', 'cjs', 'mjs']).flatMap(filepath => {
+        console.warn(`Warning: custom rule '${filepath.absolute}' will be executed with the privileges of this process; only use --rules with trusted files.`);
+        return require(filepath.absolute);
+      });
       if (fileList.length === 0) {
         throw new Error('No such rule');
       }
